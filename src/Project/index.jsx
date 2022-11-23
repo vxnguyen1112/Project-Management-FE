@@ -3,10 +3,13 @@ import { Route, Redirect, useRouteMatch, useHistory } from 'react-router-dom';
 
 import useApi from 'hooks/api';
 import { updateArrayItemById, createQueryParamModalHelpers } from 'react-project-management';
+import { Modal } from 'components';
 
 import NavbarLeft from './NavbarLeft';
+import IssueCreate from './IssueCreate';
 import Sidebar from './Sidebar';
 import Board from './Board';
+import ProjectSettings from './ProjectSettings';
 import { ProjectPage } from './Styles';
 
 const Project = () => {
@@ -195,6 +198,24 @@ const Project = () => {
 
       <Sidebar project={project} />
 
+      {issueCreateModalHelpers.isOpen() && (
+        <Modal
+          isOpen
+          testid="modal:issue-create"
+          width={800}
+          withCloseIcon={false}
+          onClose={issueCreateModalHelpers.close}
+          renderContent={modal => (
+            <IssueCreate
+              project={project}
+              fetchProject={fetchProject}
+              onCreate={() => history.push(`${match.url}/board`)}
+              modalClose={modal.close}
+            />
+          )}
+        />
+      )}
+
       <Route
         path={`${match.path}/board`}
         render={() => (
@@ -204,6 +225,11 @@ const Project = () => {
             updateLocalProjectIssues={updateLocalProjectIssues}
           />
         )}
+      />
+
+      <Route
+        path={`${match.path}/settings`}
+        render={() => <ProjectSettings project={project} fetchProject={fetchProject} />}
       />
 
       {match.isExact && <Redirect to={`${match.url}/board`} />}

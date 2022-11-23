@@ -1,11 +1,13 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import React, {useState} from 'react';
+import { useHistory } from "react-router-dom"
 import { Form } from 'components';
 import { toast } from 'react-project-management';
 
 import { FormCont, FormHeading, FormElement, ActionButton } from '../ProjectSettings/Styles';
 
 const ProjectCreate = () => {
+    const history = useHistory();
 
     const project = {
         name: "",
@@ -73,10 +75,17 @@ const ProjectCreate = () => {
               />
             </div>
 
-            <ActionButton type="submit" variant="primary">
+            <ActionButton 
+                type="submit" 
+                variant="primary" 
+                onClick={() => history.push('/project')}>
               Create project
             </ActionButton>
-            <ActionButton type="button" variant="secondary" style={{ marginLeft: 10 }}>
+            <ActionButton 
+                type="button" 
+                variant="secondary" 
+                style={{ marginLeft: 10 }}
+                onClick={() => history.push('/home')}>
               Cancel
             </ActionButton>
           </FormElement>

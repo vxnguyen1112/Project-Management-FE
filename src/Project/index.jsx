@@ -10,6 +10,7 @@ import IssueCreate from './IssueCreate';
 import Sidebar from './Sidebar';
 import Board from './Board';
 import ProjectSettings from './ProjectSettings';
+import Grantt from './Grantt';
 import { ProjectPage } from './Styles';
 
 const Project = () => {
@@ -230,6 +231,11 @@ const Project = () => {
       <Route
         path={`${match.path}/settings`}
         render={() => <ProjectSettings project={project} fetchProject={fetchProject} />}
+      />
+
+      <Route
+        path={`${match.path}/grantt`}
+        render={() => <Grantt/>}
       />
 
       {match.isExact && <Redirect to={`${match.url}/board`} />}

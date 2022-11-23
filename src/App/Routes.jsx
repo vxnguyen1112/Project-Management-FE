@@ -2,6 +2,7 @@ import React from 'react';
 import { Router, Switch, Route, Redirect } from 'react-router-dom';
 import Project from 'Project';
 import Login from 'Login/Login';
+import ProjectCreate from 'Project/ProjectCreate';
 import history from 'browserHistory';
 // import Authenticate from 'Auth/Authenticate';
 import PageError from 'components/PageError';
@@ -12,7 +13,8 @@ const Routes = () => (
     <Redirect exact from="/" to="/login" />
     <Route path="/project" component={Project} />
     <Route path="/login" component={Login} />
-      <Route component={PageError} />
+    <Route path="/create-project" component={ProjectCreate} />
+    <Route component={PageError} />
     </Switch>
   </Router>
 );

@@ -1,0 +1,66 @@
+/* details {
+    padding-top: 10px;
+}
+
+summary {
+    position: relative;
+    padding-bottom: 10px;
+}
+
+.droppable[open] summary ~ * {
+    animation: open 0.3s ease-in-out;
+}
+
+@keyframes open {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+.createIssueArea {
+    margin-top: 16px;
+}
+
+.createIssueGroupInput {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.createIssueArea .createIssueGroupInputWrapper {
+    background: #fff;
+    padding: 0;
+    border: 1px solid #000;
+    min-width: 85%;
+}
+
+.createIssueArea .createIssueGroupButton {
+   max-width: 20%;
+}
+
+.createIssueArea .createIssueSelect {
+    display: inline-block;
+}
+
+.createIssueArea .createIssueInput {
+    outline: none;
+    border: none;
+    padding-left: 16px;
+}
+.createIssueGroupButton .btn {
+    margin-left: 20px;
+}
+
+.hidden { 
+    display:none; 
+}
+
+.btnBoard {
+    position: absolute;
+    right: 0;
+    top: -10px;
+} */

@@ -1,0 +1,104 @@
+details {
+    padding-top: 10px;
+}
+
+summary {
+    position: relative;
+    padding-bottom: 10px;
+}
+
+.droppable[open] summary ~ * {
+    animation: open 0.3s ease-in-out;
+}
+
+@keyframes open {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+.createIssueArea {
+    margin-top: 16px;
+}
+
+.createIssueGroupInput {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.createIssueArea .createIssueGroupInputWrapper {
+    background: #fff;
+    padding: 0;
+    border: 1px solid #000;
+    width: 100%;
+    display: flex;
+}
+
+.createIssueArea .createIssueGroupButton {
+    width: fit-content;
+    display: flex;
+    justify-content: center;
+}
+
+.createIssueArea .createIssueGroupButton .btnCreateIssue {
+    margin: 0 20px;
+}
+
+.createIssueArea .createIssueSelect {
+    min-width: 100px;
+}
+
+.createIssueArea .createIssueInput {
+    outline: none;
+    border: none;
+    padding: 0 16px;
+    width: 100%;
+}
+.createIssueGroupButton .btnCreateBacklog {
+    margin-left: 20px;
+}
+
+.hidden { 
+    display:none; 
+}
+
+.groupButton {
+    position: absolute;
+    right: 0;
+    top: -10px;
+    display: flex;
+    align-items: center;
+}
+
+.btnCreateBacklog {
+    margin-right: 10px;
+    background-color: #c4bebe;
+    color: #172b4d;
+}
+
+.btnCreateBacklog:not(:disabled):hover {
+    background-color: #c4bebe;
+}
+
+.issueArea {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #fff;
+}
+
+.issueArea span {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.issueArea div {
+    margin-left: 10px;
+}

@@ -11,6 +11,7 @@ import Sidebar from './Sidebar';
 import Board from './Board';
 import ProjectSettings from './ProjectSettings';
 import ProjectCreate from './ProjectCreate';
+import Backlog from './Backlog';
 import { ProjectPage } from './Styles';
 
 const Project = () => {
@@ -236,6 +237,11 @@ const Project = () => {
       <Route
         path={`${match.path}/project-create`}
         render={() => <ProjectCreate/>}
+      />
+
+      <Route
+        path={`${match.path}/backlog`}
+        render={() => <Backlog/>}
       />
 
       {match.isExact && <Redirect to={`${match.url}/board`} />}

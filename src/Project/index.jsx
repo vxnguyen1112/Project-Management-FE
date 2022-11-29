@@ -7,6 +7,7 @@ import { Modal } from 'components';
 
 import NavbarLeft from './NavbarLeft';
 import IssueCreate from './IssueCreate';
+import IssueSearch from './IssueSearch';
 import Sidebar from './Sidebar';
 import Board from './Board';
 import ProjectSettings from './ProjectSettings';
@@ -199,6 +200,17 @@ const Project = () => {
       />
 
       <Sidebar project={project} />
+
+      {issueSearchModalHelpers.isOpen() && (
+        <Modal
+          isOpen
+          testid="modal:issue-search"
+          variant="aside"
+          width={600}
+          onClose={issueSearchModalHelpers.close}
+          renderContent={() => <IssueSearch project={project} />}
+        />
+      )}
 
       {issueCreateModalHelpers.isOpen() && (
         <Modal

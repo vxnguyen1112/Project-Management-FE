@@ -1,15 +1,20 @@
 import axios from 'axios';
-
-import history from 'browserHistory';
 import { toast , objectToQueryString , getStoredAuthToken, removeStoredAuthToken } from 'react-project-management';
+import history from 'browserHistory';
 
+const token=(authToken)=>
+{
+if (authToken !== null || authToken !== undefined || authToken !== '') {
+  return ''
+} 
+ return `Bearer ${authToken}`;
 
-
+}
 const defaults = {
   baseURL: process.env.API_URL || 'http://139.59.96.208:8000',
   headers: () => ({
     'Content-Type': 'application/json',
-    Authorization: getStoredAuthToken() === "undefined" ? '': `Bearer ${getStoredAuthToken()}`,
+    Authorization: token(getStoredAuthToken()),
     accept:'*/*',
   }),
   error: {
@@ -36,11 +41,11 @@ const api = (method, url, variables) =>
       },
       error => {
         if (error.response) {
-          if (error.response.data.error.code === 'INVALID_TOKEN') {
+          if (error.response.data.code === 401) {
             removeStoredAuthToken();
-            history.push('/authenticate');
+            history.push('/login');
           } else {
-            reject(error.response.data.error);
+            reject(error.response.data.message);
           }
         } else {
           reject(defaults.error);

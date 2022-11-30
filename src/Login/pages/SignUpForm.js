@@ -59,10 +59,9 @@ const SignUpForm = () => {
     event.preventDefault();
     if (Object.keys(formErrors).length === 0) {
       try {
-        const authToken = await api.post('/api/auth/signup', JSON.stringify(state));
-        console.log(authToken);
+        await api.post('/api/auth/signup', JSON.stringify(state));
         toast.success('Singup successfully');
-        history.push('/listproject');
+        history.push('/login');
       } catch (error) {
         toast.error(error);
       }

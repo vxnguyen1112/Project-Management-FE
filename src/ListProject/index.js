@@ -1,7 +1,8 @@
 /* eslint-disable no-nested-ternary */
-import React, { useState, useEffect } from 'react';
+import React  from 'react';
 import { useTable, useSortBy } from 'react-table';
 import "./styles.css";
+
 const  ListProject=()=> {
 
  const data = React.useMemo(

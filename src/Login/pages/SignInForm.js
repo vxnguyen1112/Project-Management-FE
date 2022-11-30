@@ -5,7 +5,7 @@ import { Link, useHistory } from 'react-router-dom';
 import { FacebookLoginButton, InstagramLoginButton } from 'react-social-login-buttons';
 import {toast, getStoredAuthToken, storeAuthToken } from 'react-project-management'
 
-import{ api} from  'Services/api'
+import api from  'Services/api'
 
 const SignInForm = () => {
   const history = useHistory();

@@ -3,36 +3,51 @@
 import React, { useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { FacebookLoginButton, InstagramLoginButton } from 'react-social-login-buttons';
-import {toast, getStoredAuthToken, storeAuthToken } from 'react-project-management'
+import { toast ,storeAuthToken} from 'react-project-management';
 
-import{ api} from  'Services/api'
+import api from 'Services/api';
 
 const SignInForm = () => {
   const history = useHistory();
   const [state, setState] = useState({ username: '', password: 'A123qwe@' });
+  const [formErrors, setFormErrors] = useState({});
+  const validate = values => {
+    const errors = {};
+    const passRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
+    const userRegex = /^[a-z0-9_-]{6,30}$/;
+    if (!passRegex.test(values.password)) {
+      errors.password =
+        'Password must be minimum 8 characters, at least 1 uppercase letter, 1 number and 1 special character!';
+    }
+    if (!userRegex.test(values.username)) {
+      errors.username =
+        'Username must be characters and number having a length of 6 to 30 characters!';
+    }
+    return errors;
+  };
+
   const handleChange = event => {
-    const {target} = event;
+    const { target } = event;
     const value = target.type === 'checkbox' ? target.checked : target.value;
-    const {name} = target;
+    const { name } = target;
     setState(previousState => {
       return { ...previousState, [name]: value };
     });
   };
   const handleSubmit = async event => {
+    setFormErrors(validate(state));
     event.preventDefault();
-
-    console.log('The form was submitted with the following data:');
-    console.log(state);
-    try {
-      const  authToken   = await api.post('/api/auth/signin', JSON.stringify(state));
-      console.log(authToken);
-      toast.success('Logged in successfully');
-      history.push('/listproject');
-    } catch (error) {
-      console.log("error");
-      console.log(error);
+    if (Object.keys(formErrors).length === 0) {
+      try {
+        const data = await api.post('/api/auth/signin', JSON.stringify(state));
+        storeAuthToken(data.accessToken)
+        toast.success('Logged in successfully');
+        history.push('/listproject');
+      } catch (error) {
+        toast.error(error);
+      }
+      setFormErrors({});
     }
-  
   };
   return (
     // eslint-disable-next-line react/jsx-filename-extension
@@ -51,8 +66,8 @@ const SignInForm = () => {
             value={state.username}
             onChange={handleChange}
           />
+          <p style={{ color: 'red', fontSize: 13 }}>{formErrors.username}</p>
         </div>
-
         <div className="formField">
           <label className="formFieldLabel" htmlFor="password">
             Password
@@ -66,6 +81,7 @@ const SignInForm = () => {
             value={state.password}
             onChange={handleChange}
           />
+          <p style={{ color: 'red', fontSize: 13 }}>{formErrors.password}</p>
         </div>
 
         <div className="formField">
@@ -77,11 +93,11 @@ const SignInForm = () => {
 
         <div className="socialMediaButtons">
           <div className="facebookButton">
-            <FacebookLoginButton onClick={() => alert('Hello')} />
+            <FacebookLoginButton />
           </div>
 
           <div className="instagramButton">
-            <InstagramLoginButton onClick={() => alert('Hello')} />
+            <InstagramLoginButton />
           </div>
         </div>
       </form>

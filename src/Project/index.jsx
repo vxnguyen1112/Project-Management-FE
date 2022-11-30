@@ -14,6 +14,7 @@ import ProjectBoard from './TestBoard'
 import ProjectSettings from './ProjectSettings';
 import ProjectCreate from './ProjectCreate';
 import Backlog from './Backlog';
+import ListIssues from './ListIssues';
 import { ProjectPage } from './Styles';
 import {uuid} from "uuidv4";
 
@@ -435,7 +436,10 @@ const Project = () => {
         path={`${match.path}/backlog`}
         render={() => <Backlog/>}
       />
-
+      <Route
+        path={`${match.path}/list-issues`}
+        render={() => <ListIssues/>}
+      />
       {match.isExact && <Redirect to={`${match.url}/board`} />}
     </ProjectPage>
   );

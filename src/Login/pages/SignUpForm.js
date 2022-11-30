@@ -1,9 +1,10 @@
+/* eslint-disable react/no-unescaped-entities */
 /* eslint-disable react/button-has-type */
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import React, { useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
-import{ api,toast} from  'react-project-management';
-
+import { toast } from 'react-project-management';
+import api from 'Services/api';
 
 const SignUpForm = () => {
   const history = useHistory();
@@ -15,24 +16,57 @@ const SignUpForm = () => {
     lastName: '',
     mailNotification: '',
   });
+  const [formErrors, setFormErrors] = useState({});
+  const validate = values => {
+    const errors = {};
+    const passRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
+    const userRegex = /^[a-z0-9_-]{6,30}$/;
+    const nameRegex = /^[a-zA-Z]+$/;
+    const mailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+    if (!passRegex.test(values.password)) {
+      errors.password =
+        'Password must be minimum 8 characters, at least 1 uppercase letter, 1 number and 1 special character!';
+    }
+    if (!userRegex.test(values.username)) {
+      errors.username =
+        'Username must be characters and number having a length of 6 to 30 characters!';
+    }
+    if (values.password !== values.confirmationPassword) {
+      errors.confirmationPassword = 'Your password and confirmation password do not match.!';
+    }
+    if (!nameRegex.test(values.firstName)) {
+      errors.firstName = 'FirstName must be characters!';
+    }
+    if (!nameRegex.test(values.lastName)) {
+      errors.lastName = 'LastName must be characters!';
+    }
+    if (!mailRegex.test(values.mailNotification)) {
+      errors.mailNotification = 'Invalid Email Address!';
+    }
+    return errors;
+  };
   const handleChange = event => {
-    const {target} = event;
+    const { target } = event;
     const value = target.type === 'checkbox' ? target.checked : target.value;
-    const {name} = target;
+    const { name } = target;
     setState(previousState => {
       return { ...previousState, [name]: value };
     });
   };
 
   const handleSubmit = async event => {
+    setFormErrors(validate(state));
     event.preventDefault();
-    console.log('The form was submitted with the following data:');
-    console.log(state);
-    try {
-      await api.post('/api/auth/signup', JSON.stringify(state));
-      history.push('/login');
-    } catch (error) {
-      toast.error(error);
+    if (Object.keys(formErrors).length === 0) {
+      try {
+        const authToken = await api.post('/api/auth/signup', JSON.stringify(state));
+        console.log(authToken);
+        toast.success('Singup successfully');
+        history.push('/listproject');
+      } catch (error) {
+        toast.error(error);
+      }
+      setFormErrors({});
     }
   };
 
@@ -53,6 +87,7 @@ const SignUpForm = () => {
             value={state.username}
             onChange={handleChange}
           />
+          <p style={{ color: 'red', fontSize: 13 }}>{formErrors.username}</p>
         </div>
         <div className="formField">
           <label className="formFieldLabel" htmlFor="password">
@@ -67,6 +102,7 @@ const SignUpForm = () => {
             value={state.password}
             onChange={handleChange}
           />
+          <p style={{ color: 'red', fontSize: 13 }}>{formErrors.password}</p>
         </div>
         <div className="formField">
           <label className="formFieldLabel" htmlFor="confirmationPassword">
@@ -81,6 +117,7 @@ const SignUpForm = () => {
             value={state.confirmationPassword}
             onChange={handleChange}
           />
+          <p style={{ color: 'red', fontSize: 13 }}>{formErrors.confirmationPassword}</p>
         </div>
         <div className="formField">
           <label className="formFieldLabel" htmlFor="firstName">
@@ -95,6 +132,7 @@ const SignUpForm = () => {
             value={state.firstName}
             onChange={handleChange}
           />
+          <p style={{ color: 'red', fontSize: 13 }}>{formErrors.firstName}</p>
         </div>
         <div className="formField">
           <label className="formFieldLabel" htmlFor="lastName">
@@ -109,6 +147,7 @@ const SignUpForm = () => {
             value={state.lastName}
             onChange={handleChange}
           />
+          <p style={{ color: 'red', fontSize: 13 }}>{formErrors.lastName}</p>
         </div>
         <div className="formField">
           <label className="formFieldLabel" htmlFor="email">
@@ -123,27 +162,12 @@ const SignUpForm = () => {
             value={state.mailNotification}
             onChange={handleChange}
           />
-        </div>
-
-        <div className="formField">
-          <label className="formFieldCheckboxLabel">
-            <input
-              className="formFieldCheckbox"
-              type="checkbox"
-              name="hasAgreed"
-              value={state.hasAgreed}
-              onChange={handleChange}
-            />{' '}
-            I agree all statements in{' '}
-            <a href="null" className="formFieldTermsLink">
-              terms of service
-            </a>
-          </label>
+          <p style={{ color: 'red', fontSize: 13 }}>{formErrors.mailNotification}</p>
         </div>
 
         <div className="formField">
           <button className="formFieldButton">Sign Up</button>{' '}
-          <Link to="/sign-in" className="formFieldLink">
+          <Link to="/login" className="formFieldLink">
             I'm already member
           </Link>
         </div>

@@ -6,12 +6,11 @@ import { toast , objectToQueryString , getStoredAuthToken, removeStoredAuthToken
 
 
 const defaults = {
-  baseURL: process.env.API_URL || 'http://146.190.105.184:8000',
+  baseURL: process.env.API_URL || 'http://139.59.96.208:8000',
   headers: () => ({
     'Content-Type': 'application/json',
     Authorization: getStoredAuthToken() === "undefined" ? '': `Bearer ${getStoredAuthToken()}`,
-    withCredentials: true,
-    'Access-Control-Allow-Credentials': true
+    accept:'*/*',
   }),
   error: {
     code: 'INTERNAL_ERROR',
@@ -26,6 +25,7 @@ const api = (method, url, variables) =>
     axios({
       url: `${defaults.baseURL}${url}`,
       method,
+      withCredentials: true,
       headers: defaults.headers(),
       params: method === 'get' ? variables : undefined,
       data: method !== 'get' ? variables : undefined,

@@ -7,6 +7,7 @@ import { addIssue, addSprint, deleteIssue } from 'store/reducers/backlogSlice';
 import { useDispatch } from 'react-redux';
 import { toast } from 'react-project-management';
 import DropdownSelect from 'components/DropdownSelect';
+import DropdownMenu from 'components/DropdownMenu';
 import ModalCustom from 'components/ModalCustom/ModalCustom';
 import Divider from '../Divider';
 import "./Board.css";
@@ -62,6 +63,9 @@ const BoardBacklog = (props) => {
         }
     ]
 
+    const issueStatus=['To do', 'In progress', 'Done'];
+    const prefix="PBL6";
+
     return (
         <React.Fragment>
             <Droppable droppableId={droppableId}>
@@ -99,11 +103,19 @@ const BoardBacklog = (props) => {
                                                 snapshot.isDragging,
                                                 provided.draggableProps.style
                                             )}>
-                                            <span>{item.content}</span>
-                                            
-                                            <div>
-                                                <DropdownSelect onSelect={() => setId(item.id)} items={items}/>
-                                            </div>
+                                                <div className="issueTypeIcon">
+                                                    <img src="https://cdn-icons-png.flaticon.com/512/1484/1484902.png" alt=""/>
+                                                </div>
+                                                <div className="issueId">
+                                                    <span>{`${prefix}-${index}`}</span>    
+                                                </div>    
+                                                <div className="issueContent">
+                                                    <span>{item.content}</span>
+                                                </div>
+                                                <div className="issueStatusArea">
+                                                    <DropdownMenu items={issueStatus}/>
+                                                    <DropdownSelect onSelect={() => setId(item.id)} items={items}/>
+                                                </div>
                                         </div>
                                     )}
                                 </Draggable>

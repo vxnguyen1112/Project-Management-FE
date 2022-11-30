@@ -10,10 +10,12 @@ import IssueCreate from './IssueCreate';
 import IssueSearch from './IssueSearch';
 import Sidebar from './Sidebar';
 import Board from './Board';
+import ProjectBoard from './TestBoard'
 import ProjectSettings from './ProjectSettings';
 import ProjectCreate from './ProjectCreate';
 import Backlog from './Backlog';
 import { ProjectPage } from './Styles';
+import {uuid} from "uuidv4";
 
 const Project = () => {
   const match = useRouteMatch();
@@ -175,9 +177,176 @@ const Project = () => {
           createdAt: "2022-11-04T14:26:48.858Z",
           updatedAt: "2022-11-06T03:48:44.362Z",
           userIds: []
+        },
+        {
+          id: 761195,
+          title: "Code giao diện trang chủ",
+          type: "story",
+          status: "inprogress",
+          priority: "3",
+          listPosition: 10,
+          createdAt: "2022-11-04T14:26:48.858Z",
+          updatedAt: "2022-11-06T03:48:44.362Z",
+          userIds: []
         }
       ]
     }
+  }
+
+  const sprintBoard = {
+    sprintId: uuid(),
+    sprintName: "KMS Sprint 1",
+    sprintStatus: "Running sprint",
+    startDate: "",
+    dueDate: "",
+    boards: [
+        {
+            id: uuid(),
+            name: "To do",
+            position: 1,
+            status: "inprogress",
+            issues: [
+                {
+                    id: uuid(),
+                    description: "Code cho đẹp vô",
+                    name: "Code giao diện trang chủ",
+                    type: "task",
+                    reporter: {                   
+                        id: 281755,
+                        name: "Lê Văn Kết",
+                        email: "rick@jira.guest",
+                        avatarUrl: "https://i.ibb.co/7JM1P2r/picke-rick.jpg",
+                        createdAt: "2022-11-03T02:44:49.763Z",
+                        updatedAt: "2022-11-03T02:44:49.776Z"
+                    },
+                    assignees: [
+                      {
+                        id: 121222,
+                        name: "Nguyễn Tấn Khanh",
+                        email: "rick@jira.guest",
+                        avatarUrl: "https://i.ibb.co/7JM1P2r/picke-rick.jpg",
+                        createdAt: "2022-11-03T02:44:49.763Z",
+                        updatedAt: "2022-11-03T02:44:49.776Z"
+                      }
+                    ],
+                    estimateTime: 12, 
+                    realTime: 15,
+                    priority: "3",
+                    statusId: 1
+                },
+                {
+                    id: uuid(),
+                    description: "Code cho đẹp vô",
+                    name: "Code giao diện bán hàng",
+                    type: "story",
+                    reporter: {                   
+                        id: 281755,
+                        name: "Lê Văn Kết",
+                        email: "rick@jira.guest",
+                        avatarUrl: "https://i.ibb.co/7JM1P2r/picke-rick.jpg",
+                        createdAt: "2022-11-03T02:44:49.763Z",
+                        updatedAt: "2022-11-03T02:44:49.776Z"
+                    },
+                    assignees: [
+                      {
+                        id: 121222,
+                        name: "Nguyễn Tấn Khanh",
+                        email: "rick@jira.guest",
+                        avatarUrl: "https://i.ibb.co/7JM1P2r/picke-rick.jpg",
+                        createdAt: "2022-11-03T02:44:49.763Z",
+                        updatedAt: "2022-11-03T02:44:49.776Z"
+                      },
+                      {
+                        id: 281757,
+                        name: "Lord Gaben",
+                        email: "gaben@jira.guest",
+                        avatarUrl: "https://i.ibb.co/6RJ5hq6/gaben.jpg",
+                        createdAt: "2022-11-03T02:44:49.770Z",
+                        updatedAt: "2022-11-03T02:44:49.776Z",
+                        projectId: 93671
+                      }
+                    ],
+                    estimateTime: 12, 
+                    realTime: 15,
+                    priority: "1",
+                    statusId: 1
+                },
+            ]
+        },
+        {
+          id: uuid(),
+          name: "To do",
+          position: 1,
+          status: "to do",
+          issues: [
+              {
+                  id: uuid(),
+                  description: "Code cho đẹp vô",
+                  name: "Code giao diện trang chủ",
+                  type: "task",
+                  reporter: {                   
+                      id: 281755,
+                      name: "Lê Văn Kết",
+                      email: "rick@jira.guest",
+                      avatarUrl: "https://i.ibb.co/7JM1P2r/picke-rick.jpg",
+                      createdAt: "2022-11-03T02:44:49.763Z",
+                      updatedAt: "2022-11-03T02:44:49.776Z"
+                  },
+                  assignees: [
+                    {
+                      id: 121222,
+                      name: "Nguyễn Tấn Khanh",
+                      email: "rick@jira.guest",
+                      avatarUrl: "https://i.ibb.co/7JM1P2r/picke-rick.jpg",
+                      createdAt: "2022-11-03T02:44:49.763Z",
+                      updatedAt: "2022-11-03T02:44:49.776Z"
+                    }
+                  ],
+                  estimateTime: 12, 
+                  realTime: 15,
+                  priority: "3",
+                  statusId: 1
+              },
+              {
+                  id: uuid(),
+                  description: "Code cho đẹp vô",
+                  name: "Code giao diện bán hàng",
+                  type: "story",
+                  reporter: {                   
+                      id: 281755,
+                      name: "Lê Văn Kết",
+                      email: "rick@jira.guest",
+                      avatarUrl: "https://i.ibb.co/7JM1P2r/picke-rick.jpg",
+                      createdAt: "2022-11-03T02:44:49.763Z",
+                      updatedAt: "2022-11-03T02:44:49.776Z"
+                  },
+                  assignees: [
+                    {
+                      id: 121222,
+                      name: "Nguyễn Tấn Khanh",
+                      email: "rick@jira.guest",
+                      avatarUrl: "https://i.ibb.co/7JM1P2r/picke-rick.jpg",
+                      createdAt: "2022-11-03T02:44:49.763Z",
+                      updatedAt: "2022-11-03T02:44:49.776Z"
+                    },
+                    {
+                      id: 281757,
+                      name: "Lord Gaben",
+                      email: "gaben@jira.guest",
+                      avatarUrl: "https://i.ibb.co/6RJ5hq6/gaben.jpg",
+                      createdAt: "2022-11-03T02:44:49.770Z",
+                      updatedAt: "2022-11-03T02:44:49.776Z",
+                      projectId: 93671
+                    }
+                  ],
+                  estimateTime: 12, 
+                  realTime: 15,
+                  priority: "1",
+                  statusId: 1
+              },
+          ]
+      }
+    ]
   }
   
 
@@ -235,6 +404,17 @@ const Project = () => {
         render={() => (
           <Board
             project={project}
+            fetchProject={fetchProject}
+            updateLocalProjectIssues={updateLocalProjectIssues}
+          />
+        )}
+      />
+
+      <Route
+        path={`${match.path}/test-board`}
+        render={() => (
+          <ProjectBoard
+            project={sprintBoard}
             fetchProject={fetchProject}
             updateLocalProjectIssues={updateLocalProjectIssues}
           />

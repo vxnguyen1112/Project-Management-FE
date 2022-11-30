@@ -186,11 +186,17 @@ export const backlogSlice = createSlice({
             }
 
             state.boards.splice(state.boardLength - 2, 0, board);
+        },
+        deleteSprint: (state, action) => {
+            const boardId = action.payload;
+            console.log(boardId);
+
+            state.boards = state.boards.filter(board => board.id !== boardId);
         }
     }
 })
 
-export const { changeIssuesOrder, addIssue, addSprint, deleteIssue } = backlogSlice.actions;
+export const { changeIssuesOrder, addIssue, addSprint, deleteIssue, deleteSprint } = backlogSlice.actions;
 
 export const selectBacklog = (state) => state.backlog.boards;
 

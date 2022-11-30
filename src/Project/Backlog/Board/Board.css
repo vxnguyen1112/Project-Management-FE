@@ -50,7 +50,7 @@ summary {
 }
 
 .createIssueArea .createIssueSelect {
-    min-width: 100px;
+    min-width: fit-content;
 }
 
 .createIssueArea .createIssueInput {
@@ -88,8 +88,10 @@ summary {
 .issueArea {
     display: flex;
     align-items: center;
-    justify-content: space-between;
     background-color: #fff;
+    flex: 1 1 0%;
+    min-width: 0px;
+    padding: 2px 16px !important; 
 }
 
 .issueArea span {
@@ -99,6 +101,42 @@ summary {
     white-space: nowrap;
 }
 
-.issueArea div {
-    margin-left: 10px;
+.issueArea > * {
+    margin-right: 10px;
 }
+
+.issueArea .issueTypeIcon{
+    width: 20px;
+    height: 20px;
+    margin-left: 0;
+    margin-right: 10px;
+}
+
+.issueArea .issueTypeIcon img{
+    width: 100%;
+    height: 100%;
+}
+
+.issueArea .issueId span{
+    color: #5e6c84;
+}
+
+.issueArea .issueContent {
+    display: flex;
+    align-items: center;
+    flex: 1 1 0%;
+    min-width: 0px;
+}
+
+.issueArea .issueStatusArea {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-left: 0;
+}
+
+.issueArea .issueStatusArea div:nth-child(1) {
+    margin-right: 10px;
+}
+
+

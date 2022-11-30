@@ -10,8 +10,7 @@ const defaults = {
   headers: () => ({
     'Content-Type': 'application/json',
     Authorization: getStoredAuthToken() === "undefined" ? '': `Bearer ${getStoredAuthToken()}`,
-    withCredentials: true,
-    'Access-Control-Allow-Credentials': true
+    accept:'*/*',
   }),
   error: {
     code: 'INTERNAL_ERROR',
@@ -26,6 +25,7 @@ const api = (method, url, variables) =>
     axios({
       url: `${defaults.baseURL}${url}`,
       method,
+      withCredentials: true,
       headers: defaults.headers(),
       params: method === 'get' ? variables : undefined,
       data: method !== 'get' ? variables : undefined,

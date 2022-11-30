@@ -38,7 +38,7 @@ const ProjectBoardLists = ({ project, filters, updateLocalProjectIssues }) => {
   return (
     <DragDropContext onDragEnd={handleIssueDrop}>
       <Lists>
-        {Object.values(IssueStatus).map(status => (
+        {/* {Object.values(IssueStatus).map(status => (
           <List
             key={status}
             status={status}
@@ -46,6 +46,14 @@ const ProjectBoardLists = ({ project, filters, updateLocalProjectIssues }) => {
             filters={filters}
             currentUserId={currentUserId}
           />  
+        ))} */}
+        {project.boards.map(board => (
+          <List
+            key={board.id}
+            project={board}
+            filters={filters}
+            currentUserId={currentUserId}
+          />
         ))}
       </Lists>
     </DragDropContext>

@@ -3,7 +3,7 @@ import { uuid } from 'uuidv4';
 import Select from 'react-select';
 import { Button } from 'components';
 import { Droppable, Draggable } from 'react-beautiful-dnd';
-import { addIssue, deleteIssue } from 'store/reducers/backlogSlice';
+import { addIssue, deleteIssue, deleteSprint } from 'store/reducers/backlogSlice';
 import { useDispatch } from 'react-redux';
 import { toast } from 'react-project-management';
 import DropdownMenu from 'components/DropdownMenu';
@@ -13,9 +13,10 @@ import Divider from '../Divider';
 import "./Board.css";
 
 const options = [
-    { value: 'task', label: 'Task' },
-    { value: 'bug', label: 'Bug' },
-    { value: 'error', label: 'Error' }
+    { value: 'task', label: 'Task', linkImage: 'https://cdn-icons-png.flaticon.com/512/906/906334.png' },
+    { value: 'bug', label: 'Bug', linkImage: 'https://cdn-icons-png.flaticon.com/512/785/785104.png' },
+    { value: 'error', label: 'Error',linkImage: 'https://cdn0.iconfinder.com/data/icons/shift-interfaces/32/Error-512.png' },
+    { value: 'story', label: 'Story',linkImage: 'https://cdn-icons-png.flaticon.com/512/1484/1484902.png' },
 ]
 
 const BoardSprint = (props) => {
@@ -24,7 +25,8 @@ const BoardSprint = (props) => {
     const [isCreateIssue, setIsCreateIssue] = useState(false);
     const [issueContent, setIssueContent] = useState("")
     const [selectedOption, setSelectedOption] = useState(options[0]);
-    const [isOpenDeleteModal, setIsOpenDeleteModal] = useState(false);
+    const [isOpenDeleteIssueModal, setIsOpenDeleteIssueModal] = useState(false);
+    const [isOpenDeleteSprintModal, setIsOpenDeleteSprintModal] = useState(false);
     const [id, setId] = useState(null);
 
     const onCreateIssue = () => {
@@ -54,10 +56,28 @@ const BoardSprint = (props) => {
             id: uuid(),
             content: 'Delete issue',
             callback: () => {
-                setIsOpenDeleteModal(true)
+                setIsOpenDeleteIssueModal(true)
             }
         }
     ]
+
+    const boardItems = [
+        {
+            id: uuid(),
+            content: 'Edit sprint',
+            callback: () => {}
+        },
+        {
+            id: uuid(),
+            content: 'Delete sprint',
+            callback: () => {
+                setIsOpenDeleteSprintModal(true)
+            }
+        }
+    ]
+
+    const issueStatus=['To do', 'In progress', 'Done'];
+    const prefix="PBL6";
 
     return (
         <React.Fragment>
@@ -79,7 +99,7 @@ const BoardSprint = (props) => {
                                         Start sprint
                                     </Button>
 
-                                    <DropdownMenu items={items}/>
+                                    <DropdownSelect onSelect={() => {}} items={boardItems}/>
                                 </div>
                             </summary>
 
@@ -98,11 +118,19 @@ const BoardSprint = (props) => {
                                                 snapshot.isDragging,
                                                 provided.draggableProps.style
                                             )}>
-                                            <span>{item.content}</span>
-                                            
-                                            <div>
-                                                <DropdownSelect onSelect={() => setId(item.id)} items={items}/>
-                                            </div>
+                                                <div className="issueTypeIcon">
+                                                    <img src="https://cdn-icons-png.flaticon.com/512/1484/1484902.png" alt=""/>
+                                                </div>
+                                                <div className="issueId">
+                                                    <span>{`${prefix}-${index}`}</span>        
+                                                </div>    
+                                                <div className="issueContent">
+                                                    <span>{item.content}</span>
+                                                </div>
+                                                <div className="issueStatusArea">
+                                                    <DropdownMenu items={issueStatus}/>
+                                                    <DropdownSelect onSelect={() => setId(item.id)} items={items}/>
+                                                </div>
                                         </div>
                                     )}
                                 </Draggable>
@@ -163,7 +191,7 @@ const BoardSprint = (props) => {
 
             <Divider/>
 
-            {isOpenDeleteModal && 
+            {isOpenDeleteIssueModal && 
                 <ModalCustom 
                     title="Delete TES-20?"
                     content={["You're about to permanently delete this issue, its comments and attachments, and all of its data.",
@@ -171,7 +199,18 @@ const BoardSprint = (props) => {
                     onConfirm={() => {
                         dispatch(deleteIssue(id))
                     }}
-                    setModalOpen={setIsOpenDeleteModal} />}
+                    setModalOpen={setIsOpenDeleteIssueModal} />}
+
+            { isOpenDeleteSprintModal && 
+                <ModalCustom 
+                    title="Delete TES-20?"
+                    content={["You're about to permanently delete this issue, its comments and attachments, and all of its data.",
+                            "If you're not sure, you can resolve or close this issue instead."]} 
+                    onConfirm={() => {
+                        dispatch(deleteSprint(droppableId))
+                    }}
+                    setModalOpen={setIsOpenDeleteSprintModal} />}
+
         </React.Fragment>
     );
 }

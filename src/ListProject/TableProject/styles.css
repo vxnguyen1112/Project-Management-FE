@@ -1,0 +1,90 @@
+.listproject {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .main {
+    height: 80%;
+    width: 100%;
+  }
+  
+  .table {
+    height: 80%;
+    width: 100%;
+    padding: 20px
+  }
+  
+  img {
+    height: 70%;
+  
+  }
+  
+  .styled-table {
+    width: 99%;
+    height: 80%;
+    border-collapse: collapse;
+    margin: 25px 0;
+    font-size: 0.9em;
+    font-family: sans-serif;
+    min-width: 400px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+  }
+  
+  .styled-table thead tr {
+    background-color: #009879;
+    color: #ffffff;
+    text-align: left;
+  }
+  
+  .styled-table th,
+  .styled-table td {
+    padding: 12px 15px;
+  }
+  
+  .styled-table tbody tr {
+    border-bottom: 1px solid #dddddd;
+  }
+  
+  .styled-table tbody tr:nth-of-type(even) {
+    background-color: #f3f3f3;
+  }
+  
+  .styled-table tbody tr:last-of-type {
+    border-bottom: 2px solid #009879;
+  }
+  
+  .styled-table tbody tr.active-row {
+    font-weight: bold;
+    color: #009879;
+  }
+  
+  input[type=checkbox] {
+    position: relative;
+    cursor: pointer;
+    display: inline;
+  }
+  input[type=checkbox]:before {
+    content: "";
+    display: block;
+    width: 16px;
+    height: 16px;
+    top: 0;
+    left: 0;
+    border: 2px solid #555555;
+    border-radius: 3px;
+    background-color: white;
+  }
+  input[type=checkbox]:checked:after {
+    content: "";
+    display: block;
+    width: 5px;
+    height: 10px;
+    border: solid black;
+    border-width: 0 2px 2px 0;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
+    position: absolute;
+    top: 2px;
+    left: 6px;
+  }

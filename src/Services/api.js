@@ -4,7 +4,7 @@ import history from 'browserHistory';
 
 const token=(authToken)=>
 {
-if (authToken !== null || authToken !== undefined || authToken !== '') {
+if (authToken === null || authToken === undefined || authToken === '') {
   return ''
 } 
  return `Bearer ${authToken}`;

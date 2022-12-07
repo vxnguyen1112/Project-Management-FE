@@ -1,6 +1,10 @@
+/* eslint-disable react/react-in-jsx-scope */
+
+import React, { useState } from 'react'
 import { InputDebounced,Avatar}  from 'components';
 import styled from 'styled-components';
 import {color,font} from 'react-project-management'
+import { useAsyncDebounce } from 'react-table'
 
 export const SearchInput = styled(InputDebounced)`
   margin-right: 18px;
@@ -28,3 +32,23 @@ export const User = styled.div`
 export const Table =styled.table`
 /* &:tr td:first-child { width: 10px; } */
 `
+
+export const GlobalFilter = ({ filter, setFilter }) => {
+  const [value, setValue] = useState(filter)
+  const onChange = useAsyncDebounce(value => {
+    setFilter(value || undefined)
+  }, 1000)
+  return (
+    // eslint-disable-next-line react/jsx-filename-extension
+    <span>
+      Search:{' '}
+      <input
+        value={value || ''}
+        onChange={e => {
+          setValue(e.target.value);
+          onChange(e.target.value);
+        }}
+      />
+    </span>
+  )
+}

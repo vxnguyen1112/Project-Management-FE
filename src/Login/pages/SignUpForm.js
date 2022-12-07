@@ -2,12 +2,12 @@
 /* eslint-disable react/button-has-type */
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import React, { useState } from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import { Link} from 'react-router-dom';
+import history from 'browserHistory';
 import { toast } from 'react-project-management';
 import api from 'Services/api';
 
 const SignUpForm = () => {
-  const history = useHistory();
   const [state, setState] = useState({
     username: '',
     password: '',
@@ -55,9 +55,10 @@ const SignUpForm = () => {
   };
 
   const handleSubmit = async event => {
-    setFormErrors(validate(state));
+    const errors=validate(state);
+    setFormErrors(errors);
     event.preventDefault();
-    if (Object.keys(formErrors).length === 0) {
+    if (Object.keys(errors).length === 0) {
       try {
         await api.post('/api/auth/signup', JSON.stringify(state));
         toast.success('Singup successfully');

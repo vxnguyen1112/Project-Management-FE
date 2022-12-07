@@ -12,7 +12,7 @@ export const NavLeft = styled.aside`
   overflow-x: hidden;
   height: 100vh;
   width: ${sizes.appNavBarLeftWidth}px;
-  background: ${color.backgroundDarkPrimary};
+  background: ${color.backgroundLeft};
   transition: all 0.1s;
   ${mixin.hardwareAccelerate}
   &:hover {

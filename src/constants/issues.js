@@ -16,7 +16,7 @@ export const IssuePriority = {
   HIGH: '4',
   MEDIUM: '3',
   LOW: '2',
-  LOWEST: '1',
+  LOWEST: 'LOWEST',
 };
 
 export const IssueTypeCopy = {

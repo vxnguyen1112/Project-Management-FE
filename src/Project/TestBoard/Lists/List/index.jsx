@@ -23,12 +23,7 @@ const ProjectBoardList = ({ project, filters, currentUserId }) => {
   // const filteredIssues = filterIssues(project.issues, filters, currentUserId);
   // const filteredListIssues = getSortedListIssues(filteredIssues, status);
   // const allListIssues = getSortedListIssues(project.issues, status);
-
-  console.log("---------");
-  console.log("Project", project);
-  console.log("Filter", filters);
-  console.log("currentUserId", currentUserId);
-  console.log("---------");
+  
   return (
     <Droppable key={project.id} droppableId={project.id}>
       {provided => (

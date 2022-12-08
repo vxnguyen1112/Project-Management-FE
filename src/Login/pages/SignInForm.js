@@ -41,7 +41,7 @@ const SignInForm = () => {
     if (Object.keys(errors).length === 0) {
       try {
         const data = await api.post('/api/auth/signin', JSON.stringify(state));
-        storeAuthToken(data.accessToken)
+        storeAuthToken(data.accessToken);
         toast.success('Logged in successfully');
         history.push('/home');
       } catch (error) {

@@ -1,18 +1,21 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import React, {useState} from 'react';
 import { useHistory } from "react-router-dom"
+import { useSelector, useDispatch } from 'react-redux';
 import { Form } from 'components';
 import { toast } from 'react-project-management';
-
+import { createProject, selectProject } from 'store/reducers/projectSlice';
 import { FormCont, FormHeading, FormElement, ActionButton } from '../ProjectSettings/Styles';
 
 const ProjectCreate = () => {
     const history = useHistory();
+    const dispatch  = useDispatch();
 
     const project = {
         name: "",
         domain: "",
         description: "",
+        key: "",
     }
 
     const [isPublic, setIsPublic] = useState(false)
@@ -21,21 +24,39 @@ const ProjectCreate = () => {
         setIsPublic(!isPublic)
     }
 
+    const queryProject = useSelector(selectProject);
+
     return (
       <Form
         initialValues={Form.initialValues(project, get => ({
           name: get('name'),
           description: get('description'),
           domain: get('domain'),
+          key: get('key'),
         }))}
         validations={{
           name: [Form.is.required(), Form.is.maxLength(100)],
           description: Form.is.required(),
           domain: Form.is.required(),
+          key: Form.is.required(),
         }}
         onSubmit={async (values, form) => {
           try {
-            toast.success('Changes have been saved successfully.');
+            const newProject = {
+              ...values, 
+              isPublic,
+              parentId: null
+            };
+            dispatch(createProject(newProject))
+            .unwrap()
+            .then((res) => {
+              console.log(res);
+            })
+            .catch((err) => {
+              toast.error(err);
+            })
+            
+            toast.success(`Changes have been saved successfully`);
           } catch (error) {
             Form.handleAPIError(error, form);
           }
@@ -47,6 +68,7 @@ const ProjectCreate = () => {
 
             <Form.Field.Input name="name" label="Name" />
             <Form.Field.Input name="domain" label="Domain" />
+            <Form.Field.Input name="key" label="Key" />
             <Form.Field.TextEditor
               name="description"
               label="Description"
@@ -74,11 +96,11 @@ const ProjectCreate = () => {
                 }}
               />
             </div>
-
+            <p>{JSON.stringify(queryProject)}</p>
             <ActionButton 
                 type="submit" 
-                variant="primary" 
-                onClick={() => history.push('/project')}>
+                variant="primary"
+                onClick={() => history.push('/home')}>
               Create project
             </ActionButton>
             <ActionButton 

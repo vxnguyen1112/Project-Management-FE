@@ -1,13 +1,14 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { uuid } from 'uuidv4';
 import Select from 'react-select';
+import api from 'Services/api'; 
 import { Button } from 'components';
 import { Droppable, Draggable } from 'react-beautiful-dnd';
 import { addIssue, deleteIssue, deleteSprint } from 'store/reducers/backlogSlice';
 import { useDispatch } from 'react-redux';
 import { toast } from 'react-project-management';
-import DropdownMenu from 'components/DropdownMenu';
 import DropdownSelect from 'components/DropdownSelect';
+import CustomStatus from 'Project/Board/IssueDetails/CustomStatus';
 import ModalCustom from 'components/ModalCustom/ModalCustom';
 import Divider from '../Divider';
 import "./Board.css";
@@ -21,29 +22,49 @@ const options = [
 
 const BoardSprint = (props) => {
     const dispatch = useDispatch();
-    const {droppableId, boardState, boardName, getListStyle, getItemStyle} = props;
+    const {sprint, getListStyle, getItemStyle} = props;
     const [isCreateIssue, setIsCreateIssue] = useState(false);
     const [issueContent, setIssueContent] = useState("")
     const [selectedOption, setSelectedOption] = useState(options[0]);
     const [isOpenDeleteIssueModal, setIsOpenDeleteIssueModal] = useState(false);
     const [isOpenDeleteSprintModal, setIsOpenDeleteSprintModal] = useState(false);
+    const [issueTypeList, setIssueTypeList] = useState([]);
     const [id, setId] = useState(null);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const organizationId = 'fbecadea-273c-48cb-bbbe-04ddaa12d0a7';
+            const res = await api.get(`/api/issues-types?organizationId=${organizationId}`);
+            setIssueTypeList(res.map((issueType) => ({
+                value: issueType.name,
+                label: issueType.name,
+                ...issueType
+            })));
+        };
+        fetchData();
+    }, []);
 
     const onCreateIssue = () => {
         if (issueContent.trim() === "") {
             toast.error('Vui lòng nhập tên issue');
         } else {
             dispatch(addIssue({
-                boardId: droppableId,
-                issue: {
-                    id: uuid(),
-                    content: issueContent,
-                    type: selectedOption.value
-                }
+                issueTypeId: selectedOption.id,
+                name: issueContent,
+                description: "",
+                projectId: "765cb983-af6f-47d4-b9cd-845e2ac0c7f4",
+                startDate: null,
+                dueDate: null,
+                estimatedHours: 0,
+                priority:  0,
+                issuesStatusId: "a3481f27-53d6-41d1-88f2-97a2cf72e2c9",
+                doneRatio: 0,
+                isPublic: true,
+                organizationId: "341a1840-273d-4f8b-8565-c8c4029fe15d",
+                boardId: sprint.id
             }))
             setIsCreateIssue(false);
         }
-        
     }
 
     const items = [
@@ -76,12 +97,18 @@ const BoardSprint = (props) => {
         }
     ]
 
-    const issueStatus=['To do', 'In progress', 'Done'];
-    const prefix="PBL6";
+    const issueStatus = {
+        status: 'todo',
+    };
+
+    const updateIssueStatus = status => {
+        console.log(status);
+        issueStatus.status = status;
+    }
 
     return (
         <React.Fragment>
-            <Droppable droppableId={droppableId}>
+            <Droppable droppableId={sprint.id}>
                 {(provided, snapshot) => (
                     <div
                         ref={provided.innerRef}
@@ -90,7 +117,7 @@ const BoardSprint = (props) => {
 
                         <details open>
                             <summary className="collopse">
-                                {boardName}
+                                {sprint.name}
                                 <div className='groupButton'>
                                     <Button 
                                         type="submit" 
@@ -103,7 +130,7 @@ const BoardSprint = (props) => {
                                 </div>
                             </summary>
 
-                            {boardState.map((item, index) => (
+                            {sprint.issuesList !== undefined && sprint.issuesList.map((item, index) => (
                                 <Draggable
                                     key={item.id}
                                     draggableId={item.id}
@@ -119,16 +146,16 @@ const BoardSprint = (props) => {
                                                 provided.draggableProps.style
                                             )}>
                                                 <div className="issueTypeIcon">
-                                                    <img src="https://cdn-icons-png.flaticon.com/512/1484/1484902.png" alt=""/>
+                                                    <img src={item.issuesTypeDto.urlIcon} alt=""/>
                                                 </div>
                                                 <div className="issueId">
-                                                    <span>{`${prefix}-${index}`}</span>        
+                                                    <span>{item.issuesKey}</span>        
                                                 </div>    
                                                 <div className="issueContent">
-                                                    <span>{item.content}</span>
+                                                    <span>{item.name}</span>
                                                 </div>
                                                 <div className="issueStatusArea">
-                                                    <DropdownMenu items={issueStatus}/>
+                                                    <CustomStatus issue={issueStatus} updateIssue={updateIssueStatus} />
                                                     <DropdownSelect onSelect={() => setId(item.id)} items={items}/>
                                                 </div>
                                         </div>
@@ -151,7 +178,7 @@ const BoardSprint = (props) => {
                                                 <Select 
                                                     defaultValue={selectedOption}
                                                     onChange={setSelectedOption}
-                                                    options={options}/>
+                                                    options={issueTypeList}/>
                                             </div>
                                             <input 
                                                 type="text"
@@ -207,7 +234,7 @@ const BoardSprint = (props) => {
                     content={["You're about to permanently delete this issue, its comments and attachments, and all of its data.",
                             "If you're not sure, you can resolve or close this issue instead."]} 
                     onConfirm={() => {
-                        dispatch(deleteSprint(droppableId))
+                        dispatch(deleteSprint(sprint.id))
                     }}
                     setModalOpen={setIsOpenDeleteSprintModal} />}
 

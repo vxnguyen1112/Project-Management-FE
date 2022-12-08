@@ -2,14 +2,12 @@ import axios from 'axios';
 import { toast , objectToQueryString , getStoredAuthToken, removeStoredAuthToken } from 'react-project-management';
 import history from 'browserHistory';
 
-const token=(authToken)=>
-{
-if (authToken === null || authToken === undefined || authToken === '') {
-  return ''
-} 
- return `Bearer ${authToken}`;
-
-}
+const token = authToken => {
+  if (authToken === null || authToken === undefined || authToken === '') {
+    return '';
+  }
+  return `Bearer ${authToken}`;
+};
 const defaults = {
   baseURL: process.env.API_URL || 'http://139.59.96.208:8000',
   headers: () => ({

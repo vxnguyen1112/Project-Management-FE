@@ -1,16 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { uuid } from 'uuidv4';
 import Select from 'react-select';
+import api from 'Services/api'; 
 import { Button } from 'components';
 import { Droppable, Draggable } from 'react-beautiful-dnd';
 import { addIssue, addSprint, deleteIssue } from 'store/reducers/backlogSlice';
 import { useDispatch } from 'react-redux';
 import { toast } from 'react-project-management';
 import DropdownSelect from 'components/DropdownSelect';
-import DropdownMenu from 'components/DropdownMenu';
 import ModalCustom from 'components/ModalCustom/ModalCustom';
+import CustomStatus from 'Project/Board/IssueDetails/CustomStatus';
 import Divider from '../Divider';
 import "./Board.css";
+
 
 const options = [
     { value: 'task', label: 'Task' },
@@ -20,24 +22,51 @@ const options = [
 
 const BoardBacklog = (props) => {
     const dispatch = useDispatch();
-    const {droppableId, boardState, getListStyle, getItemStyle} = props;
+    const {droppableId, backlog, numSprint, getListStyle, getItemStyle} = props;
     const [isCreateIssue, setIsCreateIssue] = useState(false);
     const [issueContent, setIssueContent] = useState("")
     const [selectedOption, setSelectedOption] = useState(options[0]);
     const [isOpenDeleteModal, setIsOpenDeleteModal] = useState(false);
     const [id, setId] = useState(null);
+    const [issueTypeList, setIssueTypeList] = useState([]);
+    const [issueStatusList, setIssueStatusList] = useState([]);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    useEffect(() => {
+        const getAllIssueType = async () => {
+            const organizationId = 'fbecadea-273c-48cb-bbbe-04ddaa12d0a7';
+            const res = await api.get(`/api/issues-types?organizationId=${organizationId}`);
+            setIssueTypeList(res.map((issueType) => ({
+                value: issueType.name,
+                label: issueType.name,
+                ...issueType
+            })));
+        };
+
+        const getAllIssueStatus = async () => {
+            const organizationId = 'fbecadea-273c-48cb-bbbe-04ddaa12d0a7';
+            const res = await api.get(`/api/issues-status?organizationId=${organizationId}`);
+            setIssueTypeList(res.map((issueType) => ({
+                value: issueType.name,
+                label: issueType.name,
+                ...issueType
+            })));
+        };
+        getAllIssueType();
+        getAllIssueStatus();
+    }, []);
 
     const onCreateIssue = () => {
         if (issueContent.trim() === "") {
             toast.error('Vui lòng nhập tên issue');
         } else {
             dispatch(addIssue({
-                boardId: droppableId,
-                issue: {
-                    id: uuid(),
-                    content: issueContent,
-                    type: selectedOption.value
-                }
+                issueTypeId: selectedOption.id,
+                description: issueContent,
+                projectId: "1a27f30a-7703-4b62-bc1e-d7c3e94c15ae",
+                issuesStatusId: "a3481f27-53d6-41d1-88f2-97a2cf72e2c9",
+                isPublic: true,
+                organizationId: "765cb983-af6f-47d4-b9cd-845e2ac0c7f4"
             }))
             setIsCreateIssue(false);
         }
@@ -45,7 +74,15 @@ const BoardBacklog = (props) => {
     }
 
     const onCreateSprint = () => {
-        dispatch(addSprint());
+        const newSprint = {
+            projectId: "1a27f30a-7703-4b62-bc1e-d7c3e94c15ae",
+            name: `Sprint ${numSprint + 1}`,
+            description: `This is sprint ${numSprint + 1}`,
+            position: 1,
+            status: "UNSTART"
+          }
+          console.log(newSprint);
+        dispatch(addSprint(newSprint));
     }
 
     const items = [
@@ -63,8 +100,15 @@ const BoardBacklog = (props) => {
         }
     ]
 
-    const issueStatus=['To do', 'In progress', 'Done'];
-    const prefix="PBL6";
+    const issueStatus = {
+        status: 'todo',
+    };
+
+    const updateIssueStatus = status => {
+        console.log(status);
+        issueStatus.status = status;
+    }
+
 
     return (
         <React.Fragment>
@@ -88,7 +132,7 @@ const BoardBacklog = (props) => {
                                 </div>
                             </summary>
 
-                            {boardState.map((item, index) => (
+                            {backlog.map((item, index) => (
                                 <Draggable
                                     key={item.id}
                                     draggableId={item.id}
@@ -104,16 +148,16 @@ const BoardBacklog = (props) => {
                                                 provided.draggableProps.style
                                             )}>
                                                 <div className="issueTypeIcon">
-                                                    <img src="https://cdn-icons-png.flaticon.com/512/1484/1484902.png" alt=""/>
+                                                    <img src={item.issuesTypeDto.urlIcon} alt=""/>
                                                 </div>
                                                 <div className="issueId">
-                                                    <span>{`${prefix}-${index}`}</span>    
+                                                    <span>{item.issuesKey}</span>    
                                                 </div>    
                                                 <div className="issueContent">
-                                                    <span>{item.content}</span>
+                                                    <span>{item.name}</span>
                                                 </div>
                                                 <div className="issueStatusArea">
-                                                    <DropdownMenu items={issueStatus}/>
+                                                    <CustomStatus issue={issueStatus} updateIssue={updateIssueStatus} />
                                                     <DropdownSelect onSelect={() => setId(item.id)} items={items}/>
                                                 </div>
                                         </div>
@@ -133,10 +177,10 @@ const BoardBacklog = (props) => {
                                     <div className="createIssueGroupInput">
                                         <div className="createIssueGroupInputWrapper">
                                             <div className="createIssueSelect">
-                                                <Select 
-                                                    defaultValue={selectedOption}
-                                                    onChange={setSelectedOption}
-                                                    options={options}/>
+                                            <Select 
+                                                defaultValue={selectedOption}
+                                                onChange={setSelectedOption}
+                                                options={issueTypeList}/>
                                             </div>
                                             <input 
                                                 type="text"

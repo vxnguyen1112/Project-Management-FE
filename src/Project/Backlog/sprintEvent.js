@@ -66,7 +66,7 @@ export const getList = (list, id) => {
     if(id === '#backlog') return [...list.backlog];
 
     const res = list.sprints.filter(sprint => sprint.id === id)[0];
-    return [...res.issuesList];
+    return res.issuesList !== undefined ? [...res.issuesList] : [];
 };
 
 

@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import { Breadcrumbs } from 'components';
 import { DragDropContext } from 'react-beautiful-dnd';
 // import { getAllSprints, selectBacklog, moveIssue } from 'store/reducers/backlogSlice';
@@ -9,7 +9,7 @@ import BoardSprint from './Board/BoardSprint';
 import BoardBacklog from './Board/BoardBacklog';
 import { reorder, move, getList } from "./sprintEvent";
 import api from 'Services/api'; 
-import { useState } from 'react';
+import { uuid } from 'uuidv4';
 
 const grid = 8;
 
@@ -47,13 +47,12 @@ const filterFeild = (items) => {
 
 const sortFeild = (items) => {
     let copedItems = {...items};
-    console.log("Copy board", copedItems);
+    // console.log("Copy board", copedItems);
     copedItems.backlog.sort((a, b) => a.position - b.position);
-
 
     copedItems.sprints.forEach(sprint => {
         if(sprint.issuesList !== undefined) {
-            console.log(sprint.issuesList);
+            // console.log(sprint.issuesList);
             sprint.issuesList.sort((a, b) => a.position - b.position);
         }
     })
@@ -66,7 +65,7 @@ const getAllSprints = async (projectId) => {
 }
 
 const moveIssue = async (movedIssue) => {
-    console.log(movedIssue);
+    // console.log(movedIssue);
     const res = await api.post(`/api/issues/move`, JSON.stringify(movedIssue));
     return res;
 }
@@ -77,26 +76,31 @@ const Backlog = () => {
     const [boardStatus, setBoardStatus] = useState("empty");
     // const boardStatus = useSelector((state) => state.backlog.state);
     // const dispatch = useDispatch();
+    const [isMove, setIsMove] = useState(false);
+    const [doCreateIssue, setDoCreateIssue] = useState(false);
+    const [doDeleteIssue, setDoDeleteIssue] = useState(false);
+    const [doCreateSprint, setDoCreateSprint] = useState(false);
+    const [doDeleteSprint, setDoDeleteSprint] = useState(false);
+
     let sortedBoards;
     if(boardStatus !== 'empty') {
         const copedBoards = {...boards};
         sortedBoards = sortFeild(copedBoards);
-        console.log("Sort board", sortedBoards);
+        // console.log("Sort board", sortedBoards);
     }
-    console.log(boardStatus);
 
     useEffect(() => {
-        const projectId = '1a27f30a-7703-4b62-bc1e-d7c3e94c15ae';
-        getAllSprints(projectId)
-        .then((res) => {
-            setBoards(res);
-            setBoardStatus("successed");
-        })
-        .catch((err) => {
-            toast.error(err);
-        })
+            const projectId = '1a27f30a-7703-4b62-bc1e-d7c3e94c15ae';
+            getAllSprints(projectId)
+            .then((res) => {
+                setBoards(res);
+                setBoardStatus(`successed`);
+            })
+            .catch((err) => {
+                toast.error(err);
+            })
         
-    }, [boardStatus]);
+    }, [boardStatus, isMove, doCreateIssue, doDeleteIssue, doCreateSprint, doDeleteSprint]);
 
     const onDragEnd = (result) => {
         const { source, destination } = result;
@@ -112,10 +116,11 @@ const Backlog = () => {
                 source.index,
                 destination.index
             );
-            console.log(items);
+
             moveIssue(filterFeild(items))
             .then((res) => {
-              console.log(res);
+            //   console.log(res);
+                toast.success(res.message)
             })
             .catch((err) => {
               toast.error(err);
@@ -128,15 +133,16 @@ const Backlog = () => {
                 source,
                 destination
             );
-            console.log(items);
+
             moveIssue(filterFeild(items))
             .then((res) => {
-              console.log(res);
+                toast.success(res.message)
             })
             .catch((err) => {
               toast.error(err);
             })
         }
+        setIsMove(!isMove);
     }
 
     return (
@@ -157,6 +163,9 @@ const Backlog = () => {
                     numSprint={sortedBoards.sprints.length}
                     getListStyle={getListStyle}
                     getItemStyle={getItemStyle}
+                    setDoCreateIssue={setDoCreateIssue}
+                    setDoDeleteIssue={setDoDeleteIssue}
+                    setDoCreateSprint={setDoCreateSprint}
                 />}
                 {boardStatus !== 'empty' && sortedBoards.sprints.map(sprint => (
                     <BoardSprint
@@ -164,6 +173,9 @@ const Backlog = () => {
                         sprint={sprint}
                         getListStyle={getListStyle}
                         getItemStyle={getItemStyle}
+                        setDoCreateIssue={setDoCreateIssue}
+                        setDoDeleteIssue={setDoDeleteIssue}
+                        setDoDeleteSprint={setDoDeleteSprint}
                     />
                 ))} 
             </DragDropContext>            

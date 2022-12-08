@@ -4,7 +4,7 @@ import Select from 'react-select';
 import api from 'Services/api'; 
 import { Button } from 'components';
 import { Droppable, Draggable } from 'react-beautiful-dnd';
-import { addIssue, addSprint, deleteIssue } from 'store/reducers/backlogSlice';
+// import { addIssue, addSprint, deleteIssue } from 'store/reducers/backlogSlice';
 import { useDispatch } from 'react-redux';
 import { toast } from 'react-project-management';
 import DropdownSelect from 'components/DropdownSelect';
@@ -13,23 +13,35 @@ import CustomStatus from 'Project/Board/IssueDetails/CustomStatus';
 import Divider from '../Divider';
 import "./Board.css";
 
+const addIssue = async (newIssue) => {
+    const res = await api.post(`/api/issues`, JSON.stringify(newIssue));
+    return res;
+}
 
-const options = [
-    { value: 'task', label: 'Task' },
-    { value: 'bug', label: 'Bug' },
-    { value: 'error', label: 'Error' }
-]
+const deleteIssue = async (issueId) => {
+    const res = await api.delete(`/api/issues/${issueId}`);
+    return res;
+}
+
+const addSprint = async (newSprint) => {
+    const res = await api.post(`/api/sprints`, JSON.stringify(newSprint));
+    return res;
+}
+
+
 
 const BoardBacklog = (props) => {
     const dispatch = useDispatch();
-    const {droppableId, backlog, numSprint, getListStyle, getItemStyle} = props;
+    const {droppableId, backlog, numSprint, getListStyle, getItemStyle, 
+        setDoCreateIssue, setDoDeleteIssue, setDoCreateSprint} = props;
     const [isCreateIssue, setIsCreateIssue] = useState(false);
     const [issueContent, setIssueContent] = useState("")
-    const [selectedOption, setSelectedOption] = useState(options[0]);
+    
     const [isOpenDeleteModal, setIsOpenDeleteModal] = useState(false);
     const [id, setId] = useState(null);
     const [issueTypeList, setIssueTypeList] = useState([]);
     const [issueStatusList, setIssueStatusList] = useState([]);
+    const [selectedOption, setSelectedOption] = useState(issueTypeList[0]);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(() => {
@@ -46,7 +58,7 @@ const BoardBacklog = (props) => {
         const getAllIssueStatus = async () => {
             const organizationId = 'fbecadea-273c-48cb-bbbe-04ddaa12d0a7';
             const res = await api.get(`/api/issues-status?organizationId=${organizationId}`);
-            setIssueTypeList(res.map((issueType) => ({
+            setIssueStatusList(res.map((issueType) => ({
                 value: issueType.name,
                 label: issueType.name,
                 ...issueType
@@ -60,14 +72,23 @@ const BoardBacklog = (props) => {
         if (issueContent.trim() === "") {
             toast.error('Vui lòng nhập tên issue');
         } else {
-            dispatch(addIssue({
+            console.log(selectedOption);
+            addIssue({
                 issueTypeId: selectedOption.id,
+                name: issueContent, 
                 description: issueContent,
                 projectId: "1a27f30a-7703-4b62-bc1e-d7c3e94c15ae",
                 issuesStatusId: "a3481f27-53d6-41d1-88f2-97a2cf72e2c9",
                 isPublic: true,
-                organizationId: "765cb983-af6f-47d4-b9cd-845e2ac0c7f4"
-            }))
+                organizationId: "341a1840-273d-4f8b-8565-c8c4029fe15d"
+            })
+            .then((res) => {
+                console.log(res);
+                setDoCreateIssue(prev => !prev);
+            })
+            .catch((err) => {
+                console.log(err);
+            })
             setIsCreateIssue(false);
         }
         
@@ -82,7 +103,14 @@ const BoardBacklog = (props) => {
             status: "UNSTART"
           }
           console.log(newSprint);
-        dispatch(addSprint(newSprint));
+        addSprint(newSprint)
+        .then((res) => {
+            console.log(res);
+            setDoCreateSprint(prev => !prev);
+        })
+        .catch((err) => {
+            console.log(err);
+        })
     }
 
     const items = [
@@ -223,7 +251,14 @@ const BoardBacklog = (props) => {
                     content={["You're about to permanently delete this issue, its comments and attachments, and all of its data.",
                             "If you're not sure, you can resolve or close this issue instead."]} 
                     onConfirm={() => {
-                        dispatch(deleteIssue(id))
+                        deleteIssue(id)
+                        .then((res) => {
+                            console.log(res);
+                            setDoDeleteIssue(prev => !prev);
+                        })
+                        .catch((err) => {
+                            console.log(err);
+                        })
                     }}
                     setModalOpen={setIsOpenDeleteModal} />}
         </React.Fragment>

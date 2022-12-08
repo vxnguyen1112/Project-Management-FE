@@ -4,7 +4,7 @@ import Select from 'react-select';
 import api from 'Services/api'; 
 import { Button } from 'components';
 import { Droppable, Draggable } from 'react-beautiful-dnd';
-import { addIssue, deleteIssue, deleteSprint } from 'store/reducers/backlogSlice';
+// import { addIssue, deleteIssue, deleteSprint } from 'store/reducers/backlogSlice';
 import { useDispatch } from 'react-redux';
 import { toast } from 'react-project-management';
 import DropdownSelect from 'components/DropdownSelect';
@@ -13,23 +13,34 @@ import ModalCustom from 'components/ModalCustom/ModalCustom';
 import Divider from '../Divider';
 import "./Board.css";
 
-const options = [
-    { value: 'task', label: 'Task', linkImage: 'https://cdn-icons-png.flaticon.com/512/906/906334.png' },
-    { value: 'bug', label: 'Bug', linkImage: 'https://cdn-icons-png.flaticon.com/512/785/785104.png' },
-    { value: 'error', label: 'Error',linkImage: 'https://cdn0.iconfinder.com/data/icons/shift-interfaces/32/Error-512.png' },
-    { value: 'story', label: 'Story',linkImage: 'https://cdn-icons-png.flaticon.com/512/1484/1484902.png' },
-]
+const addIssue = async (newIssue) => {
+    const res = await api.post(`/api/issues`, JSON.stringify(newIssue));
+    return res;
+}
+
+const deleteIssue = async (issueId) => {
+    const res = await api.delete(`/api/issues/${issueId}`);
+    return res;
+}
+
+const deleteSprint = async (sprintId) => {
+    const res = await api.delete(`/api/sprints/${sprintId}`);
+    return res;
+}
+
 
 const BoardSprint = (props) => {
     const dispatch = useDispatch();
-    const {sprint, getListStyle, getItemStyle} = props;
+    const {sprint, getListStyle, getItemStyle, setDoCreateIssue,
+        setDoDeleteIssue, setDoDeleteSprint} = props;
     const [isCreateIssue, setIsCreateIssue] = useState(false);
     const [issueContent, setIssueContent] = useState("")
-    const [selectedOption, setSelectedOption] = useState(options[0]);
+
     const [isOpenDeleteIssueModal, setIsOpenDeleteIssueModal] = useState(false);
     const [isOpenDeleteSprintModal, setIsOpenDeleteSprintModal] = useState(false);
     const [issueTypeList, setIssueTypeList] = useState([]);
     const [id, setId] = useState(null);
+    const [selectedOption, setSelectedOption] = useState(issueTypeList[0]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -48,11 +59,11 @@ const BoardSprint = (props) => {
         if (issueContent.trim() === "") {
             toast.error('Vui lòng nhập tên issue');
         } else {
-            dispatch(addIssue({
+            addIssue({
                 issueTypeId: selectedOption.id,
                 name: issueContent,
                 description: "",
-                projectId: "765cb983-af6f-47d4-b9cd-845e2ac0c7f4",
+                projectId: "1a27f30a-7703-4b62-bc1e-d7c3e94c15ae",
                 startDate: null,
                 dueDate: null,
                 estimatedHours: 0,
@@ -61,8 +72,16 @@ const BoardSprint = (props) => {
                 doneRatio: 0,
                 isPublic: true,
                 organizationId: "341a1840-273d-4f8b-8565-c8c4029fe15d",
-                boardId: sprint.id
-            }))
+                boardId: sprint.boardId
+            })
+            .then((res) => {
+                console.log(res);
+                setDoCreateIssue(prev => !prev);
+                toast.success('Create issue successfully!');
+            })
+            .catch((err) => {
+                console.log(err);
+            })
             setIsCreateIssue(false);
         }
     }
@@ -224,7 +243,14 @@ const BoardSprint = (props) => {
                     content={["You're about to permanently delete this issue, its comments and attachments, and all of its data.",
                             "If you're not sure, you can resolve or close this issue instead."]} 
                     onConfirm={() => {
-                        dispatch(deleteIssue(id))
+                        deleteIssue(id)
+                        .then((res) => {
+                            console.log(res);
+                            setDoDeleteIssue(prev => !prev);
+                        })
+                        .catch((err) => {
+                            console.log(err);
+                        })
                     }}
                     setModalOpen={setIsOpenDeleteIssueModal} />}
 
@@ -234,7 +260,14 @@ const BoardSprint = (props) => {
                     content={["You're about to permanently delete this issue, its comments and attachments, and all of its data.",
                             "If you're not sure, you can resolve or close this issue instead."]} 
                     onConfirm={() => {
-                        dispatch(deleteSprint(sprint.id))
+                        deleteSprint(sprint.id)
+                        .then((res) => {
+                            console.log(res);
+                            setDoDeleteSprint(prev => !prev);
+                        })
+                        .catch((err) => {
+                            console.log(err);
+                        })
                     }}
                     setModalOpen={setIsOpenDeleteSprintModal} />}
 

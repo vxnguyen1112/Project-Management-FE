@@ -67,6 +67,7 @@ export const backlogSlice = createSlice({
     name: 'backlog',
     initialState,
     reducers: {
+        
     },
     extraReducers: {
         [getAllSprints.fulfilled]: (state, action) => {

@@ -60,6 +60,7 @@ const ProjectCreate = () => {
           } catch (error) {
             Form.handleAPIError(error, form);
           }
+          history.push('/home');
         }}
       >
         <FormCont>
@@ -96,11 +97,10 @@ const ProjectCreate = () => {
                 }}
               />
             </div>
-            <p>{JSON.stringify(queryProject)}</p>
+
             <ActionButton 
                 type="submit" 
-                variant="primary"
-                onClick={() => history.push('/home')}>
+                variant="primary">
               Create project
             </ActionButton>
             <ActionButton 

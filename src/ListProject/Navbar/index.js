@@ -1,6 +1,8 @@
+/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 import React, { useState } from "react";
 import { NavLink} from "react-router-dom";
+import { removeStoredAuthToken } from 'react-project-management';
 import "./navbar.css";
 
 const NavBar=()=> {
@@ -51,13 +53,13 @@ const NavBar=()=> {
                 Account
               </NavLink>
             </li>
-            <li className="nav-item">
+            <li className="nav-item"  >
               <NavLink
                 exact
-                to="/contact"
+                to="/login"
                 activeClassName="active"
                 className="nav-links"
-                onClick={handleClick}
+                onClick={()=>removeStoredAuthToken()}
               >
                 Logout
               </NavLink>

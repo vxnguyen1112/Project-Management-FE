@@ -6,15 +6,18 @@ import Login from 'Login/Login';
 import ProjectCreate from 'Project/ProjectCreate';
 import history from 'browserHistory';
 import PageError from 'components/PageError';
+import RouteUnauthenticated from 'Auth/UnauthenticatedRoute';
+import RouteAuthenticated from  'Auth/AuthenticatedRoute';
+
 
 const Routes = () => (
   <Router history={history}>
     <Switch>
     <Redirect exact from="/" to="/login" />
-    <Route path="/project" component={Project} />
-    <Route path="/login" component={Login} />
-    <Route path="/home" component={ListProject} />
-    <Route path="/create-project" component={ProjectCreate} />
+    <RouteUnauthenticated path="/login" component={Login} />
+    <RouteAuthenticated path="/project" component={Project} />
+    <RouteAuthenticated path="/home" component={ListProject} />
+    <RouteAuthenticated path="/create-project" component={ProjectCreate} />
     <Route component={PageError} />
     </Switch>
   </Router>

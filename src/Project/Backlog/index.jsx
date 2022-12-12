@@ -1,15 +1,12 @@
 import React, {useEffect, useState} from 'react';
 import { Breadcrumbs } from 'components';
 import { DragDropContext } from 'react-beautiful-dnd';
-// import { getAllSprints, selectBacklog, moveIssue } from 'store/reducers/backlogSlice';
-import { useSelector, useDispatch } from 'react-redux';
 import { toast } from 'react-project-management';
+import api from 'Services/api'; 
 import { FormHeading } from '../ProjectSettings/Styles';
 import BoardSprint from './Board/BoardSprint';
 import BoardBacklog from './Board/BoardBacklog';
 import { reorder, move, getList } from "./sprintEvent";
-import api from 'Services/api'; 
-import { uuid } from 'uuidv4';
 
 const grid = 8;
 
@@ -49,6 +46,7 @@ const sortFeild = (items) => {
     let copedItems = {...items};
     // console.log("Copy board", copedItems);
     copedItems.backlog.sort((a, b) => a.position - b.position);
+    copedItems.sprints.sort((a, b) => a.position - b.position);
 
     copedItems.sprints.forEach(sprint => {
         if(sprint.issuesList !== undefined) {
@@ -65,7 +63,7 @@ const getAllSprints = async (projectId) => {
 }
 
 const moveIssue = async (movedIssue) => {
-    // console.log(movedIssue);
+    console.log(movedIssue);
     const res = await api.post(`/api/issues/move`, JSON.stringify(movedIssue));
     return res;
 }
@@ -86,7 +84,7 @@ const Backlog = () => {
     if(boardStatus !== 'empty') {
         const copedBoards = {...boards};
         sortedBoards = sortFeild(copedBoards);
-        // console.log("Sort board", sortedBoards);
+        console.log("Sort board", sortedBoards);
     }
 
     useEffect(() => {
@@ -116,7 +114,6 @@ const Backlog = () => {
                 source.index,
                 destination.index
             );
-
             moveIssue(filterFeild(items))
             .then((res) => {
             //   console.log(res);
@@ -133,7 +130,7 @@ const Backlog = () => {
                 source,
                 destination
             );
-
+            console.log(items);
             moveIssue(filterFeild(items))
             .then((res) => {
                 toast.success(res.message)

@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import moment from 'moment';
 import { Droppable } from 'react-beautiful-dnd';
 import { intersection } from 'lodash';
@@ -9,35 +8,26 @@ import { IssueStatusCopy } from 'constants/issues';
 import Issue from './Issue';
 import { List, Title, IssuesCount, Issues } from './Styles';
 
-const propTypes = {
-  project: PropTypes.object.isRequired,
-  filters: PropTypes.object.isRequired,
-  currentUserId: PropTypes.number,
-};
-
-const defaultProps = {
-  currentUserId: null,
-};
-
-const ProjectBoardList = ({ project, filters, currentUserId }) => {
+const ProjectBoardList = (props) => {
+  const {boardName, board} = props;
   // const filteredIssues = filterIssues(project.issues, filters, currentUserId);
   // const filteredListIssues = getSortedListIssues(filteredIssues, status);
   // const allListIssues = getSortedListIssues(project.issues, status);
   
   return (
-    <Droppable key={project.id} droppableId={project.id}>
+    <Droppable key={boardName} droppableId={boardName}>
       {provided => (
         <List>
           <Title>
-            {project.name}
+            {boardName}
             {/* <IssuesCount>{formatIssuesCount(allListIssues, filteredListIssues)}</IssuesCount> */}
           </Title>
           <Issues
             {...provided.droppableProps}
             ref={provided.innerRef}
-            data-testid={`board-list:${project.id}`}
+            data-testid={`board-list:${boardName}`}
           >
-            {project.issues.map((issue, index) => (
+            {board !== undefined && board.map((issue, index) => (
               <Issue key={issue.id} issue={issue} index={index} />
             ))}
             {provided.placeholder}
@@ -76,8 +66,5 @@ const ProjectBoardList = ({ project, filters, currentUserId }) => {
 //   }
 //   return allListIssues.length;
 // };
-
-ProjectBoardList.propTypes = propTypes;
-ProjectBoardList.defaultProps = defaultProps;
 
 export default ProjectBoardList;

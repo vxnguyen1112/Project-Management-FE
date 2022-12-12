@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 import { useRouteMatch } from 'react-router-dom';
 import { Draggable } from 'react-beautiful-dnd';
 
-import { IssueTypeIcon, IssuePriorityIcon } from 'components';
+import { IssuePriorityIcon } from 'components';
 
-import { IssueLink, Issue, Title, Bottom, Assignees, AssigneeAvatar } from './Styles';
+import { IssueLink, Issue, Title, Bottom, IssueType, AssigneeAvatar, IssueTypeIcon } from './Styles';
 
 const propTypes = {
   issue: PropTypes.object.isRequired,
@@ -31,10 +31,13 @@ const ProjectBoardListIssue = ({ issue, index }) => {
             <Title>{issue.name}</Title>
             <Bottom>
               <div>
-                <IssueTypeIcon type={issue.type} />
+                {/* <IssueTypeIcon type={issue.issuesTypeDto.name.toLowerCase()} /> */}
+                <IssueType>
+                  <IssueTypeIcon src={issue.issuesTypeDto.urlIcon} alt=""/>
+                </IssueType>
                 <IssuePriorityIcon priority={issue.priority} top={-1} left={4} />
               </div>
-              <Assignees>
+              {/* <Assignees>
                 {issue.assignees.map(user => (
                   <AssigneeAvatar
                     key={user.id}
@@ -43,7 +46,7 @@ const ProjectBoardListIssue = ({ issue, index }) => {
                     name={user.name}
                   />
                 ))}
-              </Assignees>
+              </Assignees> */}
             </Bottom>
           </Issue>
         </IssueLink>

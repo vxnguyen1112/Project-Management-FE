@@ -49,14 +49,13 @@ const ProjectCreate = () => {
             };
             dispatch(createProject(newProject))
             .unwrap()
-            .then((res) => {
-              console.log(res);
+            .then(() => {
+              toast.success(`Changes have been saved successfully`);
             })
             .catch((err) => {
-              toast.error(err);
+              toast.success(err);
             })
-            
-            toast.success(`Changes have been saved successfully`);
+          
           } catch (error) {
             Form.handleAPIError(error, form);
           }

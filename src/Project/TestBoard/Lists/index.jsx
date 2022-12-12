@@ -1,58 +1,37 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { DragDropContext } from 'react-beautiful-dnd';
-
-import useCurrentUser from 'hooks/currentUser';
-import api from 'Services/api';
 import { moveItemWithinArray, insertItemIntoArray } from 'react-project-management';
-import { IssueStatus } from 'constants/issues';
 
 import List from './List';
 import { Lists } from './Styles';
 
-const propTypes = {
-  project: PropTypes.object.isRequired,
-  filters: PropTypes.object.isRequired,
-  updateLocalProjectIssues: PropTypes.func.isRequired,
-};
-
-const ProjectBoardLists = ({ project, filters, updateLocalProjectIssues }) => {
-  const { currentUserId } = useCurrentUser();
+const ProjectBoardLists = (props) => {
+  const {boards} = props;
 
   const handleIssueDrop = ({ draggableId, destination, source }) => {
     if (!isPositionChanged(source, destination)) return;
-
+    console.log(draggableId, destination, source);
     const issueId = Number(draggableId);
 
     // sửa lại chỗ ni call api đổi vị trí issues.
-    api.optimisticUpdate(`/issues/${issueId}`, {
-      updatedFields: {
-        status: destination.droppableId,
-        listPosition: calculateIssueListPosition(project.issues, destination, source, issueId),
-      },
-      currentFields: project.issues.find(({ id }) => id === issueId),
-      setLocalData: fields => updateLocalProjectIssues(issueId, fields),
-    });
+    // api.optimisticUpdate(`/issues/${issueId}`, {
+    //   updatedFields: {
+    //     status: destination.droppableId,
+    //     listPosition: calculateIssueListPosition(project.issues, destination, source, issueId),
+    //   },
+    //   currentFields: project.issues.find(({ id }) => id === issueId),
+    //   setLocalData: fields => updateLocalProjectIssues(issueId, fields),
+    // });
   };
 
   return (
     <DragDropContext onDragEnd={handleIssueDrop}>
       <Lists>
-        {/* {Object.values(IssueStatus).map(status => (
+        {boards !== undefined && ["TO DO", "IN PROGRESS", "DONE"].map((boardName, index) => (
           <List
-            key={status}
-            status={status}
-            project={project}
-            filters={filters}
-            currentUserId={currentUserId}
-          />  
-        ))} */}
-        {project.boards.map(board => (
-          <List
-            key={board.id}
-            project={board}
-            filters={filters}
-            currentUserId={currentUserId}
+            key={index}
+            boardName={boardName}
+            board={boards[boardName]}
           />
         ))}
       </Lists>
@@ -101,6 +80,5 @@ const getAfterDropPrevNextIssue = (allIssues, destination, source, droppedIssueI
 const getSortedListIssues = (issues, status) =>
   issues.filter(issue => issue.status === status).sort((a, b) => a.listPosition - b.listPosition);
 
-ProjectBoardLists.propTypes = propTypes;
 
 export default ProjectBoardLists;

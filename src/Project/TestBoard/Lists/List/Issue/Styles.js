@@ -9,6 +9,19 @@ export const IssueLink = styled(Link)`
   margin-bottom: 5px;
 `;
 
+export const IssueType = styled.div`
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  margin-left: 0;
+  margin-right: 10px;
+`;
+
+export const IssueTypeIcon = styled.img`
+  width: 100%;
+  height: 100%;
+`;
+
 export const Issue = styled.div`
   padding: 10px;
   border-radius: 3px;

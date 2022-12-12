@@ -59,9 +59,9 @@ summary {
     padding: 0 16px;
     width: 100%;
 }
-.createIssueGroupButton .btnCreateBacklog {
+/* .createIssueGroupButton .btnSprint {
     margin-left: 20px;
-}
+} */
 
 .hidden { 
     display:none; 
@@ -75,14 +75,15 @@ summary {
     align-items: center;
 }
 
-.btnCreateBacklog {
+.btnSprint {
     margin-right: 10px;
-    background-color: #c4bebe;
-    color: #172b4d;
+    /* color: #172b4d; */
 }
 
-.btnCreateBacklog:not(:disabled):hover {
+
+.btnCompleteSprint {
     background-color: #c4bebe;
+    color: #172b4d;
 }
 
 .issueArea {

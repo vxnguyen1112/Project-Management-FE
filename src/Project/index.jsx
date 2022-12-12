@@ -414,11 +414,7 @@ const Project = () => {
       <Route
         path={`${match.path}/test-board`}
         render={() => (
-          <ProjectBoard
-            project={sprintBoard}
-            fetchProject={fetchProject}
-            updateLocalProjectIssues={updateLocalProjectIssues}
-          />
+          <ProjectBoard />
         )}
       />
 

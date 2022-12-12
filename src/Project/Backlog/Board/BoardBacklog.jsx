@@ -4,8 +4,6 @@ import Select from 'react-select';
 import api from 'Services/api'; 
 import { Button } from 'components';
 import { Droppable, Draggable } from 'react-beautiful-dnd';
-// import { addIssue, addSprint, deleteIssue } from 'store/reducers/backlogSlice';
-import { useDispatch } from 'react-redux';
 import { toast } from 'react-project-management';
 import DropdownSelect from 'components/DropdownSelect';
 import ModalCustom from 'components/ModalCustom/ModalCustom';
@@ -28,15 +26,11 @@ const addSprint = async (newSprint) => {
     return res;
 }
 
-
-
 const BoardBacklog = (props) => {
-    const dispatch = useDispatch();
     const {droppableId, backlog, numSprint, getListStyle, getItemStyle, 
         setDoCreateIssue, setDoDeleteIssue, setDoCreateSprint} = props;
     const [isCreateIssue, setIsCreateIssue] = useState(false);
-    const [issueContent, setIssueContent] = useState("")
-    
+    const [issueContent, setIssueContent] = useState("");
     const [isOpenDeleteModal, setIsOpenDeleteModal] = useState(false);
     const [id, setId] = useState(null);
     const [issueTypeList, setIssueTypeList] = useState([]);
@@ -58,11 +52,7 @@ const BoardBacklog = (props) => {
         const getAllIssueStatus = async () => {
             const organizationId = 'fbecadea-273c-48cb-bbbe-04ddaa12d0a7';
             const res = await api.get(`/api/issues-status?organizationId=${organizationId}`);
-            setIssueStatusList(res.map((issueType) => ({
-                value: issueType.name,
-                label: issueType.name,
-                ...issueType
-            })));
+            setIssueStatusList(res);
         };
         getAllIssueType();
         getAllIssueStatus();
@@ -72,23 +62,23 @@ const BoardBacklog = (props) => {
         if (issueContent.trim() === "") {
             toast.error('Vui lòng nhập tên issue');
         } else {
-            console.log(selectedOption);
-            addIssue({
-                issueTypeId: selectedOption.id,
-                name: issueContent, 
-                description: issueContent,
-                projectId: "1a27f30a-7703-4b62-bc1e-d7c3e94c15ae",
-                issuesStatusId: "a3481f27-53d6-41d1-88f2-97a2cf72e2c9",
-                isPublic: true,
-                organizationId: "341a1840-273d-4f8b-8565-c8c4029fe15d"
-            })
-            .then((res) => {
-                console.log(res);
-                setDoCreateIssue(prev => !prev);
-            })
-            .catch((err) => {
-                console.log(err);
-            })
+            console.log(issueStatusList);
+            // addIssue({
+            //     issueTypeId: selectedOption.id,
+            //     name: issueContent, 
+            //     description: issueContent,
+            //     projectId: "1a27f30a-7703-4b62-bc1e-d7c3e94c15ae",
+            //     issuesStatusId: "a3481f27-53d6-41d1-88f2-97a2cf72e2c9",
+            //     isPublic: true,
+            //     organizationId: "341a1840-273d-4f8b-8565-c8c4029fe15d"
+            // })
+            // .then((res) => {
+            //     console.log(res);
+            //     setDoCreateIssue(prev => !prev);
+            // })
+            // .catch((err) => {
+            //     console.log(err);
+            // })
             setIsCreateIssue(false);
         }
         
@@ -128,15 +118,7 @@ const BoardBacklog = (props) => {
         }
     ]
 
-    const issueStatus = {
-        status: 'todo',
-    };
-
-    const updateIssueStatus = status => {
-        console.log(status);
-        issueStatus.status = status;
-    }
-
+    
 
     return (
         <React.Fragment>
@@ -161,37 +143,38 @@ const BoardBacklog = (props) => {
                             </summary>
 
                             {backlog.map((item, index) => (
-                                <Draggable
-                                    key={item.id}
-                                    draggableId={item.id}
-                                    index={index}>
-                                    {(provided, snapshot) => (
-                                        <div
-                                            className="issueArea"
-                                            ref={provided.innerRef}
-                                            {...provided.draggableProps}
-                                            {...provided.dragHandleProps}
-                                            style={getItemStyle(
-                                                snapshot.isDragging,
-                                                provided.draggableProps.style
-                                            )}>
-                                                <div className="issueTypeIcon">
-                                                    <img src={item.issuesTypeDto.urlIcon} alt=""/>
-                                                </div>
-                                                <div className="issueId">
-                                                    <span>{item.issuesKey}</span>    
-                                                </div>    
-                                                <div className="issueContent">
-                                                    <span>{item.name}</span>
-                                                </div>
-                                                <div className="issueStatusArea">
-                                                    <CustomStatus issue={issueStatus} updateIssue={updateIssueStatus} />
-                                                    <DropdownSelect onSelect={() => setId(item.id)} items={items}/>
-                                                </div>
-                                        </div>
-                                    )}
-                                </Draggable>
-                            ))}
+                                    <Draggable
+                                        key={item.id}
+                                        draggableId={item.id}
+                                        index={index}>
+                                        {(provided, snapshot) => (
+                                            <div
+                                                className="issueArea"
+                                                ref={provided.innerRef}
+                                                {...provided.draggableProps}
+                                                {...provided.dragHandleProps}
+                                                style={getItemStyle(
+                                                    snapshot.isDragging,
+                                                    provided.draggableProps.style
+                                                )}>
+                                                    <div className="issueTypeIcon">
+                                                        <img src={item.issuesTypeDto.urlIcon} alt=""/>
+                                                    </div>
+                                                    <div className="issueId">
+                                                        <span>{item.issuesKey}</span>    
+                                                    </div>    
+                                                    <div className="issueContent">
+                                                        <span>{item.name}</span>
+                                                    </div>
+                                                    <div className="issueStatusArea">
+                                                        <CustomStatus issueStatusName={item.issuesStatusDto.name} updateIssue={() => {}} />
+                                                        <DropdownSelect onSelect={() => setId(item.id)} items={items}/>
+                                                    </div>
+                                            </div>
+                                        )}
+                                    </Draggable>
+                                )
+                            )}
 
                             <div className="createIssueArea">
                                 <span
@@ -215,7 +198,7 @@ const BoardBacklog = (props) => {
                                                 autoFocus
                                                 value={issueContent}
                                                 onChange={(e) => setIssueContent(e.target.value)}
-                                                className="createIssueInput" 
+                                                className="createIssueInput"
                                             />
                                         </div> 
                                         <div className="createIssueGroupButton">

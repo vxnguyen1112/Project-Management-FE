@@ -9,7 +9,7 @@ import { toast ,storeAuthToken} from 'react-project-management';
 import api from 'Services/api';
 
 const SignInForm = () => {
-  const [state, setState] = useState({ username: '', password: 'A123qwe@' });
+  const [state, setState] = useState({ username: '', password: 'Ket@1512001' });
   const [formErrors, setFormErrors] = useState({});
   const validate = values => {
     const errors = {};

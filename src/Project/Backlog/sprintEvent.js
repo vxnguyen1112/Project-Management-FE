@@ -44,7 +44,7 @@ export const move = (list, source, destination, droppableSource, droppableDestin
     const destClone = Array.from(destination);
     const [removed] = sourceClone.splice(droppableSource.index, 1);
 
-    const boardId = getFirstBoardId(list, droppableDestination.droppableId);
+    const boardId = getFirstBoardId(list, droppableDestination.droppableId);    
     console.log(boardId);
     console.log({...removed, boardId});
     destClone.splice(droppableDestination.index, 0, {...removed, boardId});

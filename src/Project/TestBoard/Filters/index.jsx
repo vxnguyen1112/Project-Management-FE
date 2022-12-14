@@ -1,37 +1,34 @@
-import React from 'react';
+import React, {useState} from 'react';
 import PropTypes from 'prop-types';
-import { xor } from 'lodash';
+import Select from 'react-select';
 
 import {
   Filters,
   SearchInput,
-  Avatars,
-  AvatarIsActiveBorder,
-  StyledAvatar,
-  StyledButton,
-  ClearAll,
 } from './Styles';
 
 const propTypes = {
-  projectUsers: PropTypes.array.isRequired,
+  sprints:  PropTypes.array.isRequired,
   defaultFilters: PropTypes.object.isRequired,
   filters: PropTypes.object.isRequired,
   mergeFilters: PropTypes.func.isRequired,
 };
 
-const ProjectBoardFilters = ({ projectUsers, defaultFilters, filters, mergeFilters }) => {
-  const { searchTerm, userIds, myOnly, recent } = filters;
-
-  const areFiltersCleared = !searchTerm && userIds.length === 0 && !myOnly && !recent;
+const ProjectBoardFilters = ({ sprints, defaultFilters, filters, mergeFilters }) => {
+  const {searchTerm, sprintId } = filters;
 
   return (
     <Filters data-testid="board-filters">
       <SearchInput
         icon="search"
         value={searchTerm}
-        onChange={value => mergeFilters({ searchTerm: value })}
+        onChange={() => {}}
       />
-      <Avatars>
+      <Select 
+        defaultValue={sprints[0]}
+        onChange={(sprint) => mergeFilters({ sprintId: sprint.id })}
+        options={sprints}/>
+      {/* <Avatars>
         {projectUsers.map(user => (
           <AvatarIsActiveBorder key={user.id} isActive={userIds.includes(user.id)}>
             <StyledAvatar
@@ -58,7 +55,7 @@ const ProjectBoardFilters = ({ projectUsers, defaultFilters, filters, mergeFilte
       </StyledButton>
       {!areFiltersCleared && (
         <ClearAll onClick={() => mergeFilters(defaultFilters)}>Clear all</ClearAll>
-      )}
+      )} */}
     </Filters>
   );
 };

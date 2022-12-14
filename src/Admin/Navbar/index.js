@@ -24,7 +24,7 @@ const NavBar=()=> {
             <li className="nav-item">
               <NavLink
                 exact
-                to="/home"
+                to="/admin"
                 activeClassName="active"
                 className="nav-links"
                 onClick={handleClick}
@@ -35,7 +35,18 @@ const NavBar=()=> {
             <li className="nav-item">
               <NavLink
                 exact
-                to="/home/project-create"
+                to="/admin/add-member"
+                activeClassName="active"
+                className="nav-links"
+                onClick={handleClick}
+              >
+                Add member
+              </NavLink>
+            </li>
+            <li className="nav-item">
+              <NavLink
+                exact
+                to="/admin/list-projcect"
                 activeClassName="active"
                 className="nav-links"
                 onClick={handleClick}
@@ -46,12 +57,12 @@ const NavBar=()=> {
             <li className="nav-item">
               <NavLink
                 exact
-                to="/home/account"
+                to="/admin/project-create"
                 activeClassName="active"
                 className="nav-links"
                 onClick={handleClick}
               >
-                Account
+                Project Create
               </NavLink>
             </li>
             <li className="nav-item"  >

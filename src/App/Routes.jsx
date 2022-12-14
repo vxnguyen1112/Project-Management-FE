@@ -8,12 +8,13 @@ import history from 'browserHistory';
 import PageError from 'components/PageError';
 import RouteUnauthenticated from 'Auth/UnauthenticatedRoute';
 import RouteAuthenticated from  'Auth/AuthenticatedRoute';
-
+import Admin from 'Admin';
 
 const Routes = () => (
   <Router history={history}>
     <Switch>
     <Redirect exact from="/" to="/login" />
+    <Route path="/admin" component={Admin} />;
     <RouteUnauthenticated path="/login" component={Login} />
     <RouteAuthenticated path="/project" component={Project} />
     <RouteAuthenticated path="/home" component={ListProject} />

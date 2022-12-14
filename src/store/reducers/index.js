@@ -2,13 +2,15 @@ import { combineReducers } from "redux";
 import storage from 'redux-persist/lib/storage';
 import { persistReducer } from 'redux-persist';
 import backlogReducer from "./backlogSlice";
-import projectReducer from "./projectSlice";
-import boardReducer from "./boardSlice";
+import authReducer  from "./authSlice";
+import messageReducer from "./messageSlide";
+import listProjectReducer from "./listprojectSlide";
 
 const allReducers = combineReducers({
     backlog: backlogReducer,
-    project: projectReducer,
-    board: boardReducer
+    auth: authReducer,
+    message: messageReducer ,
+    listproject:listProjectReducer
 });
 
 const persistConfig = {

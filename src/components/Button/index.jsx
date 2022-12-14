@@ -9,7 +9,7 @@ import { StyledButton, StyledSpinner, Text } from './Styles';
 const propTypes = {
   className: PropTypes.string,
   children: PropTypes.node,
-  variant: PropTypes.oneOf(['primary', 'success', 'danger', 'secondary', 'empty']),
+  variant: PropTypes.oneOf(['primary', 'success', 'danger', 'secondary', 'empty', 'dark']),
   icon: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
   iconSize: PropTypes.number,
   disabled: PropTypes.bool,

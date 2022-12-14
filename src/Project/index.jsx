@@ -7,10 +7,14 @@ import { Modal } from 'components';
 
 import NavbarLeft from './NavbarLeft';
 import IssueCreate from './IssueCreate';
+import IssueSearch from './IssueSearch';
 import Sidebar from './Sidebar';
 import Board from './Board';
+import ProjectBoard from './TestBoard'
 import ProjectSettings from './ProjectSettings';
 import ProjectCreate from './ProjectCreate';
+import Backlog from './Backlog';
+import ListIssues from './ListIssues';
 import { ProjectPage } from './Styles';
 
 const Project = () => {
@@ -173,11 +177,21 @@ const Project = () => {
           createdAt: "2022-11-04T14:26:48.858Z",
           updatedAt: "2022-11-06T03:48:44.362Z",
           userIds: []
+        },
+        {
+          id: 761195,
+          title: "Code giao diện trang chủ",
+          type: "story",
+          status: "inprogress",
+          priority: "3",
+          listPosition: 10,
+          createdAt: "2022-11-04T14:26:48.858Z",
+          updatedAt: "2022-11-06T03:48:44.362Z",
+          userIds: []
         }
       ]
     }
   }
-  
 
   const { project } = data;
 
@@ -198,6 +212,17 @@ const Project = () => {
       />
 
       <Sidebar project={project} />
+
+      {issueSearchModalHelpers.isOpen() && (
+        <Modal
+          isOpen
+          testid="modal:issue-search"
+          variant="aside"
+          width={600}
+          onClose={issueSearchModalHelpers.close}
+          renderContent={() => <IssueSearch project={project} />}
+        />
+      )}
 
       {issueCreateModalHelpers.isOpen() && (
         <Modal
@@ -229,6 +254,13 @@ const Project = () => {
       />
 
       <Route
+        path={`${match.path}/test-board`}
+        render={() => (
+          <ProjectBoard />
+        )}
+      />
+
+      <Route
         path={`${match.path}/settings`}
         render={() => <ProjectSettings project={project} fetchProject={fetchProject} />}
       />
@@ -238,6 +270,14 @@ const Project = () => {
         render={() => <ProjectCreate/>}
       />
 
+      <Route
+        path={`${match.path}/backlog`}
+        render={() => <Backlog/>}
+      />
+      <Route
+        path={`${match.path}/list-issues`}
+        render={() => <ListIssues/>}
+      />
       {match.isExact && <Redirect to={`${match.url}/board`} />}
     </ProjectPage>
   );

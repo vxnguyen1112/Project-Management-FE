@@ -24,6 +24,7 @@ const ProjectBoardLists = ({ project, filters, updateLocalProjectIssues }) => {
 
     const issueId = Number(draggableId);
 
+    // sửa lại chỗ ni call api đổi vị trí issues.
     api.optimisticUpdate(`/issues/${issueId}`, {
       updatedFields: {
         status: destination.droppableId,
@@ -44,7 +45,7 @@ const ProjectBoardLists = ({ project, filters, updateLocalProjectIssues }) => {
             project={project}
             filters={filters}
             currentUserId={currentUserId}
-          />
+          />  
         ))}
       </Lists>
     </DragDropContext>

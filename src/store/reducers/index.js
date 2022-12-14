@@ -1,10 +1,14 @@
 import { combineReducers } from "redux";
-import backlogReducer from "./backlogSlice";
 import storage from 'redux-persist/lib/storage';
 import { persistReducer } from 'redux-persist';
+import backlogReducer from "./backlogSlice";
+import projectReducer from "./projectSlice";
+import boardReducer from "./boardSlice";
 
 const allReducers = combineReducers({
-    backlog: backlogReducer
+    backlog: backlogReducer,
+    project: projectReducer,
+    board: boardReducer
 });
 
 const persistConfig = {

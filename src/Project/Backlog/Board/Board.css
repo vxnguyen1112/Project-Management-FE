@@ -50,7 +50,7 @@ summary {
 }
 
 .createIssueArea .createIssueSelect {
-    min-width: 100px;
+    min-width: fit-content;
 }
 
 .createIssueArea .createIssueInput {
@@ -59,9 +59,9 @@ summary {
     padding: 0 16px;
     width: 100%;
 }
-.createIssueGroupButton .btnCreateBacklog {
+/* .createIssueGroupButton .btnSprint {
     margin-left: 20px;
-}
+} */
 
 .hidden { 
     display:none; 
@@ -75,21 +75,24 @@ summary {
     align-items: center;
 }
 
-.btnCreateBacklog {
+.btnSprint {
     margin-right: 10px;
-    background-color: #c4bebe;
-    color: #172b4d;
+    /* color: #172b4d; */
 }
 
-.btnCreateBacklog:not(:disabled):hover {
+
+.btnCompleteSprint {
     background-color: #c4bebe;
+    color: #172b4d;
 }
 
 .issueArea {
     display: flex;
     align-items: center;
-    justify-content: space-between;
     background-color: #fff;
+    flex: 1 1 0%;
+    min-width: 0px;
+    padding: 2px 16px !important; 
 }
 
 .issueArea span {
@@ -99,6 +102,42 @@ summary {
     white-space: nowrap;
 }
 
-.issueArea div {
-    margin-left: 10px;
+.issueArea > * {
+    margin-right: 10px;
 }
+
+.issueArea .issueTypeIcon{
+    width: 20px;
+    height: 20px;
+    margin-left: 0;
+    margin-right: 10px;
+}
+
+.issueArea .issueTypeIcon img{
+    width: 100%;
+    height: 100%;
+}
+
+.issueArea .issueId span{
+    color: #5e6c84;
+}
+
+.issueArea .issueContent {
+    display: flex;
+    align-items: center;
+    flex: 1 1 0%;
+    min-width: 0px;
+}
+
+.issueArea .issueStatusArea {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-left: 0;
+}
+
+.issueArea .issueStatusArea div:nth-child(1) {
+    margin-right: 10px;
+}
+
+

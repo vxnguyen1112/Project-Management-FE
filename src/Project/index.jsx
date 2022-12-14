@@ -10,6 +10,7 @@ import IssueCreate from './IssueCreate';
 import IssueSearch from './IssueSearch';
 import Sidebar from './Sidebar';
 import Board from './Board';
+import ProjectBoard from './TestBoard'
 import ProjectSettings from './ProjectSettings';
 import ProjectCreate from './ProjectCreate';
 import Backlog from './Backlog';
@@ -176,11 +177,21 @@ const Project = () => {
           createdAt: "2022-11-04T14:26:48.858Z",
           updatedAt: "2022-11-06T03:48:44.362Z",
           userIds: []
+        },
+        {
+          id: 761195,
+          title: "Code giao diện trang chủ",
+          type: "story",
+          status: "inprogress",
+          priority: "3",
+          listPosition: 10,
+          createdAt: "2022-11-04T14:26:48.858Z",
+          updatedAt: "2022-11-06T03:48:44.362Z",
+          userIds: []
         }
       ]
     }
   }
-  
 
   const { project } = data;
 
@@ -239,6 +250,13 @@ const Project = () => {
             fetchProject={fetchProject}
             updateLocalProjectIssues={updateLocalProjectIssues}
           />
+        )}
+      />
+
+      <Route
+        path={`${match.path}/test-board`}
+        render={() => (
+          <ProjectBoard />
         )}
       />
 

@@ -5,8 +5,7 @@ export const IssueType = {
 };
 
 export const IssueStatus = {
-  BACKLOG: 'backlog',
-  SELECTED: 'selected',
+  TODO: 'todo',
   INPROGRESS: 'inprogress',
   DONE: 'done',
 };
@@ -26,8 +25,7 @@ export const IssueTypeCopy = {
 };
 
 export const IssueStatusCopy = {
-  [IssueStatus.BACKLOG]: 'Backlog',
-  [IssueStatus.SELECTED]: 'Selected for development',
+  [IssueStatus.TODO]: 'To do',
   [IssueStatus.INPROGRESS]: 'In progress',
   [IssueStatus.DONE]: 'Done',
 };

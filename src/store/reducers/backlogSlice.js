@@ -1,196 +1,101 @@
-import { createSlice } from '@reduxjs/toolkit';
-import { uuid } from 'uuidv4';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import api from 'Services/api'; 
 
-const boards = [
-    {
-        id: uuid(),
-        name: 'Sprint 1',
-        isBacklog: false,
-        status: 1,
-        issues: [
-            {
-                id: uuid(),
-                content: 'Code giao diện trang chủ',
-                type: 'task'
-            },
-            {
-                id: uuid(),
-                content: 'Code giao diện đăng kí',
-                type: 'task'
-            },
-            {
-                id: uuid(),
-                content: 'Thiết kê giao diện trang admin',
-                type: 'task'
-            },
-        ]
-    },
-    {
-        id: uuid(),
-        name: 'Sprint 2',
-        isBacklog: false,
-        status: 1,
-        issues: [
-            {
-                id: uuid(),
-                content: 'Code giao diện trang thanh toán',
-                type: 'task'
-            },
-            {
-                id: uuid(),
-                content: 'Code giao diện xem chi tiết đơn hàng',
-                type: 'task'
-            },
-            {
-                id: uuid(),
-                content: 'Thiết kê giao diện trang thanh toán',
-                type: 'task'
-            },
-        ]
-    },
-    {
-        id: uuid(),
-        name: 'Backlog',
-        isBacklog: true,
-        status: 1,
-        issues:  [
-            {
-                id: uuid(),
-                content: 'Thiết kế database',
-                type: 'task'
-            },
-            {
-                id: uuid(),
-                content: 'Chuẩn bị môi trường phát triển',
-                type: 'task'
-            },
-            {
-                id: uuid(),
-                content: 'Thiết kế giao diện đăng kí',
-                type: 'task'
-            },
-            {
-                id: uuid(),
-                content: 'Thiết kế giao diện trang chủ',
-                type: 'task'
-            },
-        ]
+const initialState = {
+    boards: [],
+    state: 'empty'
+}
+
+export const getAllSprints = createAsyncThunk(
+    'backlog/getAllSprints',
+    async (projectId) => {
+        const res = await api.get(`/api/backlogs?project_id=${projectId}`);
+        return res;
     }
-]
+)
 
-// a little function to help us with reordering the result
-const reorder = (list, startIndex, endIndex) => {
-    const result = Array.from(list);
-    const [removed] = result.splice(startIndex, 1);
-    result.splice(endIndex, 0, removed);
+export const addSprint = createAsyncThunk(
+    'backlog/addSprint',
+    async (newSprint) => {
+        const res = await api.post(`/api/sprints`, JSON.stringify(newSprint));
+        return res;
+    }
+)
 
-    return result;
-};
+export const updateSprint = createAsyncThunk(
+    'backlog/updateSprint',
+    async (editedSprint) => {
+        const res = await api.put(`/api/sprints/${editedSprint.id}`, JSON.stringify(editedSprint));
+        return res;
+    }
+)
 
-/**
- * Moves an item from one list to another list.
- */
-const move = (source, destination, droppableSource, droppableDestination) => {
-    const sourceClone = Array.from(source);
-    const destClone = Array.from(destination);
-    const [removed] = sourceClone.splice(droppableSource.index, 1);
+export const deleteSprint = createAsyncThunk(
+    'backlog/deleteSprint',
+    async (sprintId) => {
+        const res = await api.delete(`/api/sprints/${sprintId}`);
+        return res;
+    }
+)
 
-    destClone.splice(droppableDestination.index, 0, removed);
+export const addIssue = createAsyncThunk(
+    'backlog/addIssue',
+    async (newIssue) => {
+        const res = await api.put(`/api/issues`, JSON.stringify(newIssue));
+        return res;
+    }
+)
 
-    const result = {};
-    result[droppableSource.droppableId] = sourceClone;
-    result[droppableDestination.droppableId] = destClone;
+export const deleteIssue = createAsyncThunk(
+    'backlog/deleteIssue',
+    async (existedIssue) => {
+        const res = await api.delete(`/api/issues`, JSON.stringify(existedIssue));
+        return res;
+    }
+)
 
-    return result;
-};
-
-const getList = (list, id) => {
-    const res = list.filter(board => board.id === id)[0];
-    return [...res.issues];
-};
-
-const boardLength = boards.length;
+export const moveIssue = createAsyncThunk(
+    'backlog/moveIssue',
+    async (movedIssue) => {
+        console.log(movedIssue);
+        const res = await api.post(`/api/issues/move`, JSON.stringify(movedIssue));
+        return res;
+    }
+)
 
 export const backlogSlice = createSlice({
     name: 'backlog',
-    initialState: {
-        boards,
-        boardLength 
-    },
+    initialState,
     reducers: {
-        changeIssuesOrder: (state, action) => {
-            const { source, destination } = action.payload;
-
-            // dropped outside the list
-            if (!destination) {
-                return;
-            }
-
-            if (source.droppableId === destination.droppableId) {
-                const items = reorder(
-                    getList(state.boards, source.droppableId),
-                    source.index,
-                    destination.index
-                );
-
-                state.boards.forEach(board => {
-                    if (board.id === source.droppableId) {
-                        board.issues = items;
-                    }
-                })
-
-            } else {
-                const items = move(
-                    getList(state.boards, source.droppableId),
-                    getList(state.boards, destination.droppableId),
-                    source,
-                    destination
-                );
-
-                state.boards.forEach(board => {
-                    if (board.id === source.droppableId) {
-                        board.issues = items[source.droppableId];
-                    }
-
-                    if (board.id === destination.droppableId) {
-                        board.issues = items[destination.droppableId];
-                    }
-                })
-            }
+        
+    },
+    extraReducers: {
+        [getAllSprints.fulfilled]: (state, action) => {
+            state.state = 'successed';  
+            state.boards = action.payload;  
         },
-        addIssue: (state, action) => {
-            const {boardId, issue} = action.payload;
-
-            state.boards.forEach(board => {
-                if(board.id === boardId) {
-                    board.issues.push(issue);
-                }
-            })
+        [addSprint.fulfilled]: (state) => {
+            state.state = 'changed';
         },
-        deleteIssue: (state, action) => {
-            const issueId = action.payload;
-
-            state.boards.forEach(board => {
-                board.issues = board.issues.filter(issue => issue.id !== issueId);
-            })
+        [deleteSprint.fulfilled]: (state) => {
+            state.state = 'changed';
         },
-        addSprint: (state) => {
-            state.boardLength += 1;
-
-            const board = {
-                id: uuid(),
-                name: `Sprint ${state.boardLength - 1}`,
-                isBacklog: false,
-                status: 1,
-                issues: []
-            }
-
-            state.boards.splice(state.boardLength - 2, 0, board);
-        }
+        [addIssue.fulfilled]: (state) => {
+            state.state = 'changed';
+        },
+        [deleteIssue.fulfilled]: (state) => {
+            state.state = 'changed';
+        },
+        [moveIssue.fulfilled]: (state, action) => {
+            state.state = 'changed';
+            // console.log("Resutl", action.payload);
+        },
+        [moveIssue.rejected]: (state, action) => {
+            // state.state = 'changed';
+            // console.log("Resutl", action.payload);
+        },
     }
 })
-
-export const { changeIssuesOrder, addIssue, addSprint, deleteIssue } = backlogSlice.actions;
 
 export const selectBacklog = (state) => state.backlog.boards;
 

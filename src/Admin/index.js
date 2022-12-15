@@ -1,36 +1,33 @@
 import React, { Fragment } from 'react';
 import { Route, Redirect, useRouteMatch } from 'react-router-dom';
 import ProjectCreate from 'Project/ProjectCreate';
-import Account from "Account"
 import NavBar from './Navbar';
-import TableProject from './TableProject';
+import AddMember from './AddMemberToOrganization'
+import ListProjcectInOrganition from './ListProjectInOrganination'
 
-const ListProject = () => {
+
+const Admin = () => {
   const match = useRouteMatch();
   return (
     // eslint-disable-next-line react/jsx-filename-extension
     <Fragment>
       <NavBar />
-      <Route
-        path={`${match.path}/listproject`}
-        render={() => (
-         <TableProject />
-        )}
-      />
-      <Route
-        path={`${match.path}/account`}
-        render={() => (
-         <Account />
-        )}
-      />
+    
       <Route
         path={`${match.path}/project-create`}
         render={() => <ProjectCreate />}
       />
-
-      {match.isExact && <Redirect to={`${match.url}/listproject`} />}
+     <Route
+        path={`${match.path}/add-member`}
+        render={() => <AddMember />}
+      />
+       <Route
+        path={`${match.path}/list-projcect`}
+        render={() => <ListProjcectInOrganition />}
+      />
+      {match.isExact && <Redirect to={`${match.url}/list-projcect`} />}
     
     </Fragment>
   );
 };
-export default ListProject;
+export default Admin;

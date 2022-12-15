@@ -1,10 +1,11 @@
 import React from 'react';
 import { Redirect, Route } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
-import { isAuthenticated } from './CheckAuth';
 
 const RouteAuthenticated = ({ component: Component, path }) => {
-  if (!isAuthenticated()) {
+  const {isLoggedIn}=useSelector(state=>state.auth)
+  if (!isLoggedIn) {
     return <Redirect to="/login" />;
   }
   return <Route component={Component} path={path} />;

@@ -14,7 +14,7 @@ export const getListProject = createAsyncThunk(
     }
   },
 );
-const initialState = { projectId: "", listproject: [{}] };
+const initialState = { projectId: "",name: [],listproject: [] };
 
 const listprojectSlice = createSlice({
   name: 'listproject',
@@ -22,6 +22,7 @@ const listprojectSlice = createSlice({
   reducers: {
       selectProject(state,action) {
       state.projectId = action.payload;
+      state.name=state.listproject.filter((project) =>project.id===state.projectId)[0].name;
     },
   },
   extraReducers: {

@@ -51,18 +51,18 @@ const NavBar=()=> {
                 className="nav-links"
                 onClick={handleClick}
               >
-                Add project
+                Project
               </NavLink>
             </li>
             <li className="nav-item">
               <NavLink
                 exact
-                to="/admin/project-create"
+                to="/admin/role"
                 activeClassName="active"
                 className="nav-links"
                 onClick={handleClick}
               >
-                Project Create
+                Role
               </NavLink>
             </li>
             <li className="nav-item"  >

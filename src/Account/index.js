@@ -5,7 +5,7 @@ import React, { useState } from 'react';
 import history from 'browserHistory';
 import { toast } from 'react-project-management';
 import api from 'Services/api';
-import "./style.css"
+import "./styles.css"
 
 const Account = () => {
   const [state, setState] = useState({

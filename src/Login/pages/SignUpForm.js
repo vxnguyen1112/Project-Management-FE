@@ -164,7 +164,7 @@ const SignUpForm = () => {
           />
           <p style={{ color: 'red', fontSize: 13 }}>{formErrors.mailNotification}</p>
         </div>
-
+        <p style={{ color: 'red', fontSize: 20 ,fontStyle:'italic',marginLeft:"50px"}}> This registration is for organization only </p>
         <div className="formField">
           <button className="formFieldButton">Sign Up</button>{' '}
           <Link to="/login" className="formFieldLink">

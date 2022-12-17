@@ -7,12 +7,12 @@ export const getListProject = createAsyncThunk(
   async (dataUser,thunkAPI) => {
     try {
       let query;
-      if(thunkAPI.getState().auth.user.roles.indexOf("ROLE_MEMBER")>=0)
-      {
-      query=`/api/organizations/${thunkAPI.getState().auth.user.organizationId}/projects/attending`;
-      }else
+      if(thunkAPI.getState().auth.user.roles.indexOf("ROLE_ADMIN_ORGANIZATION")>=0)
       {
       query=`/api/organizations/${thunkAPI.getState().auth.user.organizationId}/projects`;
+      }else
+      {
+        query=`/api/organizations/${thunkAPI.getState().auth.user.organizationId}/projects/attending`;
       }
       console.log(query)
       const data = await api.get(query);

@@ -5,12 +5,14 @@ import backlogReducer from "./backlogSlice";
 import authReducer  from "./authSlice";
 import messageReducer from "./messageSlide";
 import listProjectReducer from "./listprojectSlide";
+import projectReducer from './projectSlice'
 
 const allReducers = combineReducers({
     backlog: backlogReducer,
     auth: authReducer,
     message: messageReducer ,
-    listproject:listProjectReducer
+    listproject:listProjectReducer,
+    project:projectReducer
 });
 
 const persistConfig = {

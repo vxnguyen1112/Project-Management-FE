@@ -16,7 +16,7 @@ const NavBar=()=> {
       <nav className="navbar">
         <div className="nav-container">
           <NavLink exact to="/" className="nav-logo">
-            Project management
+          <img src="../../favicon.png" alt="" style={{width:'74px',marginLeft:"24px"}} />
             <i className="fas fa-code" />
           </NavLink>
 
@@ -51,18 +51,18 @@ const NavBar=()=> {
                 className="nav-links"
                 onClick={handleClick}
               >
-                Add project
+                Project
               </NavLink>
             </li>
             <li className="nav-item">
               <NavLink
                 exact
-                to="/admin/project-create"
+                to="/admin/role"
                 activeClassName="active"
                 className="nav-links"
                 onClick={handleClick}
               >
-                Project Create
+                Role
               </NavLink>
             </li>
             <li className="nav-item"  >

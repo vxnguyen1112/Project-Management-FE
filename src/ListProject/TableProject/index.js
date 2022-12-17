@@ -6,35 +6,36 @@
 /* eslint-disable no-nested-ternary */
 import React, { useState, useEffect } from 'react';
 import { toast } from 'react-project-management';
-import api from 'Services/api';
 import history from 'browserHistory';
+import { store } from 'store';
+import {  useDispatch } from 'react-redux';
+import { getListProject, selectProject } from 'store/reducers/listprojectSlide';
 import './styles.css';
 
 const TableProject = () => {
   const [listProject, setListProject] = useState([]);
+  const dispatch = useDispatch();
   useEffect(() => {
-    getData();
+    dispatch(getListProject())
+      .unwrap()
+      .then(() => {
+        setListProject(store.getState().listproject.listproject);
+      })
+      .catch(() => {
+        toast.error(store.getState().message.message);
+      });
   }, []);
   const[filter,setFilter]=useState("")
   const handleChange = event => {
     setFilter(event.target.value);
   };
-  const getData = async () => {
-    await api.get('/api/organizations/fbecadea-273c-48cb-bbbe-04ddaa12d0a7/projects').then(
-      data => {
-        setListProject(data);
-      },
-      error => {
-        toast.error(error);
-      },
-    );
-  };
-  const onClickRow = () => {
+
+  const onClickRow = (id) => {
+    dispatch(selectProject(id));
     history.push('/project');
   };
   return (
     <div className="listproject">
-      <div className="header" />
       <div className="main" style={{ padding: '30px 70px' }}>
         <p style={{ fontFamily: 'CircularStdMedium', fontWeight: 'normal' }}>Project</p>
         <div className="wrapper">
@@ -47,11 +48,11 @@ const TableProject = () => {
           />
         </div>
         <div className="container">
-          {listProject.filter(x=>x.name.includes(filter) || x.domain.includes(filter)||x.projectStatus.includes(filter) ).map(item => (
-            <div className="item" onClick={() => onClickRow()}>
+          {listProject.filter(x=>x.name.toLowerCase().includes(filter.toLocaleLowerCase()) || x.domain.toLowerCase().includes(filter.toLowerCase())||x.projectStatus.toLowerCase().includes(filter.toLocaleLowerCase()) ).map(item => (
+            <div className="item" onClick={() => onClickRow(item.id)}>
               <div style={{ display: 'flex' }}>
                 <h2 style={{ width: '250px' }}>{item.name}</h2>
-                <img
+                <img style={{}}
                   src="https://levanket.atlassian.net/rest/api/2/universal_avatar/view/type/issuetype/avatar/10315?size=medium"
                   alt="new"
                 />

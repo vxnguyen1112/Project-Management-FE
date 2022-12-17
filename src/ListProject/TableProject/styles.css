@@ -21,7 +21,7 @@
   margin-right: 25px;
   padding:15px 20px;
   display: block;
-  background: #a1f4fd;
+  background-image: linear-gradient(-20deg, #00cdac 0%, #8ddad5 100%);
 }
 
 .table {

@@ -7,6 +7,7 @@ import React, { useState } from 'react';
 import { FileUploader } from 'react-drag-drop-files';
 import api from 'Services/apiPostfile';
 import { CSVLink } from "react-csv";
+import { store } from 'store';
 import history from 'browserHistory';
 import { toast } from 'react-project-management';
 import './styles.css';
@@ -53,7 +54,7 @@ const AddMember = () => {
     try {
       const formdata=new  FormData();
       formdata.append('file',file);
-      await  api.post('/api/users/organizations/982a1cd0-5437-4df4-83fa-74009ac1077f/members',formdata);
+      await  api.post(`/api/users/organizations/${store.getState().auth.user.organizationId}/members`,formdata);
       toast.success('Add member successfully');
       history.push('/admin');
     } catch (error) {
@@ -70,7 +71,7 @@ const AddMember = () => {
         <thead>
           <tr key="header">
             {headerKeys.map((key) => (
-              <th>{key}</th>
+              <th style={{textAlign:'center'}}>{key}</th>
             ))}
           </tr>
         </thead>

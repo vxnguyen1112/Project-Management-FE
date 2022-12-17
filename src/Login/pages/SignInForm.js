@@ -3,16 +3,16 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import React, { useState} from 'react';
 import { Link } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch} from 'react-redux';
 import { login } from 'store/reducers/authSlice';
+import { store } from 'store';
 import history from 'browserHistory';
 import { FacebookLoginButton, InstagramLoginButton } from 'react-social-login-buttons';
 import { toast } from 'react-project-management';
 
 const SignInForm = () => {
-  const { message } = useSelector(state => state.message);
   const dispatch = useDispatch();
-  const [state, setState] = useState({ username: 'vanketk19', password: 'Ket@1512001' });
+  const [state, setState] = useState({ username: 'nguyenkhanh', password: 'Khanh2001!' });
   const [formErrors, setFormErrors] = useState({});
   const validate = values => {
     const errors = {};
@@ -45,13 +45,14 @@ const SignInForm = () => {
       dispatch(login(state))
         .unwrap()
         .then(() => {
-          toast.success(message);
+          toast.success(store.getState().message.message);
           history.push('/home');
         })
         .catch(() => {
-          toast.error(message);
+          toast.error(store.getState().message.message);
         });
       setFormErrors({});
+
     }
   };
   return (

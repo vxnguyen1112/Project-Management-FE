@@ -8,14 +8,13 @@ import React, { useState, useEffect } from 'react';
 import { toast } from 'react-project-management';
 import history from 'browserHistory';
 import { store } from 'store';
-import { useSelector, useDispatch } from 'react-redux';
+import {  useDispatch } from 'react-redux';
 import { getListProject, selectProject } from 'store/reducers/listprojectSlide';
 import './styles.css';
 
 const TableProject = () => {
   const [listProject, setListProject] = useState([]);
   const dispatch = useDispatch();
-  const { message } = useSelector(state => state.message);
   useEffect(() => {
     dispatch(getListProject())
       .unwrap()
@@ -23,7 +22,7 @@ const TableProject = () => {
         setListProject(store.getState().listproject.listproject);
       })
       .catch(() => {
-        toast.error(message);
+        toast.error(store.getState().message.message);
       });
   }, []);
   const[filter,setFilter]=useState("")
@@ -49,11 +48,11 @@ const TableProject = () => {
           />
         </div>
         <div className="container">
-          {listProject.filter(x=>x.name.includes(filter) || x.domain.includes(filter)||x.projectStatus.includes(filter) ).map(item => (
+          {listProject.filter(x=>x.name.toLowerCase().includes(filter.toLocaleLowerCase()) || x.domain.toLowerCase().includes(filter.toLowerCase())||x.projectStatus.toLowerCase().includes(filter.toLocaleLowerCase()) ).map(item => (
             <div className="item" onClick={() => onClickRow(item.id)}>
               <div style={{ display: 'flex' }}>
                 <h2 style={{ width: '250px' }}>{item.name}</h2>
-                <img
+                <img style={{}}
                   src="https://levanket.atlassian.net/rest/api/2/universal_avatar/view/type/issuetype/avatar/10315?size=medium"
                   alt="new"
                 />

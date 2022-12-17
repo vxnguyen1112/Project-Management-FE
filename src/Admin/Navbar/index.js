@@ -16,7 +16,7 @@ const NavBar=()=> {
       <nav className="navbar">
         <div className="nav-container">
           <NavLink exact to="/" className="nav-logo">
-            Project management
+          <img src="../../favicon.png" alt="" style={{width:'74px',marginLeft:"24px"}} />
             <i className="fas fa-code" />
           </NavLink>
 

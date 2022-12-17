@@ -15,6 +15,7 @@ const SignUpForm = () => {
     firstName: '',
     lastName: '',
     mailNotification: '',
+    name:''
   });
   const [formErrors, setFormErrors] = useState({});
   const validate = values => {
@@ -43,6 +44,9 @@ const SignUpForm = () => {
     if (!mailRegex.test(values.mailNotification)) {
       errors.mailNotification = 'Invalid Email Address!';
     }
+    if (!nameRegex.test(values.name)) {
+      errors.name = ' Name organization must be characters!';
+    }
     return errors;
   };
   const handleChange = event => {
@@ -60,7 +64,7 @@ const SignUpForm = () => {
     event.preventDefault();
     if (Object.keys(errors).length === 0) {
       try {
-        await api.post('/api/auth/signup', JSON.stringify(state));
+        await api.post('/api/auth/signup/organization', JSON.stringify(state));
         toast.success('Singup successfully');
         history.push('/login');
       } catch (error) {
@@ -164,8 +168,23 @@ const SignUpForm = () => {
           />
           <p style={{ color: 'red', fontSize: 13 }}>{formErrors.mailNotification}</p>
         </div>
-        <p style={{ color: 'red', fontSize: 20 ,fontStyle:'italic',marginLeft:"50px"}}> This registration is for organization only </p>
         <div className="formField">
+          <label className="formFieldLabel" htmlFor="email">
+            Name Organization
+          </label>
+          <input
+            type="text"
+            id="name"
+            className="formFieldInput"
+            placeholder="Enter your email"
+            name="name"
+            value={state.name}
+            onChange={handleChange}
+          />
+          <p style={{ color: 'red', fontSize: 13 }}>{formErrors.name}</p>
+        </div>
+        <p style={{ color: 'red', fontSize: 20 ,fontStyle:'italic',marginLeft:"50px"}}> This registration is for organization only </p>
+        <div className="for mField">
           <button className="formFieldButton">Sign Up</button>{' '}
           <Link to="/login" className="formFieldLink">
             I'm already member

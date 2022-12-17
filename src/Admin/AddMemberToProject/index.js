@@ -34,7 +34,7 @@ const AddMemberToProject = () => {
         toast.error(error);
       },
     );
-    await api.get('/api/members/organization/0477066C-6E6B-4B5B-9B90-ADA5F42A2E95/search').then(
+    await api.get(`/api/members/organization/${store.getState().auth.user.organizationId}/search`).then(
       data => {
         setListMemberAll(data);
       },

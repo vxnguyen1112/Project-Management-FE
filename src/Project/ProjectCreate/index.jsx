@@ -1,10 +1,10 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import React, {useState} from 'react';
 import { useHistory } from "react-router-dom"
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { Form } from 'components';
 import { toast } from 'react-project-management';
-import { createProject, selectProject } from 'store/reducers/projectSlice';
+import { createProject} from 'store/reducers/projectSlice';
 import { FormCont, FormHeading, FormElement, ActionButton } from '../ProjectSettings/Styles';
 
 const ProjectCreate = () => {
@@ -23,8 +23,6 @@ const ProjectCreate = () => {
     const handleCheckbox = () => {
         setIsPublic(!isPublic)
     }
-
-    const queryProject = useSelector(selectProject);
 
     return (
       <Form
@@ -59,7 +57,7 @@ const ProjectCreate = () => {
           } catch (error) {
             Form.handleAPIError(error, form);
           }
-          history.push('/home');
+          history.push('/admin');
         }}
       >
         <FormCont>

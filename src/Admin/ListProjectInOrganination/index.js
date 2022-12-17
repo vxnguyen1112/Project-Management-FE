@@ -6,7 +6,7 @@
 /* eslint-disable no-nested-ternary */
 import React, { useState, useEffect } from 'react';
 import { useTable, useSortBy, useAsyncDebounce, useGlobalFilter } from 'react-table';
-import { useSelector, useDispatch } from 'react-redux';
+import {  useDispatch } from 'react-redux';
 import { store } from 'store';
 import { getListProject, selectProject } from 'store/reducers/listprojectSlide';
 import { toast } from 'react-project-management';
@@ -43,7 +43,6 @@ const ListProjcectInOrganition = () => {
       </div>
     );
   };
-  const { message } = useSelector(state => state.message);
   const [listProject, setListProject] = useState([]);
   const dispatch = useDispatch();
   useEffect(() => {
@@ -53,7 +52,7 @@ const ListProjcectInOrganition = () => {
         setListProject(store.getState().listproject.listproject);
       })
       .catch(() => {
-        toast.error(message);
+        toast.error(store.getState().message.message);
       });
   }, []);
 

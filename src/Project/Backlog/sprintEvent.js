@@ -25,7 +25,6 @@ export const reorder = (list, id, startIndex, endIndex) => {
     const [removed] = result.splice(startIndex, 1);
 
     result.splice(endIndex, 0, removed);
-    console.log(startIndex, endIndex);
 
     const updatedPostion = filterFeild(result, id);
     return [
@@ -43,10 +42,8 @@ export const move = (list, source, destination, droppableSource, droppableDestin
     const sourceClone = Array.from(source);
     const destClone = Array.from(destination);
     const [removed] = sourceClone.splice(droppableSource.index, 1);
-
     const boardId = getFirstBoardId(list, droppableDestination.droppableId);    
-    console.log(boardId);
-    console.log({...removed, boardId});
+
     destClone.splice(droppableDestination.index, 0, {...removed, boardId});
 
     const result = [];

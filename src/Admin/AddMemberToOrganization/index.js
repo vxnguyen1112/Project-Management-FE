@@ -66,7 +66,7 @@ const AddMember = () => {
     <div style={{ textAlign: 'center' }}>
       <p>Please download example file add member:</p>
       <CSVLink  className="snip1457" filename='add-member-example.csv'  data={csvData} enclosingCharacter="">Download me</CSVLink>
-   { file?  <table className="styled-table">
+   { file? ( <table className="styled-table">
         <thead>
           <tr key="header">
             {headerKeys.map((key) => (

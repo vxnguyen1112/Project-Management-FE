@@ -16,7 +16,6 @@ const ProjectBoardIssueDetailsAssigneesReporter = ({ issue, updateIssue, project
   const getUserById = userId => projectUsers.find(user => user.userId === userId);
 
   const userOptions = projectUsers.map(user => ({ value: user.userId, label: user.displayName }));
-  console.log(projectUsers);
 
   return (
     <Fragment>
@@ -28,15 +27,15 @@ const ProjectBoardIssueDetailsAssigneesReporter = ({ issue, updateIssue, project
         name="assignees"
         value={issue.assignMemberId}
         options={userOptions}
-        onChange={assignees => {
-          updateIssue({ assignees });
+        onChange={assignMemberId => {
+          updateIssue({ assignMemberId });
         }}
         renderValue={({ value: userId, removeOptionValue }) =>
           renderUser(getUserById(userId), true, removeOptionValue)
         }
         renderOption={({ value: userId }) => renderUser(getUserById(userId), false)}
       />
-{/* 
+      {/* 
       <SectionTitle>Reporter</SectionTitle>
       <Select
         variant="empty"
@@ -60,7 +59,11 @@ const renderUser = (user, isSelectValue, removeOptionValue) => (
     withBottomMargin={!!removeOptionValue}
     onClick={() => removeOptionValue && removeOptionValue()}
   >
-    <Avatar avatarUrl="https://pixlok.com/wp-content/uploads/2021/03/default-user-profile-picture.jpg" name={user.displayName} size={24} />
+    <Avatar
+      avatarUrl="https://pixlok.com/wp-content/uploads/2021/03/default-user-profile-picture.jpg"
+      name={user.displayName}
+      size={24}
+    />
     <Username>{user.displayName}</Username>
     {removeOptionValue && <Icon type="close" top={1} />}
   </User>

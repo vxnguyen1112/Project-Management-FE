@@ -5,6 +5,7 @@ import { CopyLinkButton, Button, AboutTooltip } from 'components';
 import CustomStatus from 'Project/TestBoard/IssueDetails/CustomStatus';
 import Divider from 'Project/Backlog/Divider';
 import { toast } from 'react-project-management';
+import store from 'store';
 import Type from './Type';
 import Delete from './Delete';
 import Title from './Title';
@@ -31,7 +32,11 @@ const statusMap = {
 
 const updateIssueDetail = async (issueId, issue, modalClose) => {
   const { issuesStatusDto, issuesTypeDto, ...rest } = issue;
-  const updatedIssue = { ...rest, issueStatusId: issuesStatusDto.id, issueTypeId: issuesTypeDto.id };
+  const updatedIssue = {
+    ...rest,
+    issuesStatusId: issuesStatusDto.id,
+    issueTypeId: issuesTypeDto.id,
+  };
   console.log(updatedIssue);
   try {
     const res = await api.put(`/api/issues/${issueId}`, updatedIssue);
@@ -73,8 +78,9 @@ const ProjectBoardIssueDetails = ({ issueId, projectUsers, fetchProject, modalCl
     };
 
     const getAllIssueStatus = async () => {
-      const organizationId = 'fbecadea-273c-48cb-bbbe-04ddaa12d0a7';
-      const res = await api.get(`/api/issues-status?organizationId=${organizationId}`);
+      const res = await api.get(
+        `/api/issues-status?organizationId=${store.getState().auth.user.organizationId}`,
+      );
       setIssueStatusList(res);
     };
     getIssueDetail();
@@ -86,7 +92,6 @@ const ProjectBoardIssueDetails = ({ issueId, projectUsers, fetchProject, modalCl
       {issue !== undefined && (
         <React.Fragment>
           <TopActions>
-            {console.log(issue)}
             <Type issue={issue} updateIssue={updateIssue} />
             <TopActionsRight>
               <AboutTooltip

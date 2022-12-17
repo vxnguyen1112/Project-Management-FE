@@ -2,6 +2,7 @@ import React, { Fragment, useState, useEffect } from 'react';
 import { Route, useRouteMatch, useHistory } from 'react-router-dom';
 import { Breadcrumbs, Modal } from 'components';
 import useMergeState from 'hooks/mergeState';
+import { store } from 'store';
 import api from 'Services/api';
 import Header from './Header';
 import Filters from './Filters';
@@ -77,7 +78,7 @@ const ProjectBoard = () => {
   const [sprints, setSprints] = useState([]);
   const [isMove, setIsMove] = useState(false);
   const [members, setMembers] = useState([]);
-  const projectId = '1a27f30a-7703-4b62-bc1e-d7c3e94c15ae';
+  const { projectId } = store.getState().listproject;
 
   useEffect(() => {
     const getBoards = async () => {
@@ -91,10 +92,10 @@ const ProjectBoard = () => {
     };
 
     const getMembers = async () => {
-      const res = await api.get(`/api/members/projects/0E0C3500-E7F0-4FDE-A2C5-4FD62251241E/search`);
+      const res = await api.get(`/api/members/projects/${projectId}/search`);
       setMembers(res);
-    }
-    
+    };
+
     getBoards();
     getMembers();
   }, [filters, isMove]);

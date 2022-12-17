@@ -1,7 +1,9 @@
-import React from 'react';
+import { update } from 'lodash';
+import React, { useState, useEffect } from 'react';
 import { DragDropContext } from 'react-beautiful-dnd';
 import { toast } from 'react-project-management';
 import api from 'Services/api';
+import { store } from 'store';
 import List from './List';
 import { Lists } from './Styles';
 
@@ -79,38 +81,61 @@ const move = (sprints, sprintId, list, source, destination) => {
     position: index,
     boardId: issue.boardId,
   }));
-  return updatedPostion;
+  return {
+    items: updatedPostion,
+    issue: { id: removed.id, issusStatusName: destination.droppableId },
+  };
 };
 
 const moveIssue = async movedIssue => {
-  console.log(movedIssue);
   const res = await api.post(`/api/issues/move`, JSON.stringify(movedIssue));
   return res;
 };
 
+const updateIssueDetail = async (issueId, issuesStatusId) => {
+  try {
+    const res = await api.put(`/api/issues/${issueId}`, { issuesStatusId });
+    toast.success('Update issue successfully');
+  } catch (err) {
+    toast.success(err);
+  }
+};
+
 const ProjectBoardLists = props => {
   const { boards, projectId, sprintId, sprints, setIsMove } = props;
+  const [issueStatusList, setIssueStatusList] = useState([]);
+
+  useEffect(() => {
+    const getAllIssueStatus = async () => {
+      const res = await api.get(
+        `/api/issues-status?organizationId=${store.getState().auth.user.organizationId}`,
+      );
+      setIssueStatusList(res);
+    };
+    getAllIssueStatus();
+  }, []);
 
   const handleIssueDrop = ({ draggableId, destination, source }) => {
     if (!isPositionChanged(source, destination)) return;
-    console.log(draggableId, destination, source);
-    console.log('Board', sprints);
+
     if (source.droppableId === destination.droppableId) {
-      console.log('Init', boards[source.droppableId]);
       const items = reorder(boards[source.droppableId], source, destination);
       moveIssue(filterFeild(projectId, sprintId, items))
         .then(res => {
-          console.log(res);
           toast.success(res.message);
         })
         .catch(err => {
           toast.error(err);
         });
     } else {
-      const items = move(sprints, sprintId, boards, source, destination);
+      const { items, issue } = move(sprints, sprintId, boards, source, destination);
+      const issueStatusId = issueStatusList.filter(
+        issueStatus => issueStatus.name === issue.issusStatusName,
+      )[0].id;
+
       moveIssue(filterFeild(projectId, sprintId, items))
         .then(res => {
-          console.log(res);
+          updateIssueDetail(issue.id, issueStatusId);
           toast.success(res.message);
         })
         .catch(err => {

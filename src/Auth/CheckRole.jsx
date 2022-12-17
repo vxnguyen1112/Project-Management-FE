@@ -2,7 +2,7 @@
 import { store } from 'store';
 
 const CheckRole = () => {
-  if (store.getState().auth.user.roles.indexOf('ROLE_MEMBER') >= 0) return false;
-  return true;
+  if (store.getState().auth.user.roles.indexOf('ROLE_ADMIN_ORGANIZATION') >= 0) return true;
+  return false;
 };
 export default CheckRole;

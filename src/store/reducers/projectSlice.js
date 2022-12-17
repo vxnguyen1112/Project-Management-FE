@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import api from 'Services/api';
+import { store } from 'store';
 
 const initialState = {
     project: null
@@ -7,8 +8,7 @@ const initialState = {
 export const createProject = createAsyncThunk(
     'project/createProject',
     async (newProject) => {
-        const organizationId = 'fbecadea-273c-48cb-bbbe-04ddaa12d0a7';
-        const res = await api.post(`/api/organizations/${organizationId}/projects`, JSON.stringify(newProject));
+        const res = await api.post(`/api/organizations/${store.getState().auth.user.organizationId}/projects`, JSON.stringify(newProject));
         return res;
     }
 )

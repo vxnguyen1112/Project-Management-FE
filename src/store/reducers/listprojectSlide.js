@@ -4,17 +4,28 @@ import { setMessage } from './messageSlide';
 
 export const getListProject = createAsyncThunk(
   'listproject/getListProject',
-  async (thunkAPI) => {
+  async (dataUser,thunkAPI) => {
     try {
-      const data = await api.get('/api/organizations/fbecadea-273c-48cb-bbbe-04ddaa12d0a7/projects');
+      let query;
+      if(thunkAPI.getState().auth.user.roles.indexOf("ROLE_ADMIN_ORGANIZATION")>=0)
+      {
+      query=`/api/organizations/${thunkAPI.getState().auth.user.organizationId}/projects`;
+      }else
+      {
+        query=`/api/organizations/${thunkAPI.getState().auth.user.organizationId}/projects/attending`;
+      }
+      console.log(query)
+      const data = await api.get(query);
+      console.log(data)
       return data;
     } catch (error) {
+      console.log(error);
       thunkAPI.dispatch(setMessage(error));
       return thunkAPI.rejectWithValue();
     }
   },
 );
-const initialState = { projectId: "", listproject: [{}] };
+const initialState = { projectId: "",name: [],listproject: [] };
 
 const listprojectSlice = createSlice({
   name: 'listproject',
@@ -22,6 +33,7 @@ const listprojectSlice = createSlice({
   reducers: {
       selectProject(state,action) {
       state.projectId = action.payload;
+      state.name=state.listproject.filter((project) =>project.id===state.projectId)[0].name;
     },
   },
   extraReducers: {

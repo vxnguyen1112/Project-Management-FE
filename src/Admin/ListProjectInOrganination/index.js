@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable no-shadow */
 /* eslint-disable jsx-a11y/alt-text */
 /* eslint-disable react/jsx-no-undef */
@@ -5,11 +6,13 @@
 /* eslint-disable no-nested-ternary */
 import React, { useState, useEffect } from 'react';
 import { useTable, useSortBy, useAsyncDebounce, useGlobalFilter } from 'react-table';
-import { useSelector, useDispatch } from 'react-redux';
+import {  useDispatch } from 'react-redux';
 import { store } from 'store';
 import { getListProject, selectProject } from 'store/reducers/listprojectSlide';
 import { toast } from 'react-project-management';
-import { Button } from 'components';
+import { Button,Icon } from 'components';
+import history from 'browserHistory';
+import "./styles.css"
 
 const ListProjcectInOrganition = () => {
   const GlobalFilter = ({ filter, setFilter }) => {
@@ -31,10 +34,15 @@ const ListProjcectInOrganition = () => {
             onChange(e.target.value);
           }}
         />
+        <div className='add-project' onClick={()=>{history.push("/admin/project-create")}}>
+          <div style={{display:"flex"  ,alignItems: 'center'}}>
+        <Icon type="page" size={20} left={15} top={2}  />
+         <p style={{paddingLeft:"24px",fontStyle:"italic"}}>Add project</p>
+         </div>
+         </div>
       </div>
     );
   };
-  const { message } = useSelector(state => state.message);
   const [listProject, setListProject] = useState([]);
   const dispatch = useDispatch();
   useEffect(() => {
@@ -44,7 +52,7 @@ const ListProjcectInOrganition = () => {
         setListProject(store.getState().listproject.listproject);
       })
       .catch(() => {
-        toast.error(message);
+        toast.error(store.getState().message.message);
       });
   }, []);
 
@@ -82,6 +90,18 @@ const ListProjcectInOrganition = () => {
         paddingLeft: 5,
       },
       {
+        Header: 'View',
+        accessor: 'id',
+        id: 'view',
+        Cell: ({ cell: { value } }) => (
+          <Button icon="link" iconSize={19} variant="empty" onClick={() => onClickView(value)} />
+        ),
+        width: 15,
+        minWidth: 5,
+        padding: 0,
+        paddingLeft: 20,
+      },
+      {
         Header: 'Remove',
         accessor: 'id',
         id: 'remove',
@@ -93,14 +113,20 @@ const ListProjcectInOrganition = () => {
         padding: 0,
         paddingLeft: 5,
       },
+      
     ],
     [],
   );
   const onClickAdd = id => {
     dispatch(selectProject(id));
+    history.push('/admin/add-member-to-project');
   };
   const onClickRemove = id => {
     dispatch(selectProject(id));
+  };
+  const onClickView = id => {
+    dispatch(selectProject(id));
+    history.push("/project");
   };
   const {
     getTableProps,
@@ -116,7 +142,7 @@ const ListProjcectInOrganition = () => {
     // eslint-disable-next-line react/jsx-filename-extension
     <div className="listproject">
       <div className="header" />
-      <div className="main">
+      <div className="main" style={{ padding: '30px 70px' }}>
         <p style={{ fontFamily: 'CircularStdMedium', fontWeight: 'normal' }}>Project</p>
         <GlobalFilter filter={globalFilter} setFilter={setGlobalFilter} />
         <table className="styled-table" {...getTableProps()}>

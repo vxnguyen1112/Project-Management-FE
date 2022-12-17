@@ -6,7 +6,7 @@ import { Button } from 'components';
 import { Droppable, Draggable } from 'react-beautiful-dnd';
 import { toast } from 'react-project-management';
 import DropdownSelect from 'components/DropdownSelect';
-import CustomStatus from 'Project/Board/IssueDetails/CustomStatus';
+import CustomStatus from 'Project/TestBoard/IssueDetails/CustomStatus';
 import ModalCustom from 'components/ModalCustom/ModalCustom';
 import Divider from '../Divider';
 import "./Board.css";

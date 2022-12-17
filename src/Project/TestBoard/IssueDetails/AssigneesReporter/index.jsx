@@ -13,30 +13,30 @@ const propTypes = {
 };
 
 const ProjectBoardIssueDetailsAssigneesReporter = ({ issue, updateIssue, projectUsers }) => {
-  const getUserById = userId => projectUsers.find(user => user.id === userId);
+  const getUserById = userId => projectUsers.find(user => user.userId === userId);
 
-  const userOptions = projectUsers.map(user => ({ value: user.id, label: user.name }));
+  const userOptions = projectUsers.map(user => ({ value: user.userId, label: user.displayName }));
+  console.log(projectUsers);
 
   return (
     <Fragment>
       <SectionTitle>Assignees</SectionTitle>
       <Select
-        isMulti
         variant="empty"
         dropdownWidth={343}
         placeholder="Unassigned"
         name="assignees"
-        value={issue.userIds}
+        value={issue.assignMemberId}
         options={userOptions}
-        onChange={userIds => {
-          updateIssue({ userIds, users: userIds.map(getUserById) });
+        onChange={assignees => {
+          updateIssue({ assignees });
         }}
         renderValue={({ value: userId, removeOptionValue }) =>
           renderUser(getUserById(userId), true, removeOptionValue)
         }
         renderOption={({ value: userId }) => renderUser(getUserById(userId), false)}
       />
-
+{/* 
       <SectionTitle>Reporter</SectionTitle>
       <Select
         variant="empty"
@@ -48,20 +48,20 @@ const ProjectBoardIssueDetailsAssigneesReporter = ({ issue, updateIssue, project
         onChange={userId => updateIssue({ reporterId: userId })}
         renderValue={({ value: userId }) => renderUser(getUserById(userId), true)}
         renderOption={({ value: userId }) => renderUser(getUserById(userId))}
-      />
+      /> */}
     </Fragment>
   );
 };
 
 const renderUser = (user, isSelectValue, removeOptionValue) => (
   <User
-    key={user.id}
+    key={user.userId}
     isSelectValue={isSelectValue}
     withBottomMargin={!!removeOptionValue}
     onClick={() => removeOptionValue && removeOptionValue()}
   >
-    <Avatar avatarUrl={user.avatarUrl} name={user.name} size={24} />
-    <Username>{user.name}</Username>
+    <Avatar avatarUrl="https://pixlok.com/wp-content/uploads/2021/03/default-user-profile-picture.jpg" name={user.displayName} size={24} />
+    <Username>{user.displayName}</Username>
     {removeOptionValue && <Icon type="close" top={1} />}
   </User>
 );

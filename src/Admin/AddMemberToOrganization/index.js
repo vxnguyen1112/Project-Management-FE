@@ -6,14 +6,14 @@
 import React, { useState } from 'react';
 import { FileUploader } from 'react-drag-drop-files';
 import api from 'Services/apiPostfile';
-import { CSVLink } from "react-csv";
+import { CSVLink } from 'react-csv';
 import history from 'browserHistory';
 import { toast } from 'react-project-management';
 import './styles.css';
 
 const csvData = [
-  ["Username", "Password", "Email","DisplayName","FirstName","LastName"],
-  ["vanketk191", "Ket@15120011", "vanketk191@gmail.com","Ket Le","Ket","Le"]
+  ['Username', 'Password', 'Email', 'DisplayName', 'FirstName', 'LastName'],
+  ['vanketk191', 'Ket@15120011', 'vanketk191@gmail.com', 'Ket Le', 'Ket', 'Le'],
 ];
 const AddMember = () => {
   const fileTypes = ['CSV'];
@@ -21,11 +21,11 @@ const AddMember = () => {
   const [array, setArray] = useState([]);
   const fileReader = new FileReader();
   const csvFileToArray = string => {
-    const csvHeader = string.slice(0, string.indexOf("\n")).split(",");
-    const csvRows = string.slice(string.indexOf("\n") + 1).split("\n");
+    const csvHeader = string.slice(0, string.indexOf('\n')).split(',');
+    const csvRows = string.slice(string.indexOf('\n') + 1).split('\n');
 
     const array = csvRows.map(i => {
-      const values = i.split(",");
+      const values = i.split(',');
       const obj = csvHeader.reduce((object, header, index) => {
         object[header] = values[index];
         return object;
@@ -36,10 +36,10 @@ const AddMember = () => {
     setArray(array);
   };
 
-  const handleChange = (file) => {
+  const handleChange = file => {
     setFile(file);
     if (file) {
-      fileReader.onload = function (event) {
+      fileReader.onload = function(event) {
         const text = event.target.result;
         csvFileToArray(text);
       };
@@ -48,12 +48,15 @@ const AddMember = () => {
     }
   };
 
-  const handleOnSubmit =async e => {
+  const handleOnSubmit = async e => {
     e.preventDefault();
     try {
-      const formdata=new  FormData();
-      formdata.append('file',file);
-      await  api.post('/api/users/organizations/982a1cd0-5437-4df4-83fa-74009ac1077f/members',formdata);
+      const formdata = new FormData();
+      formdata.append('file', file);
+      await api.post(
+        '/api/users/organizations/982a1cd0-5437-4df4-83fa-74009ac1077f/members',
+        formdata,
+      );
       toast.success('Add member successfully');
       history.push('/admin');
     } catch (error) {
@@ -62,29 +65,37 @@ const AddMember = () => {
   };
   const headerKeys = Object.keys(Object.assign({}, ...array));
   return (
-
     <div style={{ textAlign: 'center' }}>
       <p>Please download example file add member:</p>
-      <CSVLink  className="snip1457" filename='add-member-example.csv'  data={csvData} enclosingCharacter="">Download me</CSVLink>
-   { file?  <table className="styled-table">
-        <thead>
-          <tr key="header">
-            {headerKeys.map((key) => (
-              <th>{key}</th>
-            ))}
-          </tr>
-        </thead>
-
-        <tbody>
-          {array.map((item) => (
-            <tr key={item.id}>
-              {Object.values(item).map((val) => (
-                <td>{val}</td>
+      <CSVLink
+        className="snip1457"
+        filename="add-member-example.csv"
+        data={csvData}
+        enclosingCharacter=""
+      >
+        Download me
+      </CSVLink>
+      {file ? (
+        <table className="styled-table">
+          <thead>
+            <tr key="header">
+              {headerKeys.map(key => (
+                <th>{key}</th>
               ))}
             </tr>
-          ))}
-        </tbody>
-      </table>:null}
+          </thead>
+
+          <tbody>
+            {array.map(item => (
+              <tr key={item.id}>
+                {Object.values(item).map(val => (
+                  <td>{val}</td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      ) : null}
       <form className="form">
         <FileUploader
           className="drop-container"
@@ -101,7 +112,6 @@ const AddMember = () => {
         >
           IMPORT CSV
         </button>
-       
       </form>
     </div>
   );

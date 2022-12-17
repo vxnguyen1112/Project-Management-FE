@@ -39,6 +39,7 @@ const filterFeild = (items) => {
             movedIssue.sprints.push(item);
         }
     })
+    // const stringifyJson = JSON.stringify(moveIssue);
     return movedIssue;
 }
 

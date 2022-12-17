@@ -7,7 +7,7 @@ import { Droppable, Draggable } from 'react-beautiful-dnd';
 import { toast } from 'react-project-management';
 import DropdownSelect from 'components/DropdownSelect';
 import ModalCustom from 'components/ModalCustom/ModalCustom';
-import CustomStatus from 'Project/Board/IssueDetails/CustomStatus';
+import CustomStatus from 'Project/TestBoard/IssueDetails/CustomStatus';
 import Divider from '../Divider';
 import "./Board.css";
 
@@ -147,7 +147,7 @@ const BoardBacklog = (props) => {
                                         key={item.id}
                                         draggableId={item.id}
                                         index={index}>
-                                        {(provided, snapshot) => (
+                                        {(provided, snapshot) => (  
                                             <div
                                                 className="issueArea"
                                                 ref={provided.innerRef}
@@ -167,7 +167,7 @@ const BoardBacklog = (props) => {
                                                         <span>{item.name}</span>
                                                     </div>
                                                     <div className="issueStatusArea">
-                                                        <CustomStatus issueStatusName={item.issuesStatusDto.name} updateIssue={() => {}} />
+                                                        <CustomStatus issueStatusName={item.issuesStatusDto.name} updateIssue={({state}) => {console.log(state);}} />
                                                         <DropdownSelect onSelect={() => setId(item.id)} items={items}/>
                                                     </div>
                                             </div>

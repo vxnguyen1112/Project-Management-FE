@@ -1535,6 +1535,11 @@
     "@webassemblyjs/wast-parser" "1.9.0"
     "@xtuc/long" "4.2.2"
 
+"@wojtekmaj/date-utils@^1.0.2":
+  "integrity" "sha512-1VPkkTBk07gMR1fjpBtse4G+oJqpmE+0gUFB0dg3VIL7qJmUVaBoD/vlzMm/jNeOPfvlmerl1lpnsZyBUFIRuw=="
+  "resolved" "http://146.190.104.63:8081/repository/npm-group/@wojtekmaj/date-utils/-/date-utils-1.0.3.tgz"
+  "version" "1.0.3"
+
 "@xtuc/ieee754@^1.2.0":
   "integrity" "sha512-DX8nKgqcGwsc0eJSqYt5lwP4DH5FlHnmuWWBRy7X0NcaGR0ZtuyeESgMwTYVEtxmsNGY+qit4QYT/MIYTOTPeA=="
   "resolved" "http://146.190.104.63:8081/repository/npm-group/@xtuc/ieee754/-/ieee754-1.2.0.tgz"
@@ -2348,6 +2353,11 @@
   "integrity" "sha1-G39Ln1kfHo+DZwQBYANFoCiHQ18= sha512-3Pe/CF1Nn94hyhIYpjtiLhdCoEoz0DqQ+988E9gmeEdQZlojxnOb74wctFyuwWQHzqyf9X7C7MG8juUpqBJT8w=="
   "resolved" "http://146.190.104.63:8081/repository/npm-group/clone/-/clone-2.1.2.tgz"
   "version" "2.1.2"
+
+"clsx@^1.2.1":
+  "integrity" "sha512-EcR6r5a8bj6pu3ycsa/E/cKVGuTgZJZdsyUYHOksG/UHIiKfjxzRxYJpyVBwYaQeOvghal9fcc4PidlgzugAQg=="
+  "resolved" "http://146.190.104.63:8081/repository/npm-group/clsx/-/clsx-1.2.1.tgz"
+  "version" "1.2.1"
 
 "code-point-at@^1.0.0":
   "integrity" "sha1-DQcLTQQ6W+ozovGkDi7bPZpMz3c= sha512-RpAVKQA5T63xEj6/giIbUEtZwJ4UFIc3ZtvEkiaUERylqe8xb5IvqcgOurZLahv93CLKfxcw5YI+DZcUBRyLXA=="
@@ -3908,6 +3918,13 @@
     "call-bind" "^1.0.2"
     "get-intrinsic" "^1.1.1"
 
+"get-user-locale@^1.2.0":
+  "integrity" "sha512-WiNpoFRcHn1qxP9VabQljzGwkAQDrcpqUtaP0rNBEkFxJdh4f3tik6MfZsMYZc+UgQJdGCxWEjL9wnCUlRQXag=="
+  "resolved" "http://146.190.104.63:8081/repository/npm-group/get-user-locale/-/get-user-locale-1.5.1.tgz"
+  "version" "1.5.1"
+  dependencies:
+    "lodash.memoize" "^4.1.1"
+
 "get-value@^2.0.3", "get-value@^2.0.6":
   "integrity" "sha1-3BXKHGcjh8p2vTesCjlbogQqLCg= sha512-Ln0UQDlxH1BapMu3GPtf7CuYNwRZf2gwCuPqbyG6pB8WfmFpzqcy4xtAaAMUhnNqjMKTiCPZG2oMT3YSx8U2NA=="
   "resolved" "http://146.190.104.63:8081/repository/npm-group/get-value/-/get-value-2.0.6.tgz"
@@ -5080,6 +5097,11 @@
   "integrity" "sha512-rlrc3yU3+JNOpZ9zj5pQtxnx2THmvRykwL4Xlxoa8I9lHBlVbbyPhgyPMioxVZ4NqyxaVVtaJnzsyOidQIhyyQ=="
   "resolved" "http://146.190.104.63:8081/repository/npm-group/lodash-es/-/lodash-es-4.17.15.tgz"
   "version" "4.17.15"
+
+"lodash.memoize@^4.1.1":
+  "integrity" "sha512-t7j+NzmgnQzTAYXcsHYLgimltOV1MXHtlOWf6GjL9Kj8GK5FInw5JotxvbOs+IvV1/Dzo04/fCGfLVs7aXb4Ag=="
+  "resolved" "http://146.190.104.63:8081/repository/npm-group/lodash.memoize/-/lodash.memoize-4.1.2.tgz"
+  "version" "4.1.2"
 
 "lodash@^4.17.11", "lodash@^4.17.12", "lodash@^4.17.13", "lodash@^4.17.14", "lodash@^4.17.15", "lodash@^4.17.20", "lodash@^4.17.21", "lodash@^4.17.3":
   "integrity" "sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg=="
@@ -6311,6 +6333,16 @@
     "react-redux" "^7.1.1"
     "redux" "^4.0.4"
     "use-memo-one" "^1.1.1"
+
+"react-calendar@^4.0.0":
+  "integrity" "sha512-y9Q5Oo3Mq869KExbOCP3aJ3hEnRZKZ0TqUa9QU1wJGgDZFrW1qTaWp5v52oZpmxTTrpAMTUcUGaC0QJcO1f8Nw=="
+  "resolved" "http://146.190.104.63:8081/repository/npm-group/react-calendar/-/react-calendar-4.0.0.tgz"
+  "version" "4.0.0"
+  dependencies:
+    "@wojtekmaj/date-utils" "^1.0.2"
+    "clsx" "^1.2.1"
+    "get-user-locale" "^1.2.0"
+    "prop-types" "^15.6.0"
 
 "react-content-loader@^4.3.3":
   "integrity" "sha512-9DdPa6rt013sO5Z2TBnRLExSBVPMwcFP9nxFKQXyQHo71/xR4nfiQqQvFFI92XQlahILYZPr+S/W5hWuRmbYjg=="

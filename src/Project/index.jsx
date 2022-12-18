@@ -278,7 +278,7 @@ const Project = () => {
         path={`${match.path}/list-issues`}
         render={() => <ListIssues/>}
       />
-      {match.isExact && <Redirect to={`${match.url}/board`} />}
+      {match.isExact && <Redirect to={`${match.url}/test-board`} />}
     </ProjectPage>
   );
 };

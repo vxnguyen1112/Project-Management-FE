@@ -1,13 +1,13 @@
 /* eslint-disable react/no-unescaped-entities */
 /* eslint-disable no-nested-ternary */
 import React, { useState, useEffect } from 'react';
-import { useTable, useSortBy,useGlobalFilter } from 'react-table';
-import { IssueTypeIcon, IssuePriorityIcon } from 'components';
+import { useTable, useSortBy, useGlobalFilter } from 'react-table';
+import { IssuePriorityIcon } from 'components';
 import api from 'Services/api';
+import { store } from 'store';
 import { toast } from 'react-project-management';
 import moment from 'moment';
 import { GlobalFilter, Table } from './Styles';
-
 
 const ListIssues = () => {
   const [listIssues, setListIssues] = useState([]);
@@ -15,7 +15,7 @@ const ListIssues = () => {
     getData();
   }, []);
   const getData = async () => {
-    await api.get('/api/issues?project_id=1a27f30a-7703-4b62-bc1e-d7c3e94c15ae').then(
+    await api.get(`/api/issues?project_id=${store.getState().listproject.projectId}`).then(
       data => {
         setListIssues(data);
       },
@@ -60,23 +60,29 @@ const ListIssues = () => {
       },
       {
         Header: 'Type',
-        accessor: 'issuesStatusDto',
-        Cell: ({ cell: { value } }) => <IssueTypeIcon type="task" />,
+        accessor: 'issuesTypeDto',
+        Cell: ({ cell: { value } }) => {
+          console.log(value);
+          return <img src={value.urlIcon} alt="new" />;
+        },
       },
     ],
     [],
   );
-  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow ,state, setGlobalFilter} = useTable(
-    { columns, data: listIssues },
-    useGlobalFilter,
-    useSortBy,
-    
-  );
+  const {
+    getTableProps,
+    getTableBodyProps,
+    headerGroups,
+    rows,
+    prepareRow,
+    state,
+    setGlobalFilter,
+  } = useTable({ columns, data: listIssues }, useGlobalFilter, useSortBy);
 
   const onClickRow = id => {
     console.log(id);
   };
-  const { globalFilter } = state
+  const { globalFilter } = state;
   return (
     // eslint-disable-next-line react/jsx-filename-extension
     <div className="listproject">

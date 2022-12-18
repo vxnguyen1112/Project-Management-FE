@@ -1,15 +1,18 @@
+/* eslint-disable no-undef */
 /* eslint-disable react/button-has-type */
 /* eslint-disable jsx-a11y/label-has-associated-control */
-import React, { useState } from 'react';
+import React, { useState} from 'react';
 import { Link } from 'react-router-dom';
+import { useDispatch} from 'react-redux';
+import { login } from 'store/reducers/authSlice';
+import { store } from 'store';
 import history from 'browserHistory';
 import { FacebookLoginButton, InstagramLoginButton } from 'react-social-login-buttons';
-import { toast ,storeAuthToken} from 'react-project-management';
-
-import api from 'Services/api';
+import { toast } from 'react-project-management';
 
 const SignInForm = () => {
-  const [state, setState] = useState({ username: '', password: 'Ket@1512001' });
+  const dispatch = useDispatch();
+  const [state, setState] = useState({ username: 'nguyenkhanh', password: 'Khanh2001!' });
   const [formErrors, setFormErrors] = useState({});
   const validate = values => {
     const errors = {};
@@ -35,19 +38,21 @@ const SignInForm = () => {
     });
   };
   const handleSubmit = async event => {
-    const errors=validate(state);
+    const errors = validate(state);
     setFormErrors(errors);
     event.preventDefault();
     if (Object.keys(errors).length === 0) {
-      try {
-        const data = await api.post('/api/auth/signin', JSON.stringify(state));
-        storeAuthToken(data.accessToken);
-        toast.success('Logged in successfully');
-        history.push('/home');
-      } catch (error) {
-        toast.error(error);
-      } 
+      dispatch(login(state))
+        .unwrap()
+        .then(() => {
+          toast.success(store.getState().message.message);
+          history.push('/home');
+        })
+        .catch(() => {
+          toast.error(store.getState().message.message);
+        });
       setFormErrors({});
+
     }
   };
   return (

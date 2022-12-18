@@ -1,18 +1,20 @@
 import axios from 'axios';
-import { toast , objectToQueryString , getStoredAuthToken, removeStoredAuthToken } from 'react-project-management';
-import history from 'browserHistory';
+import { toast , objectToQueryString } from 'react-project-management';
+import {logout} from "store/reducers/authSlice";
+import { store } from 'store';
 
-const token = authToken => {
-  if (authToken === null || authToken === undefined || authToken === '') {
+const token = () => {
+  const getUser=store.getState().auth.user;
+  if (getUser === null || getUser === undefined || getUser === '') {
     return '';
   }
-  return `Bearer ${authToken}`;
+  return `${getUser.tokenType} ${getUser.accessToken}`;
 };
 const defaults = {
   baseURL: process.env.API_URL || 'http://139.59.96.208:8000',
   headers: () => ({
     'Content-Type': 'application/json',
-    Authorization: token(getStoredAuthToken()),
+    Authorization: token(),
     accept:'*/*',
   }),
   error: {
@@ -40,8 +42,7 @@ const api = (method, url, variables) =>
       error => {
         if (error.response) {
           if (error.response.data.code === 401) {
-            removeStoredAuthToken();
-            history.push('/login');
+            store.dispatch(logout())
           } else {
             reject(error.response.data.message);
           }

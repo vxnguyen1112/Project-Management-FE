@@ -1,0 +1,71 @@
+.addMemberButton{
+    border: none;
+    background-color: #238636;
+    border-radius: 5px;
+    color: #ffffff;
+    cursor: pointer;
+    padding: 0px 30px;
+    display: inline-block;
+    margin-left: 30px;
+    text-transform: uppercase;
+    line-height: 46px;
+    font-weight: 200;
+    font-size: 1em;
+    outline: none;
+    position: relative;
+    overflow: hidden;
+    font-size: 16px;
+    border-radius: 6px;
+    letter-spacing: 2px;
+    -webkit-transform: translateZ(0);
+    -webkit-transition: all 0.35s ease;
+    transition: all 0.35s ease;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+}
+.search-member{
+    min-width: 45%;
+}
+.input-search{
+  margin-top :5px;
+  border: 1px solid grey;
+  border-radius: 5px;
+  height: 40px;
+  width: 100%;
+  padding: 2px 23px 2px 30px;
+  outline: 0;
+}
+
+.search-icon-member{
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    width: 14px;
+}
+.list-member{
+    position: absolute;
+    min-width: 45%;
+    border-radius: 6px;
+    border: 1px solid grey;
+}
+.member{
+
+    border-bottom: 1px solid;
+    background-color: #f4f5f7;
+    padding: 13px 30px;
+  
+}
+.isMemberSelect
+{
+    display: inline-flex;
+    justify-content: center;
+    border: none;
+    background-color: #afb7b0;
+    border-radius: 5px;
+    color: black;
+    padding: 0px 30px;
+    margin-left: 30px;
+    box-sizing: border-box;
+    align-items: center;
+    font-style: italic;
+}

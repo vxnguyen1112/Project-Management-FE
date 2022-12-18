@@ -2,12 +2,13 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 import React, { useState } from "react";
 import { NavLink} from "react-router-dom";
-import { removeStoredAuthToken } from 'react-project-management';
+import {logout} from "store/reducers/authSlice";
+import { useDispatch } from "react-redux";
 import "./navbar.css";
 
 const NavBar=()=> {
+  const dispatch = useDispatch();
   const [click, setClick] = useState(false);
-
   const handleClick = () => setClick(!click);
   return (
     // eslint-disable-next-line react/jsx-filename-extension
@@ -15,7 +16,7 @@ const NavBar=()=> {
       <nav className="navbar">
         <div className="nav-container">
           <NavLink exact to="/" className="nav-logo">
-            Project management
+           <img src="../../favicon.png" alt="" style={{width:'74px',marginLeft:"24px"}} />
             <i className="fas fa-code" />
           </NavLink>
 
@@ -34,18 +35,7 @@ const NavBar=()=> {
             <li className="nav-item">
               <NavLink
                 exact
-                to="/home/project-create"
-                activeClassName="active"
-                className="nav-links"
-                onClick={handleClick}
-              >
-                Add project
-              </NavLink>
-            </li>
-            <li className="nav-item">
-              <NavLink
-                exact
-                to="/blog"
+                to="/home/account"
                 activeClassName="active"
                 className="nav-links"
                 onClick={handleClick}
@@ -59,7 +49,7 @@ const NavBar=()=> {
                 to="/login"
                 activeClassName="active"
                 className="nav-links"
-                onClick={()=>removeStoredAuthToken()}
+                onClick={()=> dispatch(logout())}
               >
                 Logout
               </NavLink>

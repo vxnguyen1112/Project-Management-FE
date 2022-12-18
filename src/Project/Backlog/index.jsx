@@ -69,16 +69,15 @@ const moveIssue = async movedIssue => {
 };
 
 const Backlog = () => {
-  // const boards = useSelector(selectBacklog);
   const [boards, setBoards] = useState(null);
   const [boardStatus, setBoardStatus] = useState('empty');
-  // const boardStatus = useSelector((state) => state.backlog.state);
-  // const dispatch = useDispatch();
   const [isMove, setIsMove] = useState(false);
   const [doCreateIssue, setDoCreateIssue] = useState(false);
   const [doDeleteIssue, setDoDeleteIssue] = useState(false);
   const [doCreateSprint, setDoCreateSprint] = useState(false);
+  const [doStartSprint, setDoStartSprint] = useState(false);
   const [doDeleteSprint, setDoDeleteSprint] = useState(false);
+  const [doCompleteSprint, setDoCompleteSprint] = useState(false);
 
   let sortedBoards;
   if (boardStatus !== 'empty') {
@@ -96,7 +95,16 @@ const Backlog = () => {
       .catch(err => {
         toast.error(err);
       });
-  }, [boardStatus, isMove, doCreateIssue, doDeleteIssue, doCreateSprint, doDeleteSprint]);
+  }, [
+    boardStatus,
+    isMove,
+    doCreateIssue,
+    doDeleteIssue,
+    doCreateSprint,
+    doStartSprint,
+    doDeleteSprint,
+    doCompleteSprint,
+  ]);
 
   const onDragEnd = result => {
     const { source, destination } = result;
@@ -112,7 +120,7 @@ const Backlog = () => {
         source.index,
         destination.index,
       );
-      
+
       moveIssue(filterFeild(items))
         .then(res => {
           toast.success(res.message);
@@ -152,6 +160,21 @@ const Backlog = () => {
       <FormHeading>Backlog</FormHeading>
 
       <DragDropContext onDragEnd={onDragEnd}>
+        {boardStatus !== 'empty' &&
+          sortedBoards.sprints.map(sprint => (
+            <BoardSprint
+              key={sprint.id}
+              sprint={sprint}
+              getListStyle={getListStyle}
+              getItemStyle={getItemStyle}
+              setDoCreateIssue={setDoCreateIssue}
+              setDoStartSprint={setDoStartSprint}
+              setDoDeleteIssue={setDoDeleteIssue}
+              setDoDeleteSprint={setDoDeleteSprint}
+              setDoCompleteSprint={setDoCompleteSprint}
+            />
+          ))}
+
         {boardStatus !== 'empty' && (
           <BoardBacklog
             droppableId="#backlog"
@@ -164,18 +187,6 @@ const Backlog = () => {
             setDoCreateSprint={setDoCreateSprint}
           />
         )}
-        {boardStatus !== 'empty' &&
-          sortedBoards.sprints.map(sprint => (
-            <BoardSprint
-              key={sprint.id}
-              sprint={sprint}
-              getListStyle={getListStyle}
-              getItemStyle={getItemStyle}
-              setDoCreateIssue={setDoCreateIssue}
-              setDoDeleteIssue={setDoDeleteIssue}
-              setDoDeleteSprint={setDoDeleteSprint}
-            />
-          ))}
       </DragDropContext>
     </div>
   );

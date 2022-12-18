@@ -12,6 +12,12 @@ import CustomStatus from 'Project/TestBoard/IssueDetails/CustomStatus';
 import Divider from '../Divider';
 import './Board.css';
 
+const statusMap = {
+  todo: 'TO DO',
+  inprogress: 'IN PROGRESS',
+  done: 'DONE',
+};
+
 const addIssue = async newIssue => {
   const res = await api.post(`/api/issues`, JSON.stringify(newIssue));
   return res;
@@ -73,7 +79,7 @@ const BoardBacklog = props => {
     if (issueContent.trim() === '') {
       toast.error('Vui lòng nhập tên issue');
     } else {
-      const issuesStatusId = issueStatusList.map(issueStatus => issueStatus.name === 'TO DO')[0].id;
+      const issuesStatusId = issueStatusList.filter(issueStatus => issueStatus.name === 'TO DO')[0].id;
 
       addIssue({
         issueTypeId: selectedOption.id,
@@ -150,34 +156,59 @@ const BoardBacklog = props => {
 
               {backlog.map((item, index) => (
                 <Draggable key={item.id} draggableId={item.id} index={index}>
-                  {(provided, snapshot) => (
-                    <div
-                      className="issueArea"
-                      ref={provided.innerRef}
-                      {...provided.draggableProps}
-                      {...provided.dragHandleProps}
-                      style={getItemStyle(snapshot.isDragging, provided.draggableProps.style)}
-                    >
-                      <div className="issueTypeIcon">
-                        <img src={item.issuesTypeDto.urlIcon} alt="" />
+                  {(provided, snapshot) => {
+                    // eslint-disable-next-line react-hooks/rules-of-hooks
+                    const [hover, setHover] = useState(false);
+                    // eslint-disable-next-line react-hooks/rules-of-hooks
+                    const [issue, setIssue] = useState(item);
+
+                    const updateIssueStatus = obj => {
+                      const statusName = statusMap[obj.status];
+                      const status = issueStatusList.filter(
+                        issueStatus => issueStatus.name === statusName,
+                      )[0];
+                      console.log(status);
+                      setIssue(prev => ({
+                        ...prev,
+                        issuesStatusDto: status,
+                      }));
+                    };
+
+                    return (
+                      <div
+                        className="issueArea"
+                        ref={provided.innerRef}
+                        {...provided.draggableProps}
+                        {...provided.dragHandleProps}
+                        onMouseEnter={() => setHover(true)}
+                        onMouseLeave={() => setHover(false)}
+                        style={getItemStyle(snapshot.isDragging, provided.draggableProps.style)}
+                      >
+                        <div className="issueTypeIcon">
+                          <img src={item.issuesTypeDto.urlIcon} alt="" />
+                        </div>
+                        <div className="issueId">
+                          <span>{item.issuesKey}</span>
+                        </div>
+                        <div className="issueContent">
+                          <span>{item.name}</span>
+                        </div>
+                        <div className="issueStatusArea">
+                          <CustomStatus
+                            issueStatusName={issue.issuesStatusDto.name}
+                            updateIssue={obj => {
+                              updateIssueStatus(obj);
+                            }}
+                          />
+                          {!hover && <div className="dropdown" />}
+
+                          {hover && (
+                            <DropdownSelect onSelect={() => setId(item.id)} items={items} />
+                          )}
+                        </div>
                       </div>
-                      <div className="issueId">
-                        <span>{item.issuesKey}</span>
-                      </div>
-                      <div className="issueContent">
-                        <span>{item.name}</span>
-                      </div>
-                      <div className="issueStatusArea">
-                        <CustomStatus
-                          issueStatusName={item.issuesStatusDto.name}
-                          updateIssue={({ state }) => {
-                            console.log(state);
-                          }}
-                        />
-                        <DropdownSelect onSelect={() => setId(item.id)} items={items} />
-                      </div>
-                    </div>
-                  )}
+                    );
+                  }}
                 </Draggable>
               ))}
 

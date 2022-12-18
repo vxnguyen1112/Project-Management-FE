@@ -5,7 +5,7 @@ import { CopyLinkButton, Button, AboutTooltip } from 'components';
 import CustomStatus from 'Project/TestBoard/IssueDetails/CustomStatus';
 import Divider from 'Project/Backlog/Divider';
 import { toast } from 'react-project-management';
-import store from 'store';
+import { store } from 'store';
 import Type from './Type';
 import Delete from './Delete';
 import Title from './Title';
@@ -31,11 +31,11 @@ const statusMap = {
 };
 
 const updateIssueDetail = async (issueId, issue, modalClose) => {
-  const { issuesStatusDto, issuesTypeDto, ...rest } = issue;
+  const { issuesStatusDto, issuesTypeDto, id, ...rest } = issue;
   const updatedIssue = {
     ...rest,
     issuesStatusId: issuesStatusDto.id,
-    issueTypeId: issuesTypeDto.id,
+    organizationId: store.getState().auth.user.organizationId,
   };
   console.log(updatedIssue);
   try {
@@ -44,7 +44,7 @@ const updateIssueDetail = async (issueId, issue, modalClose) => {
     modalClose();
     toast.success('Update issue successfully');
   } catch (err) {
-    toast.success(err);
+    toast.err(err);
   }
 };
 
@@ -143,7 +143,7 @@ const ProjectBoardIssueDetails = ({ issueId, projectUsers, fetchProject, modalCl
                 variant="primary"
                 onClick={() => updateIssueDetail(issueId, issue, modalClose)}
               >
-                Create sprint
+                Update issue
               </Button>
             </Right>
           </Content>

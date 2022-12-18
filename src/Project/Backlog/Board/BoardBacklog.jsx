@@ -44,6 +44,7 @@ const BoardBacklog = props => {
     setDoDeleteIssue,
     setDoCreateSprint,
   } = props;
+
   const [isCreateIssue, setIsCreateIssue] = useState(false);
   const [issueContent, setIssueContent] = useState('');
   const [isOpenDeleteModal, setIsOpenDeleteModal] = useState(false);
@@ -79,7 +80,8 @@ const BoardBacklog = props => {
     if (issueContent.trim() === '') {
       toast.error('Vui lòng nhập tên issue');
     } else {
-      const issuesStatusId = issueStatusList.filter(issueStatus => issueStatus.name === 'TO DO')[0].id;
+      const issuesStatusId = issueStatusList.filter(issueStatus => issueStatus.name === 'TO DO')[0]
+        .id;
 
       addIssue({
         issueTypeId: selectedOption.id,

@@ -3,13 +3,15 @@ import { uuid } from 'uuidv4';
 import Select from 'react-select';
 import api from 'Services/api';
 import { store } from 'store';
-import { Button } from 'components';
+import { Button, Modal } from 'components';
 import { Droppable, Draggable } from 'react-beautiful-dnd';
 import { toast } from 'react-project-management';
 import DropdownSelect from 'components/DropdownSelect';
 import CustomStatus from 'Project/TestBoard/IssueDetails/CustomStatus';
 import ModalOptionCustom from 'components/ModalCustom/ModalOptionCustom';
 import ModalCustom from 'components/ModalCustom/ModalCustom';
+// import IssueDetails from 'Project/TestBoard/IssueDetails';
+// import { Route, Link, useRouteMatch, useHistory } from 'react-router-dom';
 import Divider from '../Divider';
 import './Board.css';
 
@@ -62,6 +64,8 @@ const BoardSprint = props => {
     setDoDeleteSprint,
     setDoCompleteSprint,
   } = props;
+  // const match = useRouteMatch();
+  // const history = useHistory();
   const [isCreateIssue, setIsCreateIssue] = useState(false);
   const [issueContent, setIssueContent] = useState('');
   const [isOpenDeleteIssueModal, setIsOpenDeleteIssueModal] = useState(false);
@@ -230,6 +234,7 @@ const BoardSprint = props => {
                 sprint.issuesList.map((item, index) => (
                   <Draggable key={item.id} draggableId={item.id} index={index}>
                     {(provided, snapshot) => {
+                      // const match = useRouteMatch();
                       // eslint-disable-next-line react-hooks/rules-of-hooks
                       const [hover, setHover] = useState(false);
                       // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -248,6 +253,7 @@ const BoardSprint = props => {
                       };
 
                       return (
+                        // <Link to={`${match.url}/issues/${item.id}`}>
                         <div
                           className="issueArea"
                           ref={provided.innerRef}
@@ -280,6 +286,7 @@ const BoardSprint = props => {
                             )}
                           </div>
                         </div>
+                        // </Link>
                       );
                     }}
                   </Draggable>
@@ -393,6 +400,28 @@ const BoardSprint = props => {
           }}
         />
       )}
+
+      {/* <Route
+        path={`${match.path}/issues/:issueId`}
+        render={routeProps => (
+          <Modal
+            isOpen
+            testid="modal:issue-details"
+            width={1040}
+            withCloseIcon={false}
+            onClose={() => history.push(match.url)}
+            renderContent={modal => (
+              <IssueDetails
+                issueId={routeProps.match.params.issueId}
+                projectUsers={members}
+                fetchProject={() => {}}
+                updateLocalProjectIssues={() => {}}
+                modalClose={modal.close}
+              />
+            )}
+          />
+        )}
+      /> */}
     </React.Fragment>
   );
 };

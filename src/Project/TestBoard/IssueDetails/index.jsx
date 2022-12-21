@@ -37,7 +37,7 @@ const updateIssueDetail = async (issueId, issue, modalClose) => {
     issuesStatusId: issuesStatusDto.id,
     organizationId: store.getState().auth.user.organizationId,
   };
-  console.log(updatedIssue);
+  console.log("Updated", updatedIssue);
   try {
     const res = await api.put(`/api/issues/${issueId}`, updatedIssue);
     console.log(res);
@@ -64,7 +64,7 @@ const ProjectBoardIssueDetails = ({ issueId, projectUsers, fetchProject, modalCl
   const updateIssueStatus = obj => {
     const statusName = statusMap[obj.status];
     const status = issueStatusList.filter(issueStatus => issueStatus.name === statusName)[0];
-
+    
     setIssue(prev => ({
       ...prev,
       issuesStatusDto: status,
@@ -74,6 +74,7 @@ const ProjectBoardIssueDetails = ({ issueId, projectUsers, fetchProject, modalCl
   useEffect(() => {
     const getIssueDetail = async () => {
       const res = await api.get(`/api/issues/${issueId}`);
+      console.log(res);
       setIssue(res);
     };
 
@@ -81,6 +82,7 @@ const ProjectBoardIssueDetails = ({ issueId, projectUsers, fetchProject, modalCl
       const res = await api.get(
         `/api/issues-status?organizationId=${store.getState().auth.user.organizationId}`,
       );
+
       setIssueStatusList(res);
     };
     getIssueDetail();

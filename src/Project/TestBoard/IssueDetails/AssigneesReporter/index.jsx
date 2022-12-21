@@ -13,9 +13,9 @@ const propTypes = {
 };
 
 const ProjectBoardIssueDetailsAssigneesReporter = ({ issue, updateIssue, projectUsers }) => {
-  const getUserById = userId => projectUsers.find(user => user.userId === userId);
+  const getUserById = id => projectUsers.find(user => user.id === id);
 
-  const userOptions = projectUsers.map(user => ({ value: user.userId, label: user.displayName }));
+  const userOptions = projectUsers.map(user => ({ value: user.id, label: user.displayName }));
 
   return (
     <Fragment>
@@ -25,15 +25,15 @@ const ProjectBoardIssueDetailsAssigneesReporter = ({ issue, updateIssue, project
         dropdownWidth={343}
         placeholder="Unassigned"
         name="assignees"
-        value={issue.id}
+        value={issue.assignMemberId}
         options={userOptions}
         onChange={assignMemberId => {
           updateIssue({ assignMemberId });
         }}
-        renderValue={({ value: userId, removeOptionValue }) =>
-          renderUser(getUserById(userId), true, removeOptionValue)
+        renderValue={({ value: id, removeOptionValue }) =>
+          renderUser(getUserById(id), true, removeOptionValue)
         }
-        renderOption={({ value: userId }) => renderUser(getUserById(userId), false)}
+        renderOption={({ value: id }) => renderUser(getUserById(id), false)}
       />
       {/* 
       <SectionTitle>Reporter</SectionTitle>
@@ -44,9 +44,9 @@ const ProjectBoardIssueDetailsAssigneesReporter = ({ issue, updateIssue, project
         name="reporter"
         value={issue.reporterId}
         options={userOptions}
-        onChange={userId => updateIssue({ reporterId: userId })}
-        renderValue={({ value: userId }) => renderUser(getUserById(userId), true)}
-        renderOption={({ value: userId }) => renderUser(getUserById(userId))}
+        onChange={id => updateIssue({ reporterId: id })}
+        renderValue={({ value: id }) => renderUser(getUserById(id), true)}
+        renderOption={({ value: id }) => renderUser(getUserById(id))}
       /> */}
     </Fragment>
   );
@@ -54,7 +54,7 @@ const ProjectBoardIssueDetailsAssigneesReporter = ({ issue, updateIssue, project
 
 const renderUser = (user, isSelectValue, removeOptionValue) => (
   <User
-    key={user.userId}
+    key={user.id}
     isSelectValue={isSelectValue}
     withBottomMargin={!!removeOptionValue}
     onClick={() => removeOptionValue && removeOptionValue()}

@@ -106,7 +106,7 @@ const Backlog = () => {
     doCompleteSprint,
   ]);
 
-  const onDragEnd = result => {
+  const onDragEnd = async result => {
     const { source, destination } = result;
 
     if (!destination) {
@@ -121,13 +121,12 @@ const Backlog = () => {
         destination.index,
       );
 
-      moveIssue(filterFeild(items))
-        .then(res => {
-          toast.success(res.message);
-        })
-        .catch(err => {
-          toast.error(err);
-        });
+      try {
+        const res = await moveIssue(filterFeild(items));
+        toast.success(res.message);
+      } catch (err) {
+        toast.error(err);
+      }
     } else {
       const items = move(
         sortedBoards,
@@ -137,13 +136,12 @@ const Backlog = () => {
         destination,
       );
 
-      moveIssue(filterFeild(items))
-        .then(res => {
-          toast.success(res.message);
-        })
-        .catch(err => {
-          toast.error(err);
-        });
+      try {
+        const res = await moveIssue(filterFeild(items));
+        toast.success(res.message);
+      } catch (err) {
+        toast.error(err);
+      }
     }
     setIsMove(!isMove);
   };

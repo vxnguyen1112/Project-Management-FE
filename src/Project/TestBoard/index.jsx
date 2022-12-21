@@ -93,6 +93,7 @@ const ProjectBoard = () => {
 
     const getMembers = async () => {
       const res = await api.get(`/api/members/projects/${projectId}/search`);
+      console.log(res);
       setMembers(res);
     };
 

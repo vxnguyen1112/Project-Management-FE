@@ -118,7 +118,7 @@ const BoardBacklog = props => {
         setDoCreateSprint(prev => !prev);
       })
       .catch(err => {
-        toast.err(err);
+        toast.error(err);
       });
   };
 
@@ -283,7 +283,7 @@ const BoardBacklog = props => {
                 toast.success('Delete issue successfully');
               })
               .catch(err => {
-                toast.err(err);
+                toast.error(err);
               });
           }}
           setModalOpen={setIsOpenDeleteModal}

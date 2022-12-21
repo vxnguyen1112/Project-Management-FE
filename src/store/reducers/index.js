@@ -1,4 +1,4 @@
-import { combineReducers } from "redux";
+import { combineReducers } from 'redux';
 import storage from 'redux-persist/lib/storage';
 import { persistReducer } from 'redux-persist';
 import backlogReducer from "./backlogSlice";
@@ -16,11 +16,10 @@ const allReducers = combineReducers({
 });
 
 const persistConfig = {
-    key: 'root',
-    storage,
-  }
-  
-const persistedReducer = persistReducer(persistConfig, allReducers)
+  key: 'root',
+  storage,
+};
 
+const persistedReducer = persistReducer(persistConfig, allReducers);
 
 export default persistedReducer;

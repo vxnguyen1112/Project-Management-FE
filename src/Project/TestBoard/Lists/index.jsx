@@ -1,39 +1,154 @@
-import React from 'react';
+import { update } from 'lodash';
+import React, { useState, useEffect } from 'react';
 import { DragDropContext } from 'react-beautiful-dnd';
-import { moveItemWithinArray, insertItemIntoArray } from 'react-project-management';
-
+import { toast } from 'react-project-management';
+import api from 'Services/api';
+import { store } from 'store';
 import List from './List';
 import { Lists } from './Styles';
 
-const ProjectBoardLists = (props) => {
-  const {boards} = props;
+const filterFeild = (projectId, sprintId, items) => {
+  const movedIssue = {
+    projectId,
+    backlogs: [],
+    sprints: [
+      {
+        id: sprintId,
+        issuesList: items,
+      },
+    ],
+  };
 
-  const handleIssueDrop = ({ draggableId, destination, source }) => {
+  return movedIssue;
+};
+
+const getBoardId = (sprints, sprintId, boardName) => {
+  const sprintItem = sprints.filter(sprint => sprint.id === sprintId)[0];
+
+  const boardId = sprintItem.boards.filter(board => board.name === boardName)[0].id;
+  return boardId;
+};
+
+const reorder = (list, startIndex, endIndex) => {
+  const result = Array.from(list);
+  const [removed] = result.splice(startIndex.index, 1);
+
+  result.splice(endIndex.index, 0, removed);
+
+  for (let i = 0; i < result.length - 1; i++) {
+    for (let j = i + 1; j < result.length; j++) {
+      if (result[i].position > result[j].position) {
+        const b = result[i].position;
+        result[i].position = result[j].position;
+        result[j].position = b;
+      }
+    }
+  }
+
+  const updatedPostion = result.map((issue, index) => ({
+    id: issue.id,
+    position: index,
+    boardId: issue.boardId,
+  }));
+  return updatedPostion;
+};
+
+/**
+ * Moves an item from one list to another list.
+ */
+const move = (sprints, sprintId, list, source, destination) => {
+  const sourceClone = Array.from(list[source.droppableId]);
+  const destClone = Array.from(list[destination.droppableId]);
+  const [removed] = sourceClone.splice(source.index, 1);
+
+  const destBoardId = getBoardId(sprints, sprintId, destination.droppableId);
+
+  destClone.splice(destination.index, 0, { ...removed, boardId: destBoardId });
+
+  for (let i = 0; i < destClone.length - 1; i++) {
+    for (let j = i + 1; j < destClone.length; j++) {
+      if (destClone[i].position > destClone[j].position) {
+        const b = destClone[i].position;
+        destClone[i].position = destClone[j].position;
+        destClone[j].position = b;
+      }
+    }
+  }
+  const result = sourceClone.concat(destClone);
+
+  const updatedPostion = result.map((issue, index) => ({
+    id: issue.id,
+    position: index,
+    boardId: issue.boardId,
+  }));
+  return {
+    items: updatedPostion,
+    issue: { id: removed.id, issusStatusName: destination.droppableId },
+  };
+};
+
+const moveIssue = async movedIssue => {
+  const res = await api.post(`/api/issues/move`, JSON.stringify(movedIssue));
+  return res;
+};
+
+const updateIssueDetail = async (issueId, issuesStatusId) => {
+  try {
+    const res = await api.put(`/api/issues/${issueId}`, { issuesStatusId });
+    toast.success('Update issue successfully');
+  } catch (err) {
+    toast.success(err);
+  }
+};
+
+const ProjectBoardLists = props => {
+  const { boards, projectId, sprintId, sprints, setIsMove } = props;
+  const [issueStatusList, setIssueStatusList] = useState([]);
+
+  useEffect(() => {
+    const getAllIssueStatus = async () => {
+      const res = await api.get(
+        `/api/issues-status?organizationId=${store.getState().auth.user.organizationId}`,
+      );
+      setIssueStatusList(res);
+    };
+    getAllIssueStatus();
+  }, []);
+
+  const handleIssueDrop = async ({ draggableId, destination, source }) => {
     if (!isPositionChanged(source, destination)) return;
-    console.log(draggableId, destination, source);
-    const issueId = Number(draggableId);
 
-    // sửa lại chỗ ni call api đổi vị trí issues.
-    // api.optimisticUpdate(`/issues/${issueId}`, {
-    //   updatedFields: {
-    //     status: destination.droppableId,
-    //     listPosition: calculateIssueListPosition(project.issues, destination, source, issueId),
-    //   },
-    //   currentFields: project.issues.find(({ id }) => id === issueId),
-    //   setLocalData: fields => updateLocalProjectIssues(issueId, fields),
-    // });
+    if (source.droppableId === destination.droppableId) {
+      const items = reorder(boards[source.droppableId], source, destination);
+      try {
+        const res = await moveIssue(filterFeild(projectId, sprintId, items));
+        toast.success(res.message);
+      } catch (err) {
+        toast.error(err);
+      }
+    } else {
+      const { items, issue } = move(sprints, sprintId, boards, source, destination);
+      const issueStatusId = issueStatusList.filter(
+        issueStatus => issueStatus.name === issue.issusStatusName,
+      )[0].id;
+
+      try {
+        const res = await moveIssue(filterFeild(projectId, sprintId, items));
+        toast.success(res.message);
+      } catch (err) {
+        toast.error(err);
+      }
+    }
+    setIsMove();
   };
 
   return (
     <DragDropContext onDragEnd={handleIssueDrop}>
       <Lists>
-        {boards !== undefined && ["TO DO", "IN PROGRESS", "DONE"].map((boardName, index) => (
-          <List
-            key={index}
-            boardName={boardName}
-            board={boards[boardName]}
-          />
-        ))}
+        {boards !== undefined &&
+          ['TO DO', 'IN PROGRESS', 'DONE'].map((boardName, index) => (
+            <List key={index} boardName={boardName} board={boards[boardName]} />
+          ))}
       </Lists>
     </DragDropContext>
   );
@@ -45,40 +160,5 @@ const isPositionChanged = (destination, source) => {
   const isSamePosition = destination.index === source.index;
   return !isSameList || !isSamePosition;
 };
-
-const calculateIssueListPosition = (...args) => {
-  const { prevIssue, nextIssue } = getAfterDropPrevNextIssue(...args);
-  let position;
-
-  if (!prevIssue && !nextIssue) {
-    position = 1;
-  } else if (!prevIssue) {
-    position = nextIssue.listPosition - 1;
-  } else if (!nextIssue) {
-    position = prevIssue.listPosition + 1;
-  } else {
-    position = prevIssue.listPosition + (nextIssue.listPosition - prevIssue.listPosition) / 2;
-  }
-  return position;
-};
-
-const getAfterDropPrevNextIssue = (allIssues, destination, source, droppedIssueId) => {
-  const beforeDropDestinationIssues = getSortedListIssues(allIssues, destination.droppableId);
-  const droppedIssue = allIssues.find(issue => issue.id === droppedIssueId);
-  const isSameList = destination.droppableId === source.droppableId;
-
-  const afterDropDestinationIssues = isSameList
-    ? moveItemWithinArray(beforeDropDestinationIssues, droppedIssue, destination.index)
-    : insertItemIntoArray(beforeDropDestinationIssues, droppedIssue, destination.index);
-
-  return {
-    prevIssue: afterDropDestinationIssues[destination.index - 1],
-    nextIssue: afterDropDestinationIssues[destination.index + 1],
-  };
-};
-
-const getSortedListIssues = (issues, status) =>
-  issues.filter(issue => issue.status === status).sort((a, b) => a.listPosition - b.listPosition);
-
 
 export default ProjectBoardLists;

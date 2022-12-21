@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useTable, useSortBy, useGlobalFilter } from 'react-table';
 import { IssuePriorityIcon } from 'components';
 import api from 'Services/api';
+import { store } from 'store';
 import { toast } from 'react-project-management';
 import moment from 'moment';
 import { GlobalFilter, Table } from './Styles';
@@ -14,7 +15,7 @@ const ListIssues = () => {
     getData();
   }, []);
   const getData = async () => {
-    await api.get('/api/issues?project_id=1a27f30a-7703-4b62-bc1e-d7c3e94c15ae').then(
+    await api.get(`/api/issues?project_id=${store.getState().listproject.projectId}`).then(
       data => {
         setListIssues(data);
       },

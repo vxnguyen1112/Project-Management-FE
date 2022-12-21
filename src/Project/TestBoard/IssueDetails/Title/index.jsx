@@ -18,15 +18,15 @@ const ProjectBoardIssueDetailsTitle = ({ issue, updateIssue }) => {
   const handleTitleChange = () => {
     setError(null);
 
-    const title = $titleInputRef.current.value;
-    if (title === issue.title) return;
+    const name = $titleInputRef.current.value;
+    if (name === issue.name) return;
 
-    const errors = generateErrors({ title }, { title: [is.required(), is.maxLength(200)] });
+    const errors = generateErrors({ name }, { name: [is.required(), is.maxLength(200)] });
 
-    if (errors.title) {
-      setError(errors.title);
+    if (errors.name) {
+      setError(errors.name);
     } else {
-      updateIssue({ title });
+      updateIssue({ name });
     }
   };
 
@@ -35,7 +35,7 @@ const ProjectBoardIssueDetailsTitle = ({ issue, updateIssue }) => {
       <TitleTextarea
         minRows={1}
         placeholder="Short summary"
-        defaultValue={issue.title}
+        defaultValue={issue.name}
         ref={$titleInputRef}
         onBlur={handleTitleChange}
         onKeyDown={event => {

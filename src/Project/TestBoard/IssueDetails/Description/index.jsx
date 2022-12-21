@@ -12,7 +12,7 @@ const propTypes = {
 };
 
 const ProjectBoardIssueDetailsDescription = ({ issue, updateIssue }) => {
-  const [description, setDescription] = useState(issue.description);
+  const [description, setDescription] = useState(issue.description ? issue.description : '');
   const [isEditing, setEditing] = useState(false);
 
   const handleUpdate = () => {

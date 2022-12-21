@@ -13,30 +13,29 @@ const propTypes = {
 };
 
 const ProjectBoardIssueDetailsAssigneesReporter = ({ issue, updateIssue, projectUsers }) => {
-  const getUserById = userId => projectUsers.find(user => user.id === userId);
+  const getUserById = id => projectUsers.find(user => user.id === id);
 
-  const userOptions = projectUsers.map(user => ({ value: user.id, label: user.name }));
+  const userOptions = projectUsers.map(user => ({ value: user.id, label: user.displayName }));
 
   return (
     <Fragment>
       <SectionTitle>Assignees</SectionTitle>
       <Select
-        isMulti
         variant="empty"
         dropdownWidth={343}
         placeholder="Unassigned"
         name="assignees"
-        value={issue.userIds}
+        value={issue.assignMemberId}
         options={userOptions}
-        onChange={userIds => {
-          updateIssue({ userIds, users: userIds.map(getUserById) });
+        onChange={assignMemberId => {
+          updateIssue({ assignMemberId });
         }}
-        renderValue={({ value: userId, removeOptionValue }) =>
-          renderUser(getUserById(userId), true, removeOptionValue)
+        renderValue={({ value: id, removeOptionValue }) =>
+          renderUser(getUserById(id), true, removeOptionValue)
         }
-        renderOption={({ value: userId }) => renderUser(getUserById(userId), false)}
+        renderOption={({ value: id }) => renderUser(getUserById(id), false)}
       />
-
+      {/* 
       <SectionTitle>Reporter</SectionTitle>
       <Select
         variant="empty"
@@ -45,10 +44,10 @@ const ProjectBoardIssueDetailsAssigneesReporter = ({ issue, updateIssue, project
         name="reporter"
         value={issue.reporterId}
         options={userOptions}
-        onChange={userId => updateIssue({ reporterId: userId })}
-        renderValue={({ value: userId }) => renderUser(getUserById(userId), true)}
-        renderOption={({ value: userId }) => renderUser(getUserById(userId))}
-      />
+        onChange={id => updateIssue({ reporterId: id })}
+        renderValue={({ value: id }) => renderUser(getUserById(id), true)}
+        renderOption={({ value: id }) => renderUser(getUserById(id))}
+      /> */}
     </Fragment>
   );
 };
@@ -60,8 +59,12 @@ const renderUser = (user, isSelectValue, removeOptionValue) => (
     withBottomMargin={!!removeOptionValue}
     onClick={() => removeOptionValue && removeOptionValue()}
   >
-    <Avatar avatarUrl={user.avatarUrl} name={user.name} size={24} />
-    <Username>{user.name}</Username>
+    <Avatar
+      avatarUrl="https://pixlok.com/wp-content/uploads/2021/03/default-user-profile-picture.jpg"
+      name={user.displayName}
+      size={24}
+    />
+    <Username>{user.displayName}</Username>
     {removeOptionValue && <Icon type="close" top={1} />}
   </User>
 );

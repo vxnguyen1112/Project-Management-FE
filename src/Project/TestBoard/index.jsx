@@ -2,7 +2,8 @@ import React, { Fragment, useState, useEffect } from 'react';
 import { Route, useRouteMatch, useHistory } from 'react-router-dom';
 import { Breadcrumbs, Modal } from 'components';
 import useMergeState from 'hooks/mergeState';
-import api from 'Services/api'; 
+import { store } from 'store';
+import api from 'Services/api';
 import Header from './Header';
 import Filters from './Filters';
 import Lists from './Lists';
@@ -10,73 +11,95 @@ import IssueDetails from './IssueDetails';
 
 const defaultFilters = {
   searchTerm: '',
-  sprintId: null
+  sprintId: null,
 };
 
 const refactorResStructure = (res, sprintId) => {
   const boards = {
-    "TO DO": [],
-    "IN PROGRESS": [],
-    "DONE": []
-  }
-  const filterRes = sprintId !== null ? res.filter(sprint => sprint.id === sprintId): res;
+    'TO DO': [],
+    'IN PROGRESS': [],
+    DONE: [],
+  };
+  const filterRes = sprintId !== null ? res.filter(sprint => sprint.id === sprintId) : res;
 
   filterRes.forEach(sprint => {
     sprint.boardDtoList.forEach(board => {
-      ["TO DO", "IN PROGRESS", "DONE"].forEach(boardName => {
-        if(board.name === boardName && board.issuesDtoList !== undefined) {
+      ['TO DO', 'IN PROGRESS', 'DONE'].forEach(boardName => {
+        if (board.name === boardName && board.issuesDtoList !== undefined) {
           const issuesList = board.issuesDtoList.map(issue => ({
             ...issue,
             sprintId: board.sprintId,
             boardId: board.id,
             sprintPosition: sprint.position,
-          }))
- 
+          }));
+
           boards[boardName].push(...issuesList);
         }
-      })
-    })
-  })
+      });
+    });
+  });
 
   return boards;
-}
+};
 
-const fetchSprints = (res) => {
-  const sprints = res.map(sprint => ({
-    id: sprint.id,
-    name: sprint.name,
-    value: sprint.name,
-    label: sprint.name
-  }));
+const fetchSprints = res => {
+  const sprints = res.map(sprint => {
+    const obj = {
+      id: sprint.id,
+      name: sprint.name,
+      value: sprint.name,
+      label: sprint.name,
+    };
 
-  return sprints
-}
+    const boards = [];
+    sprint.boardDtoList.forEach(board => {
+      boards.push({
+        id: board.id,
+        name: board.name,
+      });
+    });
+    obj.boards = boards;
+    return obj;
+  });
 
-const sortIssueListBySprintAndIssuePosition = (boards) => {
-  ["TO DO", "IN PROGRESS", "DONE"].forEach(boardName => {
-    boards[boardName].sort((a, b) => (a.sprintPosition - b.sprintPosition || a.position - b.position));
-  })
-}
+  return sprints;
+};
+
+const sortIssueListBySprintAndIssuePosition = boards => {
+  ['TO DO', 'IN PROGRESS', 'DONE'].forEach(boardName => {
+    boards[boardName].sort((a, b) => a.position - b.position);
+  });
+};
 const ProjectBoard = () => {
   const match = useRouteMatch();
   const history = useHistory();
   const [boards, setBoards] = useState({});
   const [filters, mergeFilters] = useMergeState(defaultFilters);
   const [sprints, setSprints] = useState([]);
+  const [isMove, setIsMove] = useState(false);
+  const [members, setMembers] = useState([]);
+  const { projectId } = store.getState().listproject;
 
   useEffect(() => {
     const getBoards = async () => {
-      const projectId = '1a27f30a-7703-4b62-bc1e-d7c3e94c15ae';
       const res = await api.get(`/api/issues/boards?project_id=${projectId}`);
       setSprints(fetchSprints(res));
       const refactored = refactorResStructure(res, filters.sprintId);
       sortIssueListBySprintAndIssuePosition(refactored);
       setBoards(refactored);
-      console.log("sort", res);
+      console.log('sort', refactored);
       return res;
-    }
+    };
+
+    const getMembers = async () => {
+      const res = await api.get(`/api/members/projects/${projectId}/search`);
+      console.log(res);
+      setMembers(res);
+    };
+
     getBoards();
-  }, [filters]);
+    getMembers();
+  }, [filters, isMove]);
 
   return (
     <Fragment>
@@ -90,6 +113,10 @@ const ProjectBoard = () => {
       />
       <Lists
         boards={boards}
+        sprintId={filters.sprintId}
+        projectId={projectId}
+        sprints={sprints}
+        setIsMove={() => setIsMove(!isMove)}
       />
       <Route
         path={`${match.path}/issues/:issueId`}
@@ -103,7 +130,7 @@ const ProjectBoard = () => {
             renderContent={modal => (
               <IssueDetails
                 issueId={routeProps.match.params.issueId}
-                projectUsers={null}
+                projectUsers={members}
                 fetchProject={() => {}}
                 updateLocalProjectIssues={() => {}}
                 modalClose={modal.close}

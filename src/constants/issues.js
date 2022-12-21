@@ -11,10 +11,10 @@ export const IssueStatus = {
 };
 
 export const IssuePriority = {
-  HIGHEST: '5',
-  HIGH: '4',
-  MEDIUM: '3',
-  LOW: '2',
+  HIGHEST: 'HIGHEST',
+  HIGH: 'HIGH',
+  MEDIUM: 'MEDIUM',
+  LOW: 'LOW',
   LOWEST: 'LOWEST',
 };
 

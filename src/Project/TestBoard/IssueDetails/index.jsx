@@ -44,7 +44,7 @@ const updateIssueDetail = async (issueId, issue, modalClose) => {
     modalClose();
     toast.success('Update issue successfully');
   } catch (err) {
-    toast.err(err);
+    toast.error(err);
   }
 };
 

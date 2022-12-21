@@ -115,32 +115,29 @@ const ProjectBoardLists = props => {
     getAllIssueStatus();
   }, []);
 
-  const handleIssueDrop = ({ draggableId, destination, source }) => {
+  const handleIssueDrop = async ({ draggableId, destination, source }) => {
     if (!isPositionChanged(source, destination)) return;
 
     if (source.droppableId === destination.droppableId) {
       const items = reorder(boards[source.droppableId], source, destination);
-      moveIssue(filterFeild(projectId, sprintId, items))
-        .then(res => {
-          toast.success(res.message);
-        })
-        .catch(err => {
-          toast.error(err);
-        });
+      try {
+        const res = await moveIssue(filterFeild(projectId, sprintId, items));
+        toast.success(res.message);
+      } catch (err) {
+        toast.error(err);
+      }
     } else {
       const { items, issue } = move(sprints, sprintId, boards, source, destination);
       const issueStatusId = issueStatusList.filter(
         issueStatus => issueStatus.name === issue.issusStatusName,
       )[0].id;
 
-      moveIssue(filterFeild(projectId, sprintId, items))
-        .then(res => {
-          updateIssueDetail(issue.id, issueStatusId);
-          toast.success(res.message);
-        })
-        .catch(err => {
-          toast.error(err);
-        });
+      try {
+        const res = await moveIssue(filterFeild(projectId, sprintId, items));
+        toast.success(res.message);
+      } catch (err) {
+        toast.error(err);
+      }
     }
     setIsMove();
   };

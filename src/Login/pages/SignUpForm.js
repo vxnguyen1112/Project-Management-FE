@@ -22,7 +22,7 @@ const SignUpForm = () => {
     const errors = {};
     const passRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
     const userRegex = /^[a-z0-9_-]{6,30}$/;
-    const nameRegex = /^[a-zA-Z]+$/;
+    const nameRegex = /^[A-Za-z\s]*$/;
     const mailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
     if (!passRegex.test(values.password)) {
       errors.password =

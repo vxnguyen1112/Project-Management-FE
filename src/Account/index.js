@@ -1,21 +1,35 @@
 /* eslint-disable react/no-unescaped-entities */
 /* eslint-disable react/button-has-type */
 /* eslint-disable jsx-a11y/label-has-associated-control */
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
+import { store } from 'store';
 import history from 'browserHistory';
 import { toast } from 'react-project-management';
 import api from 'Services/api';
 import "./styles.css"
 
 const Account = () => {
+
+  useEffect(() => {
+    getData();
+  }, [state]);
+  const getData = async () => {
+    // await api.get(`/api/members/organization/${store.getState().auth.user.organizationId}/search?keyword=vanketk1911`).then(
+    //   data => {
+    //     console.log(data)
+    //   },
+    //   error => {
+    //     toast.error(error);
+    //   },
+    // );
+  };
   const [state, setState] = useState({
-    username: '',
-    password: '',
-    confirmationPassword: '',
-    firstName: '',
-    lastName: '',
-    mailNotification: '',
+    username: 'admin',
+    firstName: 'admin',
+    lastName: 'admin',
+    mailNotification: 'admin@gmail.com',
   });
+
   const [formErrors, setFormErrors] = useState({});
   const validate = values => {
     const errors = {};
@@ -74,7 +88,7 @@ const Account = () => {
 
     // eslint-disable-next-line react/jsx-filename-extension
     <div className="formCenter">
-      <form onSubmit={handleSubmit} className="formFields">
+      <form onSubmit={handleSubmit} className="formFields" style={{ padding: "95px 124px"}}>
         <div className="formField">
           <label className="formFieldlablename" htmlFor="name">
             User name
@@ -82,7 +96,7 @@ const Account = () => {
           <input
             type="text"
             id="name"
-            className="formFieldInput"
+            className="formFieldInputAcc"
             name="username"
             value={state.username}
             onChange={handleChange}
@@ -96,7 +110,7 @@ const Account = () => {
           <input
             type="text"
             id="firstName"
-            className="formFieldInput"
+            className="formFieldInputAcc"
             name="firstName"
             value={state.firstName}
             onChange={handleChange}
@@ -110,7 +124,7 @@ const Account = () => {
           <input
             type="text"
             id="lastName"
-            className="formFieldInput"
+            className="formFieldInputAcc"
             name="lastName"
             value={state.lastName}
             onChange={handleChange}
@@ -124,7 +138,7 @@ const Account = () => {
           <input
             type="email"
             id="mailNotification"
-            className="formFieldInput"
+            className="formFieldInputAcc"
             name="mailNotification"
             value={state.mailNotification}
             onChange={handleChange}
@@ -132,8 +146,8 @@ const Account = () => {
           <p style={{ color: 'red', fontSize: 13 }}>{formErrors.mailNotification}</p>
         </div>
 
-        <div className="formField">
-          <button className="formFieldButton">Change</button>{' '}
+        <div className="formField" style={{display:"flex",justifyContent:"center"}}>
+          <button className="snip1457" style={{marginRight:"180px"}}>Change</button>{' '}
         </div>
       </form>
     </div>

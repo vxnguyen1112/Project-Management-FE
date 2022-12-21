@@ -8,9 +8,9 @@ const RouteAuthenticated = ({ component: Component, path }) => {
   if (!isLoggedIn) {
     return <Redirect to="/login" />;
   }
-  console.log(`path: ${path}`)
-  console.log( `check: ${CheckRole()}`)
+  console.log(path)
   if (path === '/home' && CheckRole()) return <Redirect to="/admin" />;
+  if (path === '/admin' && !CheckRole()) return <Redirect to="/home" />;
 
   return <Route component={Component} path={path} />;
 };

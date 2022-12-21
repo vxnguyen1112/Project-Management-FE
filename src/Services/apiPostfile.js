@@ -11,7 +11,7 @@ const token = () => {
   return `${getUser.tokenType} ${getUser.accessToken}`;
 };
 const defaults = {
-  baseURL: process.env.API_URL || 'http://139.59.96.208:8000',
+  baseURL: process.env.API_URL || 'http://165.232.173.235:8000',
   headers: () => ({
     'Content-Type': 'multipart/form-data;boundary=<calculated when request is sent>',
     Authorization: token(),

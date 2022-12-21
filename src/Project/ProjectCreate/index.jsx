@@ -49,6 +49,7 @@ const ProjectCreate = () => {
             .unwrap()
             .then(() => {
               toast.success(`Changes have been saved successfully`);
+              history.push('/admin');
             })
             .catch((err) => {
               toast.success(err);
@@ -57,7 +58,7 @@ const ProjectCreate = () => {
           } catch (error) {
             Form.handleAPIError(error, form);
           }
-          history.push('/admin');
+          // history.push('/admin');
         }}
       >
         <FormCont>

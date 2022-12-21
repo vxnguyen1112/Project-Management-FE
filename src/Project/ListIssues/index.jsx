@@ -2,17 +2,24 @@
 /* eslint-disable no-nested-ternary */
 import React, { useState, useEffect } from 'react';
 import { useTable, useSortBy, useGlobalFilter } from 'react-table';
-import { IssuePriorityIcon } from 'components';
+import { IssuePriorityIcon, Modal } from 'components';
 import api from 'Services/api';
 import { store } from 'store';
 import { toast } from 'react-project-management';
 import moment from 'moment';
+import IssueDetails from 'Project/TestBoard/IssueDetails';
+import { Route, Link, useRouteMatch, useHistory } from 'react-router-dom';
 import { GlobalFilter, Table } from './Styles';
 
 const ListIssues = () => {
   const [listIssues, setListIssues] = useState([]);
+  const match = useRouteMatch();
+  const history = useHistory();
+  const [members, setMembers] = useState([]);
+
   useEffect(() => {
     getData();
+    getMembers();
   }, []);
   const getData = async () => {
     await api.get(`/api/issues?project_id=${store.getState().listproject.projectId}`).then(
@@ -24,6 +31,15 @@ const ListIssues = () => {
       },
     );
   };
+
+  const getMembers = async () => {
+    const res = await api.get(
+      `/api/members/projects/${store.getState().listproject.projectId}/search`,
+    );
+    console.log(res);
+    setMembers(res);
+  };
+
   const columns = React.useMemo(
     () => [
       {
@@ -80,8 +96,9 @@ const ListIssues = () => {
   } = useTable({ columns, data: listIssues }, useGlobalFilter, useSortBy);
 
   const onClickRow = id => {
-    console.log(id);
+    history.push(`${match.url}/issues/${id}`);
   };
+
   const { globalFilter } = state;
   return (
     // eslint-disable-next-line react/jsx-filename-extension
@@ -118,7 +135,11 @@ const ListIssues = () => {
             {rows.map(row => {
               prepareRow(row);
               return (
-                <tr {...row.getRowProps()} onClick={() => onClickRow(row.original.id)}>
+                <tr
+                  {...row.getRowProps()}
+                  onClick={() => onClickRow(row.original.id)}
+                  style={{ cursor: 'pointer' }}
+                >
                   {row.cells.map(cell => {
                     return <td {...cell.getCellProps()}>{cell.render('Cell')}</td>;
                   })}
@@ -128,6 +149,28 @@ const ListIssues = () => {
           </tbody>
         </Table>
       </div>
+
+      <Route
+        path={`${match.path}/issues/:issueId`}
+        render={routeProps => (
+          <Modal
+            isOpen
+            testid="modal:issue-details"
+            width={1040}
+            withCloseIcon={false}
+            onClose={() => history.push(match.url)}
+            renderContent={modal => (
+              <IssueDetails
+                issueId={routeProps.match.params.issueId}
+                projectUsers={members}
+                fetchProject={() => {}}
+                updateLocalProjectIssues={() => {}}
+                modalClose={modal.close}
+              />
+            )}
+          />
+        )}
+      />
     </div>
   );
 };

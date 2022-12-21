@@ -10,8 +10,8 @@ import DropdownSelect from 'components/DropdownSelect';
 import CustomStatus from 'Project/TestBoard/IssueDetails/CustomStatus';
 import ModalOptionCustom from 'components/ModalCustom/ModalOptionCustom';
 import ModalCustom from 'components/ModalCustom/ModalCustom';
-// import IssueDetails from 'Project/TestBoard/IssueDetails';
-// import { Route, Link, useRouteMatch, useHistory } from 'react-router-dom';
+import IssueDetails from 'Project/TestBoard/IssueDetails';
+import { Route, Link, useRouteMatch, useHistory } from 'react-router-dom';
 import Divider from '../Divider';
 import './Board.css';
 
@@ -64,8 +64,8 @@ const BoardSprint = props => {
     setDoDeleteSprint,
     setDoCompleteSprint,
   } = props;
-  // const match = useRouteMatch();
-  // const history = useHistory();
+  const match = useRouteMatch();
+  const history = useHistory();
   const [isCreateIssue, setIsCreateIssue] = useState(false);
   const [issueContent, setIssueContent] = useState('');
   const [isOpenDeleteIssueModal, setIsOpenDeleteIssueModal] = useState(false);
@@ -78,6 +78,7 @@ const BoardSprint = props => {
   const [isStartSprint, setIsStartSprint] = useState(false);
   const { projectId } = store.getState().listproject;
   const { organizationId } = store.getState().auth.user;
+  const [members, setMembers] = useState([]);
 
   useEffect(() => {
     const getAllIssueType = async () => {
@@ -95,8 +96,16 @@ const BoardSprint = props => {
       const res = await api.get(`/api/issues-status?organizationId=${organizationId}`);
       setIssueStatusList(res);
     };
+
+    const getMembers = async () => {
+      const res = await api.get(`/api/members/projects/${projectId}/search`);
+      console.log(res);
+      setMembers(res);
+    };
+
     getAllIssueType();
     getAllIssueStatus();
+    getMembers();
   }, []);
 
   const onCreateIssue = () => {
@@ -234,7 +243,6 @@ const BoardSprint = props => {
                 sprint.issuesList.map((item, index) => (
                   <Draggable key={item.id} draggableId={item.id} index={index}>
                     {(provided, snapshot) => {
-                      // const match = useRouteMatch();
                       // eslint-disable-next-line react-hooks/rules-of-hooks
                       const [hover, setHover] = useState(false);
                       // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -253,40 +261,40 @@ const BoardSprint = props => {
                       };
 
                       return (
-                        // <Link to={`${match.url}/issues/${item.id}`}>
-                        <div
-                          className="issueArea"
-                          ref={provided.innerRef}
-                          {...provided.draggableProps}
-                          {...provided.dragHandleProps}
-                          onMouseEnter={() => setHover(true)}
-                          onMouseLeave={() => setHover(false)}
-                          style={getItemStyle(snapshot.isDragging, provided.draggableProps.style)}
-                        >
-                          <div className="issueTypeIcon">
-                            <img src={item.issuesTypeDto.urlIcon} alt="" />
-                          </div>
-                          <div className="issueId">
-                            <span>{item.issuesKey}</span>
-                          </div>
-                          <div className="issueContent">
-                            <span>{item.name}</span>
-                          </div>
-                          <div className="issueStatusArea">
-                            <CustomStatus
-                              issueStatusName={issue.issuesStatusDto.name}
-                              updateIssue={obj => {
-                                updateIssueStatus(obj);
-                              }}
-                            />
-                            {!hover && <div className="dropdown" />}
+                        <Link to={`${match.url}/issues/${item.id}`}>
+                          <div
+                            className="issueArea"
+                            ref={provided.innerRef}
+                            {...provided.draggableProps}
+                            {...provided.dragHandleProps}
+                            onMouseEnter={() => setHover(true)}
+                            onMouseLeave={() => setHover(false)}
+                            style={getItemStyle(snapshot.isDragging, provided.draggableProps.style)}
+                          >
+                            <div className="issueTypeIcon">
+                              <img src={item.issuesTypeDto.urlIcon} alt="" />
+                            </div>
+                            <div className="issueId">
+                              <span>{item.issuesKey}</span>
+                            </div>
+                            <div className="issueContent">
+                              <span>{item.name}</span>
+                            </div>
+                            <div className="issueStatusArea">
+                              <CustomStatus
+                                issueStatusName={issue.issuesStatusDto.name}
+                                updateIssue={obj => {
+                                  updateIssueStatus(obj);
+                                }}
+                              />
+                              {!hover && <div className="dropdown" />}
 
-                            {hover && (
-                              <DropdownSelect onSelect={() => setId(item.id)} items={items} />
-                            )}
+                              {hover && (
+                                <DropdownSelect onSelect={() => setId(item.id)} items={items} />
+                              )}
+                            </div>
                           </div>
-                        </div>
-                        // </Link>
+                        </Link>
                       );
                     }}
                   </Draggable>
@@ -401,7 +409,7 @@ const BoardSprint = props => {
         />
       )}
 
-      {/* <Route
+      <Route
         path={`${match.path}/issues/:issueId`}
         render={routeProps => (
           <Modal
@@ -421,7 +429,7 @@ const BoardSprint = props => {
             )}
           />
         )}
-      /> */}
+      />
     </React.Fragment>
   );
 };

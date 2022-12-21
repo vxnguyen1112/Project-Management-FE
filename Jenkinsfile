@@ -34,9 +34,10 @@ pipeline {
 
   stage("deploy") {
     steps {
-        sshagent(['ssh_key']) {
-            sh "ssh -o StrictHostKeyChecking=no -l root 143.198.208.97 './deploy.sh'"
-        }
+       sh" echo Pass deploy "
+        // sshagent(['ssh_key']) {
+        //     sh "ssh -o StrictHostKeyChecking=no -l root 143.198.208.97 "
+        // }
     }
   }
   }

@@ -104,7 +104,7 @@ const ListIssues = () => {
     // eslint-disable-next-line react/jsx-filename-extension
     <div className="listproject">
       <div className="main">
-        <p>Issues</p>
+        <p style={{textAlign:"center",fontStyle:'italic',fontFamily:'fantasy',color:"#150707de",fontSize:"30px"}}>Issues</p>
         <GlobalFilter filter={globalFilter} setFilter={setGlobalFilter} />
         <Table className="styled-table" {...getTableProps()}>
           <thead>

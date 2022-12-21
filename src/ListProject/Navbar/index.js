@@ -4,7 +4,6 @@ import React, { useState } from "react";
 import { NavLink} from "react-router-dom";
 import {logout} from "store/reducers/authSlice";
 import { useDispatch } from "react-redux";
-import "./navbar.css";
 
 const NavBar=()=> {
   const dispatch = useDispatch();

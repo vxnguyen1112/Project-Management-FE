@@ -35,12 +35,12 @@ const NavBar=()=> {
             <li className="nav-item">
               <NavLink
                 exact
-                to="/admin/add-member"
+                to="/admin/list-member"
                 activeClassName="active"
                 className="nav-links"
                 onClick={handleClick}
               >
-                Add member
+                Member
               </NavLink>
             </li>
             <li className="nav-item">

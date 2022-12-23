@@ -6,17 +6,14 @@
 /* eslint-disable no-nested-ternary */
 import React, { useState, useEffect } from 'react';
 import { useTable, useSortBy, useAsyncDebounce, useGlobalFilter } from 'react-table';
-import {  useDispatch } from 'react-redux';
 import { store } from 'store';
-import { getListProject, selectProject } from 'store/reducers/listprojectSlide';
 import { toast } from 'react-project-management';
+import { Button, Icon } from 'components';
 import ModalCustom from 'components/ModalCustom/ModalCustom';
-import { Button,Icon } from 'components';
 import history from 'browserHistory';
 import api from 'Services/api';
-import "./styles.css"
 
-const ListProjcectInOrganition = () => {
+const ListMemberInOrganition = () => {
   const GlobalFilter = ({ filter, setFilter }) => {
     const [value, setValue] = useState(filter);
     const onChange = useAsyncDebounce(value => {
@@ -36,74 +33,57 @@ const ListProjcectInOrganition = () => {
             onChange(e.target.value);
           }}
         />
-        <div className='add-project' onClick={()=>{history.push("/admin/project-create")}}>
-          <div style={{display:"flex"  ,alignItems: 'center',cursor:'pointer'}}>
-        <Icon type="page" size={20} left={15} top={2}  />
-         <p style={{paddingLeft:"24px",fontStyle:"italic"}}>Add project</p>
-         </div>
-         </div>
+        <div
+          className="add-project"
+          onClick={() => {
+            history.push('/admin/add-member');
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center' ,cursor:'pointer'}}>
+            <Icon type="page" size={20} left={15} top={2} />
+            <p style={{ paddingLeft: '24px', fontStyle: 'italic' }}>Add member</p>
+          </div>
+        </div>
       </div>
     );
   };
-  const [listProject, setListProject] = useState([]);
+  const [listMember, setListMember] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
   const [isOpenDeleteModal, setIsOpenDeleteModal] = useState(false);
-  const [projectID, setProjectID] = useState();
-  const dispatch = useDispatch();
+  const [memberID, setMemberID] = useState();
   useEffect(() => {
-    dispatch(getListProject())
-      .unwrap()
-      .then(() => {
-        setListProject(store.getState().listproject.listproject);
-      })
-      .catch(() => {
-        toast.error(store.getState().message.message);
-      });
-  }, []);
+    api.get(`/api/members/organization/${store.getState().auth.user.organizationId}/search`).then(
+      data => {
+        console.log(data);
+        setListMember(data.filter(x=>x.displayName!=null));
+      },
+      error => {
+        toast.error(error);
+      },
+    );
+  }, [isLoading]);
 
   const columns = React.useMemo(
     () => [
       {
-        Header: 'Name',
-        accessor: 'name', // accessor is the "key" in the data
+        Header: 'User Name',
+        accessor: 'username',
       },
       {
-        Header: 'Domain',
-        accessor: 'domain',
+        Header: 'Display Name',
+        accessor: 'displayName',
       },
       {
-        Header: 'Public',
-        accessor: 'isPublic',
-        Cell: ({ cell: { value } }) => (
-          <input type="checkbox" className="checkbox" checked={value} readOnly />
-        ),
+        Header: 'First Name',
+        accessor: 'firstName',
       },
       {
-        Header: 'Status',
-        accessor: 'projectStatus',
+        Header: 'Last Name',
+        accessor: 'lastName',
       },
       {
-        Header: 'Add member',
-        accessor: 'id',
-        id: 'add',
-        Cell: ({ cell: { value } }) => (
-          <Button icon="plus" iconSize={19} variant="empty" onClick={() => onClickAdd(value)} />
-        ),
-        width: 15,
-        minWidth: 5,
-        padding: 0,
-        paddingLeft: 5,
-      },
-      {
-        Header: 'View',
-        accessor: 'id',
-        id: 'view',
-        Cell: ({ cell: { value } }) => (
-          <Button icon="link" iconSize={19} variant="empty" onClick={() => onClickView(value)} />
-        ),
-        width: 15,
-        minWidth: 5,
-        padding: 0,
-        paddingLeft: 20,
+        Header: 'EMail',
+        accessor: 'mailNotification',
       },
       {
         Header: 'Remove',
@@ -117,22 +97,14 @@ const ListProjcectInOrganition = () => {
         padding: 0,
         paddingLeft: 5,
       },
-      
     ],
     [],
   );
-  const onClickAdd = id => {
-    dispatch(selectProject(id));
-    history.push('/admin/add-member-to-project');
-  };
-  const onClickRemove = id => {
-    setProjectID(id);
+  const onClickRemove = async id => {
+    setMemberID(id);
     setIsOpenDeleteModal(true);
   };
-  const onClickView = id => {
-    dispatch(selectProject(id));
-    history.push("/project");
-  };
+
   const {
     getTableProps,
     getTableBodyProps,
@@ -141,14 +113,14 @@ const ListProjcectInOrganition = () => {
     prepareRow,
     state,
     setGlobalFilter,
-  } = useTable({ columns, data: listProject }, useGlobalFilter, useSortBy);
+  } = useTable({ columns, data: listMember }, useGlobalFilter, useSortBy);
   const { globalFilter } = state;
   return (
     // eslint-disable-next-line react/jsx-filename-extension
     <div className="listproject">
       <div className="header" />
       <div className="main" style={{ padding: '30px 70px' }}>
-        <p style={{ fontFamily: 'CircularStdMedium', fontWeight: 'normal' }}>Project</p>
+        <p style={{ fontFamily: 'CircularStdMedium', fontWeight: 'normal' }}>Member</p>
         <GlobalFilter filter={globalFilter} setFilter={setGlobalFilter} />
         <table className="styled-table" {...getTableProps()}>
           <thead>
@@ -191,12 +163,12 @@ const ListProjcectInOrganition = () => {
         {isOpenDeleteModal && (
           <ModalCustom
             title="Remove"
-            content={["Do you wan't remove project?"]}
+            content={['Do you want remove member?']}
             onConfirm={async () => {
               try {
-                await api.delete(`/api/organizations/${store.getState().auth.user.organizationId}/projects/${projectID}`);
+                await api.delete(`/api/users/${memberID}`);
                 toast.success('Delete project successfully');
-                history.push('/login');
+                setIsLoading(current => !current);
               } catch (error) {
                 toast.error(error);
               }
@@ -209,4 +181,4 @@ const ListProjcectInOrganition = () => {
   );
 };
 
-export default ListProjcectInOrganition;
+export default ListMemberInOrganition;

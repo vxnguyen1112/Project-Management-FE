@@ -5,6 +5,7 @@ import NavBar from './Navbar';
 import AddMember from './AddMemberToOrganization'
 import ListProjcectInOrganition from './ListProjectInOrganination'
 import AddMemberToProject from './AddMemberToProject'
+import ListMemberInOrganition from './ListMemberInOrganiation'
 import Role from './Role'
 
 const Admin = () => {
@@ -19,6 +20,10 @@ const Admin = () => {
         render={() => <ProjectCreate />}
       />
      <Route
+        path={`${match.path}/list-member`}
+        render={() => <ListMemberInOrganition />}
+      />
+       <Route
         path={`${match.path}/add-member`}
         render={() => <AddMember />}
       />

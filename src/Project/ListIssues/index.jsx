@@ -8,7 +8,7 @@ import { store } from 'store';
 import { toast } from 'react-project-management';
 import moment from 'moment';
 import IssueDetails from 'Project/TestBoard/IssueDetails';
-import { Route, Link, useRouteMatch, useHistory } from 'react-router-dom';
+import { Route, useRouteMatch, useHistory } from 'react-router-dom';
 import { GlobalFilter, Table } from './Styles';
 
 const ListIssues = () => {
@@ -25,6 +25,7 @@ const ListIssues = () => {
     await api.get(`/api/issues?project_id=${store.getState().listproject.projectId}`).then(
       data => {
         setListIssues(data);
+        console.log(data)
       },
       error => {
         toast.error(error);
@@ -53,7 +54,7 @@ const ListIssues = () => {
           if (value) {
             return moment(value).format('lll');
           }
-          return '------------------------------';
+          return 'N/A';
         },
       },
       {
@@ -63,7 +64,7 @@ const ListIssues = () => {
           if (value) {
             return moment(value).format('lll');
           }
-          return '------------------------------';
+          return 'N/A';
         },
       },
       {

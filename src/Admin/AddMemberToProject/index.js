@@ -8,6 +8,7 @@
 import React, { useState, useEffect } from 'react';
 import { useTable, useSortBy } from 'react-table';
 import api from 'Services/api';
+import ModalCustom from 'components/ModalCustom/ModalCustom';
 import { store } from 'store';
 import { Button } from 'components';
 import { toast } from 'react-project-management';
@@ -17,6 +18,8 @@ const AddMemberToProject = () => {
   const [listMember, setListMember] = useState([]);
   const [listMemberAll, setListMemberAll] = useState([]);
   const [filter, setFilter] = useState('');
+  const [isOpenDeleteModal, setIsOpenDeleteModal] = useState(false);
+  const [memberID, setMemberID] = useState();
   const [isSelect, setisSelect] = useState('');
   const [state, setState] = useState(true);
   const handleChange = event => {
@@ -34,14 +37,16 @@ const AddMemberToProject = () => {
         toast.error(error);
       },
     );
-    await api.get(`/api/members/organization/${store.getState().auth.user.organizationId}/search`).then(
-      data => {
-        setListMemberAll(data);
-      },
-      error => {
-        toast.error(error);
-      },
-    );
+    await api
+      .get(`/api/members/organization/${store.getState().auth.user.organizationId}/search`)
+      .then(
+        data => {
+          setListMemberAll(data);
+        },
+        error => {
+          toast.error(error);
+        },
+      );
   };
   const addMember = async () => {
     if (isSelect) {
@@ -56,7 +61,7 @@ const AddMemberToProject = () => {
           }),
         );
         toast.success('Add member successfully');
-        setState(!state);
+        setState(current => !current);
         setisSelect('');
       } catch (error) {
         toast.error(error);
@@ -91,8 +96,10 @@ const AddMemberToProject = () => {
     ],
     [],
   );
-  const onClickRemove = id => {
-    console.log(id)
+
+  const onClickRemove = async id => {
+   setMemberID(id);
+   setIsOpenDeleteModal(true);
   };
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = useTable(
     { columns, data: listMember },
@@ -103,7 +110,15 @@ const AddMemberToProject = () => {
     <div className="listproject">
       <div className="header" />
       <div className="main" style={{ padding: '30px 70px' }}>
-        <p style={{ fontFamily: 'CircularStdMedium', fontWeight: 'normal', paddingBottom: '18px' , fontStyle: 'italic',fontSize:'40px'}}>
+        <p
+          style={{
+            fontFamily: 'CircularStdMedium',
+            fontWeight: 'normal',
+            paddingBottom: '18px',
+            fontStyle: 'italic',
+            fontSize: '40px',
+          }}
+        >
           {store.getState().listproject.name}{' '}
         </p>
 
@@ -117,11 +132,12 @@ const AddMemberToProject = () => {
             {filter ? (
               <div className="list-member">
                 {listMemberAll
-                  .filter(x => x.mailNotification.includes(filter))
+                  .filter(x => x.mailNotification.toLocaleLowerCase().includes(filter.toLocaleLowerCase()))
                   .map(item => (
                     <p
-                      key="item"
+                      key={item.id}
                       className="member"
+                      style={{cursor: 'pointer'}}
                       onClick={() => {
                         setisSelect(item.username);
                         setFilter('');
@@ -201,6 +217,22 @@ const AddMemberToProject = () => {
             })}
           </tbody>
         </table>
+        {isOpenDeleteModal && (
+          <ModalCustom
+            title="Remove"
+            content={["Do you wan't remove user?"]}
+            onConfirm={async () => {
+              try {
+                await api.delete(`/api/members/${memberID}`);
+                toast.success('Delete member successfully');
+                setState(!state);
+              } catch (error) {
+                toast.error(error);
+              }
+            }}
+            setModalOpen={setIsOpenDeleteModal}
+          />
+        )}
       </div>
     </div>
   );

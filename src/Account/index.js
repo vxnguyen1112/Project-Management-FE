@@ -3,31 +3,36 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import React, { useState,useEffect } from 'react';
 import { store } from 'store';
+import {  useRouteMatch } from 'react-router-dom';
 import history from 'browserHistory';
 import { toast } from 'react-project-management';
 import api from 'Services/api';
 import "./styles.css"
 
 const Account = () => {
-
+  const match = useRouteMatch();
   useEffect(() => {
     getData();
   }, [state]);
   const getData = async () => {
-    // await api.get(`/api/members/organization/${store.getState().auth.user.organizationId}/search?keyword=vanketk1911`).then(
-    //   data => {
-    //     console.log(data)
-    //   },
-    //   error => {
-    //     toast.error(error);
-    //   },
-    // );
+    await api.get(`/api/users/information`).then(
+      data => {
+        setState(data)
+        console.log(data);
+        console.log(store.getState().auth.user.userId)
+        console.log(state)
+
+      },
+      error => {
+        toast.error(error);
+      },
+    );
   };
   const [state, setState] = useState({
-    username: 'admin',
-    firstName: 'admin',
-    lastName: 'admin',
-    mailNotification: 'admin@gmail.com',
+    username: '',
+    firstName: '',
+    lastName: '',
+    mailNotification: '',
   });
 
   const [formErrors, setFormErrors] = useState({});
@@ -37,16 +42,9 @@ const Account = () => {
     const userRegex = /^[a-z0-9_-]{6,30}$/;
     const nameRegex = /^[a-zA-Z]+$/;
     const mailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
-    if (!passRegex.test(values.password)) {
-      errors.password =
-        'Password must be minimum 8 characters, at least 1 uppercase letter, 1 number and 1 special character!';
-    }
     if (!userRegex.test(values.username)) {
       errors.username =
         'Username must be characters and number having a length of 6 to 30 characters!';
-    }
-    if (values.password !== values.confirmationPassword) {
-      errors.confirmationPassword = 'Your password and confirmation password do not match.!';
     }
     if (!nameRegex.test(values.firstName)) {
       errors.firstName = 'FirstName must be characters!';
@@ -74,12 +72,13 @@ const Account = () => {
     event.preventDefault();
     if (Object.keys(errors).length === 0) {
       try {
-        await api.post('/api/auth/signup', JSON.stringify(state));
-        toast.success('Singup successfully');
-        history.push('/login');
+        await api.patch(`/api/users/${store.getState().auth.user.userId}`, JSON.stringify(state));
+        toast.success('Change successfully');
+        history.push(`${match.path}/account`);
       } catch (error) {
         toast.error(error);
       }
+      
       setFormErrors({});
     }
   };
@@ -88,7 +87,20 @@ const Account = () => {
 
     // eslint-disable-next-line react/jsx-filename-extension
     <div className="formCenter">
-      <form onSubmit={handleSubmit} className="formFields" style={{ padding: "95px 124px"}}>
+         <p
+          style={{
+            fontFamily: 'cursive',
+            fontWeight: 'bold',
+            paddingTop: '18px',
+            textAlign: 'center',
+            fontStyle:'oblique',
+            fontSize:'25px'
+          }}
+        >
+          {' '}
+          Account
+        </p>
+      <form onSubmit={handleSubmit} className="formFields" style={{ padding: "50px 124px"}}>
         <div className="formField">
           <label className="formFieldlablename" htmlFor="name">
             User name

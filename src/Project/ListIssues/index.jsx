@@ -8,7 +8,7 @@ import { store } from 'store';
 import { toast } from 'react-project-management';
 import moment from 'moment';
 import IssueDetails from 'Project/TestBoard/IssueDetails';
-import { Route, Link, useRouteMatch, useHistory } from 'react-router-dom';
+import { Route, useRouteMatch, useHistory } from 'react-router-dom';
 import { GlobalFilter, Table } from './Styles';
 
 const ListIssues = () => {

@@ -6,7 +6,7 @@
 import React, { useState } from 'react';
 import { FileUploader } from 'react-drag-drop-files';
 import api from 'Services/apiPostfile';
-import { CSVLink } from "react-csv";
+import { CSVLink } from 'react-csv';
 import { store } from 'store';
 import history from 'browserHistory';
 import { toast } from 'react-project-management';
@@ -48,32 +48,47 @@ const AddMember = () => {
       fileReader.readAsText(file);
     }
   };
-
+  
   const handleOnSubmit = async e => {
     e.preventDefault();
-    try {
-      const formdata=new  FormData();
-      formdata.append('file',file);
-      await  api.post(`/api/users/organizations/${store.getState().auth.user.organizationId}/members`,formdata);
-      toast.success('Add member successfully');
-      history.push('/admin');
-    } catch (error) {
-      toast.error(error);
+    if (file) {
+      try {
+        const formdata = new FormData();
+        formdata.append('file', file);
+        await api.post(
+          `/api/users/organizations/${store.getState().auth.user.organizationId}/members`,
+          formdata,
+        );
+        toast.success('Add member successfully');
+        history.push('/admin/list-member');
+      } catch (error) {
+        toast.error(error);
+      }
+    } else {
+      toast.error('Please import file');
     }
   };
   const headerKeys = Object.keys(Object.assign({}, ...array));
   return (
-    <div style={{ textAlign: 'center' }}>
+    <div style={{ textAlign: 'center' ,marginTop:`${file? "10px":"170px"}`}}>
       <p>Please download example file add member:</p>
-      <CSVLink  className="snip1457" filename='add-member-example.csv'  data={csvData} enclosingCharacter="">Download me</CSVLink>
-   { file? ( <table className="styled-table">
-        <thead>
-          <tr key="header">
-            {headerKeys.map((key) => (
-              <th style={{textAlign:'center'}}>{key}</th>
-            ))}
-          </tr>
-        </thead>
+      <CSVLink
+        className="snip1457"
+        filename="add-member-example.csv"
+        data={csvData}
+        enclosingCharacter=""
+      >
+        Download me
+      </CSVLink>
+      {file ? (
+        <table className="styled-table">
+          <thead>
+            <tr key="header">
+              {headerKeys.map(key => (
+                <th style={{ textAlign: 'center' }}>{key}</th>
+              ))}
+            </tr>
+          </thead>
 
           <tbody>
             {array.map(item => (

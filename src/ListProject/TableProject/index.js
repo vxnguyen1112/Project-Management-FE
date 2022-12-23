@@ -49,7 +49,7 @@ const TableProject = () => {
         </div>
         <div className="container">
           {listProject.filter(x=>x.name.toLowerCase().includes(filter.toLocaleLowerCase()) || x.domain.toLowerCase().includes(filter.toLowerCase())||x.projectStatus.toLowerCase().includes(filter.toLocaleLowerCase()) ).map(item => (
-            <div className="item" onClick={() => onClickRow(item.id)}>
+            <div className="item" style={{ cursor: 'pointer' }} onClick={() => onClickRow(item.id)}>
               <div style={{ display: 'flex' }}>
                 <h2 style={{ width: '250px' }}>{item.name}</h2>
                 <img style={{}}

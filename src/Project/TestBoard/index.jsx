@@ -62,6 +62,8 @@ const fetchSprints = res => {
     return obj;
   });
 
+  sprints.sort((a, b) => a.name.localeCompare(b.name));
+
   return sprints;
 };
 
@@ -83,7 +85,13 @@ const ProjectBoard = () => {
   useEffect(() => {
     const getBoards = async () => {
       const res = await api.get(`/api/issues/boards?project_id=${projectId}`);
-      setSprints(fetchSprints(res));
+      const fetchedSprint = fetchSprints(res);
+      setSprints(fetchedSprint);
+
+      if (filters.sprintId === null) {
+        filters.sprintId = fetchedSprint[0].id;
+      }
+
       const refactored = refactorResStructure(res, filters.sprintId);
       sortIssueListBySprintAndIssuePosition(refactored);
       setBoards(refactored);

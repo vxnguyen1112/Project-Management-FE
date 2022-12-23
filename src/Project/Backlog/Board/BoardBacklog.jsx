@@ -1,14 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { uuid } from 'uuidv4';
 import Select from 'react-select';
 import api from 'Services/api';
 import { store } from 'store';
-import { Button } from 'components';
+import { Button, Modal } from 'components';
 import { Droppable, Draggable } from 'react-beautiful-dnd';
 import { toast } from 'react-project-management';
 import DropdownSelect from 'components/DropdownSelect';
 import ModalCustom from 'components/ModalCustom/ModalCustom';
 import CustomStatus from 'Project/TestBoard/IssueDetails/CustomStatus';
+import IssueDetails from 'Project/TestBoard/IssueDetails';
+import { Route, Link, useRouteMatch, useHistory } from 'react-router-dom';
 import Divider from '../Divider';
 import './Board.css';
 
@@ -37,6 +39,9 @@ const BoardBacklog = props => {
   const {
     droppableId,
     backlog,
+    members,
+    issueTypeList,
+    issueStatusList,
     numSprint,
     getListStyle,
     getItemStyle,
@@ -45,45 +50,24 @@ const BoardBacklog = props => {
     setDoCreateSprint,
   } = props;
 
+  const match = useRouteMatch();
+  const history = useHistory();
   const [isCreateIssue, setIsCreateIssue] = useState(false);
   const [issueContent, setIssueContent] = useState('');
   const [isOpenDeleteModal, setIsOpenDeleteModal] = useState(false);
   const [id, setId] = useState(null);
-  const [issueTypeList, setIssueTypeList] = useState([]);
-  const [issueStatusList, setIssueStatusList] = useState([]);
   const [selectedOption, setSelectedOption] = useState(issueTypeList[0]);
   const { organizationId } = store.getState().auth.user;
   const { projectId } = store.getState().listproject;
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => {
-    const getAllIssueType = async () => {
-      const res = await api.get(`/api/issues-types?organizationId=${organizationId}`);
-      setIssueTypeList(
-        res.map(issueType => ({
-          value: issueType.name,
-          label: issueType.name,
-          ...issueType,
-        })),
-      );
-    };
-
-    const getAllIssueStatus = async () => {
-      const res = await api.get(`/api/issues-status?organizationId=${organizationId}`);
-      setIssueStatusList(res);
-    };
-    getAllIssueType();
-    getAllIssueStatus();
-  }, []);
-
-  const onCreateIssue = () => {
+  const onCreateIssue = async () => {
     if (issueContent.trim() === '') {
       toast.error('Vui lòng nhập tên issue');
     } else {
       const issuesStatusId = issueStatusList.filter(issueStatus => issueStatus.name === 'TO DO')[0]
         .id;
 
-      addIssue({
+      const body = {
         issueTypeId: selectedOption.id,
         name: issueContent,
         description: issueContent,
@@ -91,15 +75,23 @@ const BoardBacklog = props => {
         issuesStatusId,
         isPublic: true,
         organizationId,
-      })
-        .then(res => {
-          setDoCreateIssue(prev => !prev);
-          toast.success('Create issue successfully');
-        })
-        .catch(err => {
-          toast.success(err);
-        });
+      };
+
+      try {
+        const res = await addIssue(body);
+        setDoCreateIssue(prev => !prev);
+        toast.success('Create issue successfully');
+      } catch (err) {
+        toast.err(err);
+      }
+      setIssueContent('');
       setIsCreateIssue(false);
+    }
+  };
+
+  const onCreateIssueByKeyPress = async e => {
+    if (e.key === 'Enter') {
+      await onCreateIssue();
     }
   };
 
@@ -108,7 +100,7 @@ const BoardBacklog = props => {
       projectId,
       name: 'Sprint',
       description: 'This is sprint',
-      position: 1,
+      position: numSprint + 1,
       status: 'UNSTART',
     };
 
@@ -136,6 +128,10 @@ const BoardBacklog = props => {
       },
     },
   ];
+
+  const viewIssueDetail = itemId => {
+    history.push(`${match.url}/issues/${itemId}`);
+  };
 
   return (
     <React.Fragment>
@@ -177,6 +173,7 @@ const BoardBacklog = props => {
                     };
 
                     return (
+                      // eslint-disable-next-line jsx-a11y/no-static-element-interactions
                       <div
                         className="issueArea"
                         ref={provided.innerRef}
@@ -184,6 +181,7 @@ const BoardBacklog = props => {
                         {...provided.dragHandleProps}
                         onMouseEnter={() => setHover(true)}
                         onMouseLeave={() => setHover(false)}
+                        onClick={() => viewIssueDetail(item.id)}
                         style={getItemStyle(snapshot.isDragging, provided.draggableProps.style)}
                       >
                         <div className="issueTypeIcon">
@@ -238,6 +236,7 @@ const BoardBacklog = props => {
                         value={issueContent}
                         onChange={e => setIssueContent(e.target.value)}
                         className="createIssueInput"
+                        onKeyPress={onCreateIssueByKeyPress}
                       />
                     </div>
                     <div className="createIssueGroupButton">
@@ -271,7 +270,7 @@ const BoardBacklog = props => {
 
       {isOpenDeleteModal && (
         <ModalCustom
-          title="Delete TES-20?"
+          title={`Delete ${id}?`}
           content={[
             "You're about to permanently delete this issue, its comments and attachments, and all of its data.",
             "If you're not sure, you can resolve or close this issue instead.",
@@ -280,7 +279,7 @@ const BoardBacklog = props => {
             deleteIssue(id)
               .then(res => {
                 setDoDeleteIssue(prev => !prev);
-                toast.success('Delete issue successfully');
+                toast.success(`Delete ${id} succesfully`);
               })
               .catch(err => {
                 toast.error(err);
@@ -289,6 +288,28 @@ const BoardBacklog = props => {
           setModalOpen={setIsOpenDeleteModal}
         />
       )}
+
+      <Route
+        path={`${match.path}/issues/:issueId`}
+        render={routeProps => (
+          <Modal
+            isOpen
+            testid="modal:issue-details"
+            width={1040}
+            withCloseIcon={false}
+            onClose={() => history.push(match.url)}
+            renderContent={modal => (
+              <IssueDetails
+                issueId={routeProps.match.params.issueId}
+                projectUsers={members}
+                fetchProject={() => {}}
+                updateLocalProjectIssues={() => {}}
+                modalClose={modal.close}
+              />
+            )}
+          />
+        )}
+      />
     </React.Fragment>
   );
 };

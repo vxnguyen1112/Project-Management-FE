@@ -42,7 +42,6 @@ const updateIssueDetail = async (issueId, issue, modalClose) => {
     const res = await api.put(`/api/issues/${issueId}`, updatedIssue);
     console.log(res);
     modalClose();
-    toast.success('Update issue successfully');
   } catch (err) {
     toast.error(err);
   }
@@ -96,15 +95,6 @@ const ProjectBoardIssueDetails = ({ issueId, projectUsers, fetchProject, modalCl
           <TopActions>
             <Type issue={issue} updateIssue={updateIssue} />
             <TopActionsRight>
-              <AboutTooltip
-                renderLink={linkProps => (
-                  <Button icon="feedback" variant="empty" {...linkProps}>
-                    Give feedback
-                  </Button>
-                )}
-              />
-              <CopyLinkButton variant="empty" />
-              <Delete issue={issue} fetchProject={fetchProject} modalClose={modalClose} />
               <Button icon="close" iconSize={24} variant="empty" onClick={modalClose} />
             </TopActionsRight>
           </TopActions>

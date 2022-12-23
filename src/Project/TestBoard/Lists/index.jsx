@@ -83,7 +83,7 @@ const move = (sprints, sprintId, list, source, destination) => {
   }));
   return {
     items: updatedPostion,
-    issue: { id: removed.id, issusStatusName: destination.droppableId },
+    issue: { id: removed.id, name: removed.name, issusStatusName: destination.droppableId },
   };
 };
 
@@ -92,10 +92,14 @@ const moveIssue = async movedIssue => {
   return res;
 };
 
-const updateIssueDetail = async (issueId, issuesStatusId) => {
+const updateIssueDetail = async (issueId, issuesStatusId, name, projectId) => {
   try {
-    const res = await api.put(`/api/issues/${issueId}`, { issuesStatusId });
-    toast.success('Update issue successfully');
+    const res = await api.put(`/api/issues/${issueId}`, {
+      name,
+      projectId,
+      issuesStatusId,
+      organizationId: store.getState().auth.user.organizationId
+    });
   } catch (err) {
     toast.success(err);
   }
@@ -134,6 +138,8 @@ const ProjectBoardLists = props => {
 
       try {
         const res = await moveIssue(filterFeild(projectId, sprintId, items));
+        const updatedIssueStatus = await updateIssueDetail(issue.id, issueStatusId, issue.name, projectId);
+        console.log(updatedIssueStatus);
         toast.success(res.message);
       } catch (err) {
         toast.error(err);

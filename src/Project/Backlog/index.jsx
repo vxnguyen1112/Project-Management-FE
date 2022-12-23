@@ -46,7 +46,6 @@ const filterFeild = items => {
 
 const sortFeild = items => {
   let copedItems = { ...items };
-  // console.log("Copy board", copedItems);
   copedItems.backlog.sort((a, b) => a.position - b.position);
   copedItems.sprints.sort((a, b) => a.position - b.position);
 
@@ -56,11 +55,6 @@ const sortFeild = items => {
     }
   });
   return copedItems;
-};
-
-const getAllSprints = async projectId => {
-  const res = await api.get(`/api/backlogs?project_id=${projectId}`);
-  return res;
 };
 
 const moveIssue = async movedIssue => {
@@ -78,6 +72,11 @@ const Backlog = () => {
   const [doStartSprint, setDoStartSprint] = useState(false);
   const [doDeleteSprint, setDoDeleteSprint] = useState(false);
   const [doCompleteSprint, setDoCompleteSprint] = useState(false);
+  const [members, setMembers] = useState([]);
+  const [issueTypeList, setIssueTypeList] = useState([]);
+  const [issueStatusList, setIssueStatusList] = useState([]);
+  const { projectId } = store.getState().listproject;
+  const { organizationId } = store.getState().auth.user;
 
   let sortedBoards;
   if (boardStatus !== 'empty') {
@@ -86,15 +85,37 @@ const Backlog = () => {
   }
 
   useEffect(() => {
-    const { projectId } = store.getState().listproject;
-    getAllSprints(projectId)
-      .then(res => {
-        setBoards(res);
-        setBoardStatus(`successed`);
-      })
-      .catch(err => {
-        toast.error(err);
-      });
+    const getAllSprints = async () => {
+      const res = await api.get(`/api/backlogs?project_id=${projectId}`);
+      setBoards(res);
+      setBoardStatus(`successed`);
+    };
+
+    const getAllIssueType = async () => {
+      const res = await api.get(`/api/issues-types?organizationId=${organizationId}`);
+      setIssueTypeList(
+        res.map(issueType => ({
+          value: issueType.name,
+          label: issueType.name,
+          ...issueType,
+        })),
+      );
+    };
+
+    const getAllIssueStatus = async () => {
+      const res = await api.get(`/api/issues-status?organizationId=${organizationId}`);
+      setIssueStatusList(res);
+    };
+
+    const getMembers = async () => {
+      const res = await api.get(`/api/members/projects/${projectId}/search`);
+      console.log(res);
+      setMembers(res);
+    };
+    getAllSprints(projectId);
+    getAllIssueType();
+    getAllIssueStatus();
+    getMembers();
   }, [
     boardStatus,
     isMove,
@@ -163,6 +184,9 @@ const Backlog = () => {
             <BoardSprint
               key={sprint.id}
               sprint={sprint}
+              members={members}
+              issueTypeList={issueTypeList}
+              issueStatusList={issueStatusList}
               getListStyle={getListStyle}
               getItemStyle={getItemStyle}
               setDoCreateIssue={setDoCreateIssue}
@@ -177,6 +201,9 @@ const Backlog = () => {
           <BoardBacklog
             droppableId="#backlog"
             backlog={sortedBoards.backlog}
+            members={members}
+            issueTypeList={issueTypeList}
+            issueStatusList={issueStatusList}
             numSprint={sortedBoards.sprints.length}
             getListStyle={getListStyle}
             getItemStyle={getItemStyle}

@@ -12,10 +12,11 @@ const filterFeild = (list, id) => {
   }));
 };
 
-const getFirstBoardId = (list, sprintId) => {
+const getFirstBoardId = (list, sprintId, boardName) => {
   if (sprintId !== '#backlog') {
-    const res = list.sprints.filter(sprint => sprint.id === sprintId)[0];
-    return res.boardIds[0];
+    const sprintRes = list.sprints.filter(sprint => sprint.id === sprintId)[0];
+    const boardId = sprintRes.boardDtoList.filter(board => board.name === boardName)[0].id;
+    return boardId;
   }
   return null;
 };
@@ -42,7 +43,11 @@ export const move = (list, source, destination, droppableSource, droppableDestin
   const sourceClone = Array.from(source);
   const destClone = Array.from(destination);
   const [removed] = sourceClone.splice(droppableSource.index, 1);
-  const boardId = getFirstBoardId(list, droppableDestination.droppableId);
+  const boardId = getFirstBoardId(
+    list,
+    droppableDestination.droppableId,
+    removed.issuesStatusDto.name,
+  );
 
   destClone.splice(droppableDestination.index, 0, { ...removed, boardId });
 

@@ -22,7 +22,14 @@ const DropdownSelect = props => {
 
   return (
     <React.Fragment>
-      <div aria-hidden="true" className="dropdown" onClick={() => onSelect()}>
+      <div
+        aria-hidden="true"
+        className="dropdown"
+        onClick={e => {
+          onSelect();
+          e.stopPropagation();
+        }}
+      >
         <button type="button" ref={btnRef} onClick={() => setIsOpen(prev => !prev)}>
           <svg width="24" height="24" viewBox="0 0 24 24" role="presentation">
             <g fill="currentColor" fillRule="evenodd">

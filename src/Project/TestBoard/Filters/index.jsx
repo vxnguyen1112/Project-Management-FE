@@ -1,33 +1,27 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import Select from 'react-select';
 
-import {
-  Filters,
-  SearchInput,
-} from './Styles';
+import { Filters, SearchInput } from './Styles';
 
 const propTypes = {
-  sprints:  PropTypes.array.isRequired,
+  sprints: PropTypes.array.isRequired,
   defaultFilters: PropTypes.object.isRequired,
   filters: PropTypes.object.isRequired,
   mergeFilters: PropTypes.func.isRequired,
 };
 
 const ProjectBoardFilters = ({ sprints, defaultFilters, filters, mergeFilters }) => {
-  const {searchTerm, sprintId } = filters;
+  const { searchTerm, sprintId } = filters;
 
   return (
     <Filters data-testid="board-filters">
-      <SearchInput
-        icon="search"
-        value={searchTerm}
-        onChange={() => {}}
+      <SearchInput icon="search" value={searchTerm} onChange={() => {}} />
+      <Select
+        value={sprints.filter(sprint => sprint.id === filters.sprintId)[0]}
+        onChange={sprint => mergeFilters({ sprintId: sprint.id })}
+        options={sprints}
       />
-      <Select 
-        defaultValue={sprints[0]}
-        onChange={(sprint) => mergeFilters({ sprintId: sprint.id })}
-        options={sprints}/>
       {/* <Avatars>
         {projectUsers.map(user => (
           <AvatarIsActiveBorder key={user.id} isActive={userIds.includes(user.id)}>

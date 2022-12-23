@@ -27,17 +27,17 @@ import { Status } from './Styles';
 // ]
 
 const statusMap = {
-  "TO DO": 'todo',
-  "IN PROGRESS": 'inprogress',
-  "DONE": 'done',
-}
+  'TO DO': 'todo',
+  'IN PROGRESS': 'inprogress',
+  DONE: 'done',
+};
 
-const ProjectBoardIssueDetailsStatus = (props) => {
+const ProjectBoardIssueDetailsStatus = props => {
   const { issueStatusName, updateIssue } = props;
   const issueStatus = {
-    status: statusMap[issueStatusName]   
-  }
-  
+    status: statusMap[issueStatusName],
+  };
+
   return (
     <Fragment>
       <Select
@@ -63,6 +63,6 @@ const ProjectBoardIssueDetailsStatus = (props) => {
       />
     </Fragment>
   );
-}
+};
 
 export default ProjectBoardIssueDetailsStatus;

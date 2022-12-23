@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import { isNil } from 'lodash';
+import moment from 'moment';
 import { InputDebounced } from 'components';
 import { SectionTitle } from '../Styles';
 
@@ -20,7 +21,7 @@ const ProjectBoardIssueDetailsCalendar = ({ displayFieldName, fieldName, issue, 
       <SectionTitle>{displayFieldName}</SectionTitle>
       <InputDebounced
         placeholder={displayFieldName}
-        value={isNil(issue[fieldName]) ? '' : issue[fieldName]}
+        value={isNil(issue[fieldName]) ? '' : moment(issue[fieldName]).format('lll')}
         onClick={() => setIsClick(!isClick)}
         onChange={() => {}}
       />

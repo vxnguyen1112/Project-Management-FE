@@ -17,7 +17,7 @@ const ProjectBoardIssueDetailsType = ({ issue, updateIssue }) => (
     dropdownWidth={150}
     withClearValue={false}
     name="type"
-    value={issue.type}
+    value={issue.issuesTypeDto.name.toLowerCase()}
     options={Object.values(IssueType).map(type => ({
       value: type,
       label: IssueTypeCopy[type],

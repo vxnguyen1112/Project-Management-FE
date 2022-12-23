@@ -56,6 +56,9 @@ const startSprint = async (projectId, sprintId) => {
 const BoardSprint = props => {
   const {
     sprint,
+    members,
+    issueTypeList,
+    issueStatusList,
     getListStyle,
     getItemStyle,
     setDoCreateIssue,
@@ -71,44 +74,13 @@ const BoardSprint = props => {
   const [isOpenDeleteIssueModal, setIsOpenDeleteIssueModal] = useState(false);
   const [isOpenDeleteSprintModal, setIsOpenDeleteSprintModal] = useState(false);
   const [isOpenCompleteSprintModal, setIsOpenCompleteSprintModal] = useState(false);
-  const [issueTypeList, setIssueTypeList] = useState([]);
-  const [issueStatusList, setIssueStatusList] = useState([]);
   const [id, setId] = useState(null);
   const [selectedOption, setSelectedOption] = useState(issueTypeList[0]);
   const [isStartSprint, setIsStartSprint] = useState(false);
   const { projectId } = store.getState().listproject;
   const { organizationId } = store.getState().auth.user;
-  const [members, setMembers] = useState([]);
 
-  useEffect(() => {
-    const getAllIssueType = async () => {
-      const res = await api.get(`/api/issues-types?organizationId=${organizationId}`);
-      setIssueTypeList(
-        res.map(issueType => ({
-          value: issueType.name,
-          label: issueType.name,
-          ...issueType,
-        })),
-      );
-    };
-
-    const getAllIssueStatus = async () => {
-      const res = await api.get(`/api/issues-status?organizationId=${organizationId}`);
-      setIssueStatusList(res);
-    };
-
-    const getMembers = async () => {
-      const res = await api.get(`/api/members/projects/${projectId}/search`);
-      console.log(res);
-      setMembers(res);
-    };
-
-    getAllIssueType();
-    getAllIssueStatus();
-    getMembers();
-  }, []);
-
-  const onCreateIssue = () => {
+  const onCreateIssue = async () => {
     if (issueContent.trim() === '') {
       toast.error('Vui lòng nhập tên issue');
     } else {
@@ -132,15 +104,21 @@ const BoardSprint = props => {
         boardId,
       };
 
-      addIssue(body)
-        .then(res => {
-          setDoCreateIssue(prev => !prev);
-          toast.success('Create issue successfully!');
-        })
-        .catch(err => {
-          toast.success(err);
-        });
+      try {
+        const res = await addIssue(body);
+        setDoCreateIssue(prev => !prev);
+        toast.success('Create issue successfully!');
+      } catch (err) {
+        toast.err(err);
+      }
+      setIssueContent('');
       setIsCreateIssue(false);
+    }
+  };
+
+  const onCreateIssueByKeyPress = async e => {
+    if (e.key === 'Enter') {
+      await onCreateIssue();
     }
   };
 
@@ -195,6 +173,10 @@ const BoardSprint = props => {
       },
     },
   ];
+
+  const viewIssueDetail = itemId => {
+    history.push(`${match.url}/issues/${itemId}`);
+  };
 
   return (
     <React.Fragment>
@@ -261,40 +243,40 @@ const BoardSprint = props => {
                       };
 
                       return (
-                        <Link to={`${match.url}/issues/${item.id}`}>
-                          <div
-                            className="issueArea"
-                            ref={provided.innerRef}
-                            {...provided.draggableProps}
-                            {...provided.dragHandleProps}
-                            onMouseEnter={() => setHover(true)}
-                            onMouseLeave={() => setHover(false)}
-                            style={getItemStyle(snapshot.isDragging, provided.draggableProps.style)}
-                          >
-                            <div className="issueTypeIcon">
-                              <img src={item.issuesTypeDto.urlIcon} alt="" />
-                            </div>
-                            <div className="issueId">
-                              <span>{item.issuesKey}</span>
-                            </div>
-                            <div className="issueContent">
-                              <span>{item.name}</span>
-                            </div>
-                            <div className="issueStatusArea">
-                              <CustomStatus
-                                issueStatusName={issue.issuesStatusDto.name}
-                                updateIssue={obj => {
-                                  updateIssueStatus(obj);
-                                }}
-                              />
-                              {!hover && <div className="dropdown" />}
-
-                              {hover && (
-                                <DropdownSelect onSelect={() => setId(item.id)} items={items} />
-                              )}
-                            </div>
+                        // eslint-disable-next-line jsx-a11y/no-static-element-interactions
+                        <div
+                          className="issueArea"
+                          ref={provided.innerRef}
+                          {...provided.draggableProps}
+                          {...provided.dragHandleProps}
+                          onMouseEnter={() => setHover(true)}
+                          onMouseLeave={() => setHover(false)}
+                          onClick={() => viewIssueDetail(item.id)}
+                          style={getItemStyle(snapshot.isDragging, provided.draggableProps.style)}
+                        >
+                          <div className="issueTypeIcon">
+                            <img src={item.issuesTypeDto.urlIcon} alt="" />
                           </div>
-                        </Link>
+                          <div className="issueId">
+                            <span>{item.issuesKey}</span>
+                          </div>
+                          <div className="issueContent">
+                            <span>{item.name}</span>
+                          </div>
+                          <div className="issueStatusArea">
+                            <CustomStatus
+                              issueStatusName={issue.issuesStatusDto.name}
+                              updateIssue={obj => {
+                                updateIssueStatus(obj);
+                              }}
+                            />
+                            {!hover && <div className="dropdown" />}
+
+                            {hover && (
+                              <DropdownSelect onSelect={() => setId(item.id)} items={items} />
+                            )}
+                          </div>
+                        </div>
                       );
                     }}
                   </Draggable>
@@ -324,6 +306,7 @@ const BoardSprint = props => {
                         value={issueContent}
                         onChange={e => setIssueContent(e.target.value)}
                         className="createIssueInput"
+                        onKeyPress={onCreateIssueByKeyPress}
                       />
                     </div>
                     <div className="createIssueGroupButton">
@@ -339,10 +322,7 @@ const BoardSprint = props => {
                         type="button"
                         variant="empty"
                         className="btn"
-                        onClick={() => {
-                          setIssueContent('');
-                          setIsCreateIssue(false);
-                        }}
+                        onClick={() => setIsCreateIssue(false)}
                       >
                         Cancel
                       </Button>

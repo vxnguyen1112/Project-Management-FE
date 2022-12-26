@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import { Formik, Form as FormikForm, Field as FormikField } from 'formik';
 import { get, mapValues } from 'lodash';
 
-import { toast } from 'react-project-management';
-import { is, generateErrors } from 'react-project-management';
+import { toast , is, generateErrors } from 'react-project-management';
+
 
 import Field from './Field';
 

@@ -34,15 +34,10 @@ const ProjectSidebar = ({ project }) => {
         </ProjectTexts>
       </ProjectInfo>
 
-      {renderLinkItem(match, 'Board', 'board', '/board')}
+      {renderLinkItem(match, 'Project Board', 'board', '/test-board')}
       {renderLinkItem(match, 'Project settings', 'settings', '/settings')}
       <Divider />
-      {/* {renderLinkItem(match, 'Releases', 'shipping')}
-      {renderLinkItem(match, 'Issues and filters', 'issues')}
-      {renderLinkItem(match, 'Pages', 'page')}
-      {renderLinkItem(match, 'Reports', 'reports')}
-      {renderLinkItem(match, 'Components', 'component')} */}
-      {renderLinkItem(match, 'Project create', 'board', '/project-create')}
+      {renderLinkItem(match, 'Issues', 'issues', '/list-issues')}
       {renderLinkItem(match, 'Backlog', 'page', '/backlog')}
       {renderLinkItem(match, 'Grantt', 'shipping', '/grantt')}
       {renderLinkItem(match, 'Burndown chart', 'calendar', '/burndown-chart')}

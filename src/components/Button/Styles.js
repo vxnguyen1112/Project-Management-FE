@@ -63,10 +63,17 @@ const secondaryAndEmptyShared = css`
   }
 `;
 
+const darkColor = css`
+  color: #000;
+  background: ${props => color[props.variant]};
+  ${font.medium}
+`;
+
 const buttonVariants = {
   primary: colored,
   success: colored,
   danger: colored,
+  dark: darkColor,
   secondary: css`
     background: ${color.secondary};
     ${secondaryAndEmptyShared};

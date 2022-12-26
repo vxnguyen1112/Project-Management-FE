@@ -1,0 +1,143 @@
+details {
+    padding-top: 10px;
+}
+
+summary {
+    position: relative;
+    padding-bottom: 10px;
+}
+
+.droppable[open] summary ~ * {
+    animation: open 0.3s ease-in-out;
+}
+
+@keyframes open {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+.createIssueArea {
+    margin-top: 16px;
+}
+
+.createIssueGroupInput {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.createIssueArea .createIssueGroupInputWrapper {
+    background: #fff;
+    padding: 0;
+    border: 1px solid #000;
+    width: 100%;
+    display: flex;
+}
+
+.createIssueArea .createIssueGroupButton {
+    width: fit-content;
+    display: flex;
+    justify-content: center;
+}
+
+.createIssueArea .createIssueGroupButton .btnCreateIssue {
+    margin: 0 20px;
+}
+
+.createIssueArea .createIssueSelect {
+    min-width: fit-content;
+}
+
+.createIssueArea .createIssueInput {
+    outline: none;
+    border: none;
+    padding: 0 16px;
+    width: 100%;
+}
+/* .createIssueGroupButton .btnSprint {
+    margin-left: 20px;
+} */
+
+.hidden { 
+    display:none; 
+}
+
+.groupButton {
+    position: absolute;
+    right: 0;
+    top: -10px;
+    display: flex;
+    align-items: center;
+}
+
+.btnSprint {
+    margin-right: 10px;
+    /* color: #172b4d; */
+}
+
+
+.btnCompleteSprint {
+    background-color: #c4bebe;
+    color: #172b4d;
+}
+
+.issueArea {
+    display: flex;
+    align-items: center;
+    background-color: #fff;
+    flex: 1 1 0%;
+    min-width: 0px;
+    padding: 2px 16px !important; 
+}
+
+.issueArea span {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.issueArea > * {
+    margin-right: 10px;
+}
+
+.issueArea .issueTypeIcon{
+    width: 20px;
+    height: 20px;
+    margin-left: 0;
+    margin-right: 10px;
+}
+
+.issueArea .issueTypeIcon img{
+    width: 100%;
+    height: 100%;
+}
+
+.issueArea .issueId span{
+    color: #5e6c84;
+}
+
+.issueArea .issueContent {
+    display: flex;
+    align-items: center;
+    flex: 1 1 0%;
+    min-width: 0px;
+}
+
+.issueArea .issueStatusArea {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-left: 0;
+}
+
+.issueArea .issueStatusArea div:nth-child(1) {
+    margin-right: 10px;
+}
+
+

@@ -1,17 +1,21 @@
 import axios from 'axios';
+import { toast , objectToQueryString } from 'react-project-management';
+import {logout} from "store/reducers/authSlice";
+import { store } from 'store';
 
-import history from 'browserHistory';
-import { toast , objectToQueryString , getStoredAuthToken, removeStoredAuthToken } from 'react-project-management';
-
-
-
+const token = () => {
+  const getUser=store.getState().auth.user;
+  if (getUser === null || getUser === undefined || getUser === '') {
+    return '';
+  }
+  return `${getUser.tokenType} ${getUser.accessToken}`;
+};
 const defaults = {
-  baseURL: process.env.API_URL || 'http://localhost:3000',
+  baseURL: process.env.API_URL || 'http://165.232.173.235:8000',
   headers: () => ({
     'Content-Type': 'application/json',
-    Authorization: getStoredAuthToken() === "undefined" ? '': `Bearer ${getStoredAuthToken()}`,
-    withCredentials: true,
-    'Access-Control-Allow-Credentials': true
+    Authorization: token(),
+    accept:'*/*',
   }),
   error: {
     code: 'INTERNAL_ERROR',
@@ -26,6 +30,7 @@ const api = (method, url, variables) =>
     axios({
       url: `${defaults.baseURL}${url}`,
       method,
+      withCredentials: true,
       headers: defaults.headers(),
       params: method === 'get' ? variables : undefined,
       data: method !== 'get' ? variables : undefined,
@@ -36,11 +41,10 @@ const api = (method, url, variables) =>
       },
       error => {
         if (error.response) {
-          if (error.response.data.error.code === 'INVALID_TOKEN') {
-            removeStoredAuthToken();
-            history.push('/authenticate');
+          if (error.response.data.code === 401) {
+            store.dispatch(logout())
           } else {
-            reject(error.response.data.error);
+            reject(error.response.data.message);
           }
         } else {
           reject(defaults.error);

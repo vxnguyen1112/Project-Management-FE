@@ -1,38 +1,59 @@
+/* eslint-disable no-undef */
 /* eslint-disable react/button-has-type */
 /* eslint-disable jsx-a11y/label-has-associated-control */
-import React, { useState } from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import React, { useState} from 'react';
+import { Link } from 'react-router-dom';
+import { useDispatch} from 'react-redux';
+import { login } from 'store/reducers/authSlice';
+import { store } from 'store';
+import history from 'browserHistory';
 import { FacebookLoginButton, InstagramLoginButton } from 'react-social-login-buttons';
-import {toast, getStoredAuthToken, storeAuthToken } from 'react-project-management'
-
-import{ api} from  'Services/api'
+import { toast } from 'react-project-management';
 
 const SignInForm = () => {
-  const history = useHistory();
-  const [state, setState] = useState({ username: '', password: 'A123qwe@' });
+  const dispatch = useDispatch();
+  const [state, setState] = useState({ username: 'vuxuannguyen', password: 'Nguyen123@' });
+  const [formErrors, setFormErrors] = useState({});
+  const validate = values => {
+    const errors = {};
+    const passRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
+    const userRegex = /^[a-z0-9_-]{6,30}$/;
+    if (!passRegex.test(values.password)) {
+      errors.password =
+        'Password must be minimum 8 characters, at least 1 uppercase letter, 1 number and 1 special character!';
+    }
+    if (!userRegex.test(values.username)) {
+      errors.username =
+        'Username must be characters and number having a length of 6 to 30 characters!';
+    }
+    return errors;
+  };
+
   const handleChange = event => {
-    const {target} = event;
+    const { target } = event;
     const value = target.type === 'checkbox' ? target.checked : target.value;
-    const {name} = target;
+    const { name } = target;
     setState(previousState => {
       return { ...previousState, [name]: value };
     });
   };
   const handleSubmit = async event => {
+    const errors = validate(state);
+    setFormErrors(errors);
     event.preventDefault();
+    if (Object.keys(errors).length === 0) {
+      dispatch(login(state))
+        .unwrap()
+        .then(() => {
+          toast.success(store.getState().message.message);
+          history.push('/home');
+        })
+        .catch(() => {
+          toast.error(store.getState().message.message);
+        });
+      setFormErrors({});
 
-    console.log('The form was submitted with the following data:');
-    console.log(state);
-    try {
-      const  authToken   = await api.post('/api/auth/signin', JSON.stringify(state));
-      console.log(authToken);
-      toast.success('Logged in successfully');
-      history.push('/listproject');
-    } catch (error) {
-      console.log("error");
-      console.log(error);
     }
-  
   };
   return (
     // eslint-disable-next-line react/jsx-filename-extension
@@ -51,8 +72,8 @@ const SignInForm = () => {
             value={state.username}
             onChange={handleChange}
           />
+          <p style={{ color: 'red', fontSize: 13 }}>{formErrors.username}</p>
         </div>
-
         <div className="formField">
           <label className="formFieldLabel" htmlFor="password">
             Password
@@ -66,6 +87,7 @@ const SignInForm = () => {
             value={state.password}
             onChange={handleChange}
           />
+          <p style={{ color: 'red', fontSize: 13 }}>{formErrors.password}</p>
         </div>
 
         <div className="formField">
@@ -77,11 +99,11 @@ const SignInForm = () => {
 
         <div className="socialMediaButtons">
           <div className="facebookButton">
-            <FacebookLoginButton onClick={() => alert('Hello')} />
+            <FacebookLoginButton />
           </div>
 
           <div className="instagramButton">
-            <InstagramLoginButton onClick={() => alert('Hello')} />
+            <InstagramLoginButton />
           </div>
         </div>
       </form>

@@ -1,109 +1,119 @@
-import React, { Component } from "react";
+import React, { useState, useEffect } from 'react';
 
-import "../../../node_modules/@syncfusion/ej2-base/styles/material.css";
-import "../../../node_modules/@syncfusion/ej2-buttons/styles/material.css";
-import "../../../node_modules/@syncfusion/ej2-calendars/styles/material.css";
-import "../../../node_modules/@syncfusion/ej2-dropdowns/styles/material.css";
-import "../../../node_modules/@syncfusion/ej2-gantt/styles/material.css";
-import "../../../node_modules/@syncfusion/ej2-grids/styles/material.css";
-import "../../../node_modules/@syncfusion/ej2-inputs/styles/material.css";
-import "../../../node_modules/@syncfusion/ej2-layouts/styles/material.css";
-import "../../../node_modules/@syncfusion/ej2-lists/styles/material.css";
-import "../../../node_modules/@syncfusion/ej2-navigations/styles/material.css";
-import "../../../node_modules/@syncfusion/ej2-popups/styles/material.css";
-import "../../../node_modules/@syncfusion/ej2-richtexteditor/styles/material.css";
-import "../../../node_modules/@syncfusion/ej2-treegrid/styles/material.css";
-import { GanttComponent, Inject, Edit } from "@syncfusion/ej2-react-gantt";
+import '../../../node_modules/@syncfusion/ej2-base/styles/material.css';
+import '../../../node_modules/@syncfusion/ej2-buttons/styles/material.css';
+import '../../../node_modules/@syncfusion/ej2-calendars/styles/material.css';
+import '../../../node_modules/@syncfusion/ej2-dropdowns/styles/material.css';
+import '../../../node_modules/@syncfusion/ej2-gantt/styles/material.css';
+import '../../../node_modules/@syncfusion/ej2-grids/styles/material.css';
+import '../../../node_modules/@syncfusion/ej2-inputs/styles/material.css';
+import '../../../node_modules/@syncfusion/ej2-layouts/styles/material.css';
+import '../../../node_modules/@syncfusion/ej2-lists/styles/material.css';
+import '../../../node_modules/@syncfusion/ej2-navigations/styles/material.css';
+import '../../../node_modules/@syncfusion/ej2-popups/styles/material.css';
+import '../../../node_modules/@syncfusion/ej2-richtexteditor/styles/material.css';
+import '../../../node_modules/@syncfusion/ej2-treegrid/styles/material.css';
+import { GanttComponent, Inject, Edit } from '@syncfusion/ej2-react-gantt';
+import useMergeState from 'hooks/mergeState';
+import { store } from 'store';
+import api from 'Services/api';
+import Filters from 'Project/TestBoard/Filters';
 
-const data = [
-    {
-        TaskID: 1,
-        TaskName: "Project Initiation",
-        StartDate: new Date("04/02/2019"),
-        EndDate: new Date("04/21/2019"),
-        subtasks: [
-            {
-                TaskID: 2,
-                TaskName: "Identify Site location",
-                StartDate: new Date("04/02/2019"),
-                Duration: 4,
-                Progress: 50
-            },
-            {
-                TaskID: 3,
-                TaskName: "Perform Soil test",
-                StartDate: new Date("04/02/2019"),
-                Duration: 4,
-                Progress: 50,
-                Predecessor: "2FS"
-            },
-            {
-                TaskID: 4,
-                TaskName: "Soil test approval",
-                StartDate: new Date("04/02/2019"),
-                Duration: 4,
-                Progress: 50
-            }
-        ]
-    },
-    {
-        TaskID: 5,
-        TaskName: "Project Estimation",
-        StartDate: new Date("04/02/2019"),
-        EndDate: new Date("04/21/2019"),
-        subtasks: [
-            {
-                TaskID: 6,
-                TaskName: "Develop floor plan for estimation",
-                StartDate: new Date("04/04/2019"),
-                Duration: 3,
-                Progress: 50
-            },
-            {
-                TaskID: 7,
-                TaskName: "List materials",
-                StartDate: new Date("04/04/2019"),
-                Duration: 3,
-                Progress: 50
-            },
-            {
-                TaskID: 8,
-                TaskName: "Estimation approval",
-                StartDate: new Date("04/04/2019"),
-                Duration: 3,
-                Progress: 50,
-                Predecessor: "7SS"
-            }
-        ]
-    }
-];
+const defaultFilters = {
+  searchTerm: '',
+  sprintId: null,
+};
+
 const taskFields = {
-    id: "TaskID",
-    name: "TaskName",
-    startDate: "StartDate",
-    duration: "Duration",
-    progress: "Progress",
-    child: "subtasks",
-    dependency: "Predecessor"
+  id: 'id',
+  name: 'name',
+  startDate: 'startDate',
+  endDate: 'endDate',
+  progress: 'progress',
 };
 
 const editSettings = {
-    allowTaskbarEditing: true
+  allowTaskbarEditing: true,
 };
 
-class Grantt extends Component {
-    render() {
-        return (
-            <GanttComponent
-                dataSource={data}
-                taskFields={taskFields}
-                editSettings={editSettings}
-                height="800px"
-            >
-                <Inject services={[Edit]} />
-            </GanttComponent>
-        );
+const fetchSprints = res => {
+  const sprints = [];
+
+  res.sprints.forEach(sprint => {
+    if (sprint.status === 'STARTING') {
+      sprints.push({
+        id: sprint.id,
+        name: sprint.name,
+        value: sprint.name,
+        label: sprint.name,
+      });
     }
-}
+  });
+
+  sprints.sort((a, b) => a.name.localeCompare(b.name));
+
+  return sprints;
+};
+
+const refactorIssues = (list, sprintId) => {
+  const filteredSprint = list.sprints.filter(sprint => sprint.id === sprintId)[0];
+  const filteredIssues = [];
+
+  filteredSprint.issuesList.forEach(issue => {
+    if (issue.startDate !== undefined && issue.dueDate !== undefined) {
+      const { id, name, startDate, endDate } = issue;
+
+      filteredIssues.push({
+        id,
+        name,
+        startDate,
+        endDate,
+        progress: 50,
+      });
+    }
+  });
+
+  return filteredIssues;
+};
+
+// eslint-disable-next-line react/prefer-stateless-function
+const Grantt = () => {
+  const [filters, mergeFilters] = useMergeState(defaultFilters);
+  const [sprints, setSprints] = useState([]);
+  const [issues, setIssues] = useState([]);
+  const { projectId } = store.getState().listproject;
+
+  useEffect(() => {
+    const getBoards = async () => {
+      const res = await api.get(`/api/backlogs?project_id=${projectId}`);
+      const fetchedSprint = fetchSprints(res);
+
+      setSprints(fetchedSprint);
+
+      if (filters.sprintId === null) {
+        filters.sprintId = fetchedSprint[0].id;
+      }
+
+      const filteredIssues = refactorIssues(res, filters.sprintId);
+      setIssues(filteredIssues);
+    };
+
+    getBoards();
+  }, [filters]);
+  return (
+    <React.Fragment>
+      <Filters
+        sprints={sprints}
+        defaultFilters={defaultFilters}
+        filters={filters}
+        mergeFilters={mergeFilters}
+      />
+
+      <GanttComponent dataSource={issues} taskFields={taskFields} editSettings={editSettings}>
+        <Inject services={[Edit]} />
+      </GanttComponent>
+    </React.Fragment>
+  );
+};
 
 export default Grantt;

@@ -55,19 +55,36 @@ const fetchSprints = res => {
   return sprints;
 };
 
+const data = [
+  {
+    TaskID: 1,
+    TaskName: 'Project Initiation',
+    StartDate: new Date('04/02/2019'),
+    EndDate: new Date('04/21/2019'),
+    Progress: 50,
+  },
+  {
+    TaskID: 5,
+    TaskName: 'Project Estimation',
+    StartDate: new Date('04/02/2019'),
+    EndDate: new Date('04/21/2019'),
+    Progress: 50,
+  },
+];
+
 const refactorIssues = (list, sprintId) => {
   const filteredSprint = list.sprints.filter(sprint => sprint.id === sprintId)[0];
   const filteredIssues = [];
 
   filteredSprint.issuesList.forEach(issue => {
     if (issue.startDate !== undefined && issue.dueDate !== undefined) {
-      const { id, name, startDate, endDate } = issue;
+      const { issuesKey, name, startDate, dueDate, doneRatio } = issue;
 
       filteredIssues.push({
-        id,
+        id: issuesKey,
         name,
-        startDate,
-        endDate,
+        startDate: new Date(startDate),
+        endDate: new Date(dueDate),
         progress: 50,
       });
     }

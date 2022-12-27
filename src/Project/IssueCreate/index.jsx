@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import api from 'Services/api';
+import { store } from 'store';
 import PropTypes from 'prop-types';
-
+import { useHistory } from "react-router-dom"
 import {
   IssueType,
   IssueStatus,
@@ -9,60 +11,115 @@ import {
   IssuePriorityCopy,
 } from 'constants/issues';
 import { toast } from 'react-project-management';
-import useApi from 'hooks/api';
-import useCurrentUser from 'hooks/currentUser';
 import { Form, IssueTypeIcon, Icon, Avatar, IssuePriorityIcon } from 'components';
+import Calendar from './Calendar';
 
 import {
   FormHeading,
   FormElement,
   SelectItem,
   SelectItemLabel,
-  Divider,
   Actions,
   ActionButton,
 } from './Styles';
 
 const propTypes = {
-  project: PropTypes.object.isRequired,
-  fetchProject: PropTypes.func.isRequired,
   onCreate: PropTypes.func.isRequired,
   modalClose: PropTypes.func.isRequired,
 };
 
-const ProjectIssueCreate = ({ project, fetchProject, onCreate, modalClose }) => {
-  const [{ isCreating }, createIssue] = useApi.post('/issues');
+const filterType = (issuesType, issueTypeName) => {
+  const res = issuesType.filter(issueType => issueType.name.toLowerCase() === issueTypeName);
 
-  const { currentUserId } = useCurrentUser();
+  return res.length > 0 ? res[0].id : null;
+};
+
+const filterStatus = (issuesStatus, issueStatusName) => {
+  const res = issuesStatus.filter(issueType => issueType.name === issueStatusName);
+
+  return res.length > 0 ? res[0].id : null;
+};
+
+const ProjectIssueCreate = ({ onCreate, modalClose }) => {
+  const history = useHistory();
+  const [startDate, setStartDate] = useState(null);
+  const [dueDate, setDueDate] = useState(null);
+  const [members, setMembers] = useState([]);
+  const [issueTypeList, setIssueTypeList] = useState([]);
+  const [issueStatusList, setIssueStatusList] = useState([]);
+  const { projectId } = store.getState().listproject;
+  const { organizationId } = store.getState().auth.user;
+
+  useEffect(() => {
+    const getAllIssueType = async () => {
+      const res = await api.get(`/api/issues-types?organizationId=${organizationId}`);
+      setIssueTypeList(
+        res.map(issueType => ({
+          value: issueType.name,
+          label: issueType.name,
+          ...issueType,
+        })),
+      );
+    };
+
+    const getAllIssueStatus = async () => {
+      const res = await api.get(`/api/issues-status?organizationId=${organizationId}`);
+      setIssueStatusList(res);
+    };
+
+    const getMembers = async () => {
+      const res = await api.get(`/api/members/projects/${projectId}/search`);
+      console.log(res);
+      setMembers(res);
+    };
+    getAllIssueType();
+    getAllIssueStatus();
+    getMembers();
+  }, []);
 
   return (
     <Form
       enableReinitialize
       initialValues={{
         type: IssueType.TASK,
-        title: '',
+        name: '',
         description: '',
-        reporterId: currentUserId,
         userIds: [],
         priority: IssuePriority.MEDIUM,
+        estimateHours: '',
       }}
       validations={{
         type: Form.is.required(),
-        title: [Form.is.required(), Form.is.maxLength(200)],
-        reporterId: Form.is.required(),
+        name: [Form.is.required(), Form.is.maxLength(200)],
         priority: Form.is.required(),
       }}
       onSubmit={async (values, form) => {
         try {
-          await createIssue({
-            ...values,
-            status: IssueStatus.BACKLOG,
-            projectId: project.id,
-            users: values.userIds.map(id => ({ id })),
-          });
-          await fetchProject();
+          // await createIssue({
+          //   ...values,
+          //   status: IssueStatus.BACKLOG,
+          //   projectId: project.id,
+          //   users: values.userIds.map(id => ({ id })),
+          // });
+          const body = {
+            issueTypeId: filterType(issueTypeList, values.type),
+            assignMemberId: values.userIds,
+            name: values.name,
+            description: values.description,
+            projectId,
+            issuesStatusId: filterStatus(issueStatusList, 'TO DO'),
+            isPublic: true,
+            organizationId,
+            startDate,
+            dueDate,
+            estimatedHours: parseInt(values.estimateHours),
+            priority: values.priority,
+          };
+          console.log(body);
+          const res = await api.post(`/api/issues`, JSON.stringify(body));
           toast.success('Issue has been successfully created.');
           onCreate();
+          history.push('/project/backlog');
         } catch (error) {
           Form.handleAPIError(error, form);
         }
@@ -70,51 +127,40 @@ const ProjectIssueCreate = ({ project, fetchProject, onCreate, modalClose }) => 
     >
       <FormElement>
         <FormHeading>Create issue</FormHeading>
+        <Form.Field.Input name="name" label="Name" />
+
         <Form.Field.Select
           name="type"
           label="Issue Type"
-          tip="Start typing to get a list of possible matches."
           options={typeOptions}
           renderOption={renderType}
           renderValue={renderType}
         />
-        <Divider />
-        <Form.Field.Input
-          name="title"
-          label="Short Summary"
-          tip="Concisely summarize the issue in one or two sentences."
-        />
-        <Form.Field.TextEditor
-          name="description"
-          label="Description"
-          tip="Describe the issue in as much detail as you'd like."
-        />
+        <Form.Field.TextEditor name="description" label="Description" />
+
         <Form.Field.Select
-          name="reporterId"
-          label="Reporter"
-          options={userOptions(project)}
-          renderOption={renderUser(project)}
-          renderValue={renderUser(project)}
-        />
-        <Form.Field.Select
-          isMulti
           name="userIds"
           label="Assignees"
-          tio="People who are responsible for dealing with this issue."
-          options={userOptions(project)}
-          renderOption={renderUser(project)}
-          renderValue={renderUser(project)}
+          options={userOptions(members)}
+          renderOption={renderUser(members)}
+          renderValue={renderUser(members)}
         />
         <Form.Field.Select
           name="priority"
           label="Priority"
-          tip="Priority in relation to other issues."
           options={priorityOptions}
           renderOption={renderPriority}
           renderValue={renderPriority}
         />
+
+        <Form.Field.Input name="estimateHours" label="Estimate (Hours)" />
+
+        <Calendar val={startDate} setValue={setStartDate} displayFieldName="Start date" />
+
+        <Calendar val={dueDate} setValue={setDueDate} displayFieldName="Due date" />
+
         <Actions>
-          <ActionButton type="submit" variant="primary" isWorking={isCreating}>
+          <ActionButton type="submit" variant="primary">
             Create Issue
           </ActionButton>
           <ActionButton type="button" variant="empty" onClick={modalClose}>
@@ -136,7 +182,7 @@ const priorityOptions = Object.values(IssuePriority).map(priority => ({
   label: IssuePriorityCopy[priority],
 }));
 
-const userOptions = project => project.users.map(user => ({ value: user.id, label: user.name }));
+const userOptions = project => project.map(user => ({ value: user.id, label: user.displayName }));
 
 const renderType = ({ value: type }) => (
   <SelectItem>
@@ -153,7 +199,7 @@ const renderPriority = ({ value: priority }) => (
 );
 
 const renderUser = project => ({ value: userId, removeOptionValue }) => {
-  const user = project.users.find(({ id }) => id === userId);
+  const user = project.find(({ id }) => id === userId);
 
   return (
     <SelectItem
@@ -161,8 +207,12 @@ const renderUser = project => ({ value: userId, removeOptionValue }) => {
       withBottomMargin={!!removeOptionValue}
       onClick={() => removeOptionValue && removeOptionValue()}
     >
-      <Avatar size={20} avatarUrl={user.avatarUrl} name={user.name} />
-      <SelectItemLabel>{user.name}</SelectItemLabel>
+      <Avatar
+        avatarUrl="https://pixlok.com/wp-content/uploads/2021/03/default-user-profile-picture.jpg"
+        name={user.displayName}
+        size={24}
+      />
+      <SelectItemLabel>{user.displayName}</SelectItemLabel>
       {removeOptionValue && <Icon type="close" top={2} />}
     </SelectItem>
   );

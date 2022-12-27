@@ -37,3 +37,11 @@ export const Actions = styled.div`
 export const ActionButton = styled(Button)`
   margin-left: 10px;
 `;
+
+export const SectionTitle = styled.div`
+  margin-top: 20px;
+  padding-bottom: 5px;
+  color: ${color.textMedium};
+  ${font.bold}
+  ${font.size(13)}
+`;

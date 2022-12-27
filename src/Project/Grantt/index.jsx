@@ -85,7 +85,7 @@ const refactorIssues = (list, sprintId) => {
         name,
         startDate: new Date(startDate),
         endDate: new Date(dueDate),
-        progress: 50,
+        progress: doneRatio,
       });
     }
   });
@@ -103,6 +103,7 @@ const Grantt = () => {
   useEffect(() => {
     const getBoards = async () => {
       const res = await api.get(`/api/backlogs?project_id=${projectId}`);
+      console.log(res);
       const fetchedSprint = fetchSprints(res);
 
       setSprints(fetchedSprint);

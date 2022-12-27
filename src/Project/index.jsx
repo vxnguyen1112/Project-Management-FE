@@ -224,8 +224,6 @@ const Project = () => {
           onClose={issueCreateModalHelpers.close}
           renderContent={modal => (
             <IssueCreate
-              project={project}
-              fetchProject={fetchProject}
               onCreate={() => history.push(`${match.url}/board`)}
               modalClose={modal.close}
             />

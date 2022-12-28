@@ -24,7 +24,7 @@ const defaults = {
     'Content-Type': 'application/json',
     Authorization: token(),
     accept:'*/*',
-     "PROJECT-ID":PROJECT_ID()
+    "PROJECT-ID":PROJECT_ID()
   }),
   error: {
     code: 'INTERNAL_ERROR',
@@ -33,14 +33,22 @@ const defaults = {
     data: {},
   },
 };
+const clear =(obj)=>{
+  for (const propName in obj) {
+    if (obj[propName] === null || obj[propName] === undefined||obj[propName]==='') {
+      delete obj[propName];
+    }
+  }
+  return obj
 
+}
 const api = (method, url, variables) =>
   new Promise((resolve, reject) => {
     axios({
       url: `${defaults.baseURL}${url}`,
       method,
       withCredentials: true,
-      headers: defaults.headers(),
+      headers:clear(defaults.headers()),
       params: method === 'get' ? variables : undefined,
       data: method !== 'get' ? variables : undefined,
       paramsSerializer: objectToQueryString,

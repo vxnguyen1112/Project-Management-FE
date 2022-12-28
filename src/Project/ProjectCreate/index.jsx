@@ -20,9 +20,9 @@ const ProjectCreate = () => {
 
     const [isPublic, setIsPublic] = useState(false)
 
-    const handleCheckbox = () => {
-        setIsPublic(!isPublic)
-    }
+    // const handleCheckbox = () => {
+    //     setIsPublic(!isPublic)
+    // }
 
     return (
       <Form
@@ -73,7 +73,7 @@ const ProjectCreate = () => {
               label="Description"
               tip="Describe the project in as much detail as you'd like."
             />
-            <div
+            {/* <div
               style={{
                 marginTop: 20,
                 display: 'flex',
@@ -94,7 +94,7 @@ const ProjectCreate = () => {
                   marginLeft: 20,
                 }}
               />
-            </div>
+            </div> */}
 
             <ActionButton 
                 type="submit" 

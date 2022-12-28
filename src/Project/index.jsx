@@ -32,7 +32,7 @@ const Project = () => {
   const data = {
     project: {
       id: 93671,
-      name: 'singularity 1.0',
+      name: 'Project',
       url: 'https://www.atlassian.com/software/jira',
       description:
         'Plan, track, and manage your agile and software development projects in Jira. Customize your workflow, collaborate, and release great software.',

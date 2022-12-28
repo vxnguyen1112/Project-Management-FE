@@ -12,7 +12,7 @@ export const getListProject = createAsyncThunk(
       query=`/api/organizations/${thunkAPI.getState().auth.user.organizationId}/projects`;
       }else
       {
-        query=`/api/organizations/${thunkAPI.getState().auth.user.organizationId}/projects/attending`;
+      query=`/api/organizations/${thunkAPI.getState().auth.user.organizationId}/projects/attending`;
       }
       console.log(query)
       const data = await api.get(query);
@@ -35,6 +35,12 @@ const listprojectSlice = createSlice({
       state.projectId = action.payload;
       state.name=state.listproject.filter((project) =>project.id===state.projectId)[0].name;
     },
+    clear(state) {
+        
+      state.projectId = "";
+      state.name = [];
+      state.listproject=[]
+    },
   },
   extraReducers: {
     [getListProject.fulfilled]: (state, action) => {
@@ -45,6 +51,6 @@ const listprojectSlice = createSlice({
     },
   },
 });
-export const {selectProject}=listprojectSlice.actions
+export const {selectProject,clear}=listprojectSlice.actions
 const { reducer } = listprojectSlice;
 export default reducer;

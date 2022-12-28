@@ -58,7 +58,7 @@ const TableProject = () => {
                 />
               </div>
               <p style={{ marginTop: '5px' }}>Domain : {item.domain}</p>
-              <div style={{ display: 'flex' }}>
+              {/* <div style={{ display: 'flex' }}>
                 <p>Public : </p>
                 <input
                   type="checkbox"
@@ -67,7 +67,7 @@ const TableProject = () => {
                   checked={item.isPublic}
                   readOnly
                 />
-              </div>
+              </div> */}
               <p>Status : {item.projectStatus}</p>
             </div>
           ))}

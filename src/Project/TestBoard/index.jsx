@@ -111,7 +111,7 @@ const ProjectBoard = () => {
 
   return (
     <Fragment>
-      <Breadcrumbs items={['Projects', 'singularity 1.0', 'Test Board']} />
+      <Breadcrumbs items={['Projects', 'Project', 'Test Board']} />
       <Header />
       <Filters
         sprints={sprints}

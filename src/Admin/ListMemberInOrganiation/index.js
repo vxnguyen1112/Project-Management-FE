@@ -40,7 +40,7 @@ const ListMemberInOrganition = () => {
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center' ,cursor:'pointer'}}>
-            <Icon type="page" size={20} left={15} top={2} />
+            <Icon type="github" size={20} left={15} top={2} />
             <p style={{ paddingLeft: '24px', fontStyle: 'italic' }}>Add member</p>
           </div>
         </div>
@@ -167,7 +167,7 @@ const ListMemberInOrganition = () => {
             onConfirm={async () => {
               try {
                 await api.delete(`/api/users/${memberID}`);
-                toast.success('Delete project successfully');
+                toast.success('Delete member successfully');
                 setIsLoading(current => !current);
               } catch (error) {
                 toast.error(error);

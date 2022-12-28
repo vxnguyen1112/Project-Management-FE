@@ -139,12 +139,12 @@ const AddMemberToProject = () => {
                       className="member"
                       style={{cursor: 'pointer'}}
                       onClick={() => {
-                        setisSelect(item.username);
+                        setisSelect(item.mailNotification);
                         setFilter('');
                       }}
                     >
                       {' '}
-                      {typeof item.username === 'string' ? item.username : item.mailNotification}
+                      {typeof item.mailNotification === 'string' ? item.mailNotification : item.username}
                     </p>
                   ))}
               </div>

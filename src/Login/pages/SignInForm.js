@@ -12,7 +12,7 @@ import { toast } from 'react-project-management';
 
 const SignInForm = () => {
   const dispatch = useDispatch();
-  const [state, setState] = useState({ username: 'vuxuannguyen', password: 'Nguyen123@' });
+  const [state, setState] = useState({ username: '', password: '' });
   const [formErrors, setFormErrors] = useState({});
   const validate = values => {
     const errors = {};

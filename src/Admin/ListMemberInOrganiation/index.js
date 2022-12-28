@@ -104,7 +104,9 @@ const ListMemberInOrganition = () => {
     setMemberID(id);
     setIsOpenDeleteModal(true);
   };
-
+  const delay = ms => new Promise(
+    resolve => setTimeout(resolve, ms)
+  );
   const {
     getTableProps,
     getTableBodyProps,
@@ -167,6 +169,7 @@ const ListMemberInOrganition = () => {
             onConfirm={async () => {
               try {
                 await api.delete(`/api/users/${memberID}`);
+                await delay(700);
                 toast.success('Delete member successfully');
                 setIsLoading(current => !current);
               } catch (error) {

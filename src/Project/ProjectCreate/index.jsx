@@ -19,11 +19,9 @@ const ProjectCreate = () => {
     }
 
     const [isPublic, setIsPublic] = useState(false)
-
     // const handleCheckbox = () => {
     //     setIsPublic(!isPublic)
     // }
-
     return (
       <Form
         initialValues={Form.initialValues(project, get => ({

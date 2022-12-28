@@ -1,5 +1,6 @@
+/* eslint-disable prefer-promise-reject-errors */
 import axios from 'axios';
-import { objectToQueryString } from 'react-project-management';
+import { objectToQueryString,toast } from 'react-project-management';
 import {logout} from "store/reducers/authSlice";
 import { store } from 'store';
 
@@ -43,7 +44,11 @@ const api = (method, url, variables) =>
         if (error.response) {
           if (error.response.data.code === 401) {
             store.dispatch(logout())
-          } else {
+          }else if(error.response.status === 403)
+            {
+              toast.error('Access denied');
+            }
+           else {
             reject(error.response.data.message);
           }
         } else {

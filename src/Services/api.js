@@ -1,18 +1,19 @@
+/* eslint-disable prefer-promise-reject-errors */
 import axios from 'axios';
-import { toast , objectToQueryString } from 'react-project-management';
-import {logout} from "store/reducers/authSlice";
+import { toast, objectToQueryString } from 'react-project-management';
+import { logout } from 'store/reducers/authSlice';
 import { store } from 'store';
 
 const token = () => {
-  const getUser=store.getState().auth.user;
+  const getUser = store.getState().auth.user;
   if (getUser === null || getUser === undefined || getUser === '') {
     return '';
   }
   return `${getUser.tokenType} ${getUser.accessToken}`;
 };
 const PROJECT_ID = () => {
-  console.log(`id project ${store.getState().listproject.projectId}`)
-  const getprojectID=store.getState().listproject.projectId;
+  console.log(`id project ${store.getState().listproject.projectId}`);
+  const getprojectID = store.getState().listproject.projectId;
   if (getprojectID === null || getprojectID === undefined || getprojectID === '') {
     return '';
   }
@@ -23,7 +24,7 @@ const defaults = {
   headers: () => ({
     'Content-Type': 'application/json',
     Authorization: token(),
-    accept:'*/*',
+    accept: '*/*',
     "PROJECT-ID":PROJECT_ID()
   }),
   error: {
@@ -33,22 +34,21 @@ const defaults = {
     data: {},
   },
 };
-const clear =(obj)=>{
+const clear = obj => {
   for (const propName in obj) {
-    if (obj[propName] === null || obj[propName] === undefined||obj[propName]==='') {
+    if (obj[propName] === null || obj[propName] === undefined || obj[propName] === '') {
       delete obj[propName];
     }
   }
-  return obj
-
-}
+  return obj;
+};
 const api = (method, url, variables) =>
   new Promise((resolve, reject) => {
     axios({
       url: `${defaults.baseURL}${url}`,
       method,
       withCredentials: true,
-      headers:clear(defaults.headers()),
+      headers: clear(defaults.headers()),
       params: method === 'get' ? variables : undefined,
       data: method !== 'get' ? variables : undefined,
       paramsSerializer: objectToQueryString,
@@ -59,7 +59,9 @@ const api = (method, url, variables) =>
       error => {
         if (error.response) {
           if (error.response.data.code === 401) {
-            store.dispatch(logout())
+            store.dispatch(logout());
+          } else if (error.response.status === 403) {
+            toast.error('Access denied');
           } else {
             reject(error.response.data.message);
           }

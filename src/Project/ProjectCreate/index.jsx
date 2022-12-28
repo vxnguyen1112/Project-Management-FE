@@ -71,7 +71,6 @@ const ProjectCreate = () => {
             <Form.Field.TextEditor
               name="description"
               label="Description"
-              tip="Describe the project in as much detail as you'd like."
             />
             {/* <div
               style={{

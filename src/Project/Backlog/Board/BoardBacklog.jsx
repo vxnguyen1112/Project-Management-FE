@@ -9,8 +9,7 @@ import { toast } from 'react-project-management';
 import DropdownSelect from 'components/DropdownSelect';
 import ModalCustom from 'components/ModalCustom/ModalCustom';
 import CustomStatus from 'Project/TestBoard/IssueDetails/CustomStatus';
-import IssueDetails from 'Project/TestBoard/IssueDetails';
-import { Route, Link, useRouteMatch, useHistory } from 'react-router-dom';
+import { useRouteMatch, useHistory } from 'react-router-dom';
 import Divider from '../Divider';
 import './Board.css';
 
@@ -288,28 +287,6 @@ const BoardBacklog = props => {
           setModalOpen={setIsOpenDeleteModal}
         />
       )}
-
-      <Route
-        path={`${match.path}/issues/:issueId`}
-        render={routeProps => (
-          <Modal
-            isOpen
-            testid="modal:issue-details"
-            width={1040}
-            withCloseIcon={false}
-            onClose={() => history.push(match.url)}
-            renderContent={modal => (
-              <IssueDetails
-                issueId={routeProps.match.params.issueId}
-                projectUsers={members}
-                fetchProject={() => {}}
-                updateLocalProjectIssues={() => {}}
-                modalClose={modal.close}
-              />
-            )}
-          />
-        )}
-      />
     </React.Fragment>
   );
 };

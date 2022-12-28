@@ -49,7 +49,6 @@ const ProjectSettings = ({ project, fetchProject }) => {
           <Form.Field.TextEditor
             name="description"
             label="Description"
-            tip="Describe the project in as much detail as you'd like."
           />
           <Form.Field.Select name="category" label="Project Category" options={categoryOptions} />
 

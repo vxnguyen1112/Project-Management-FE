@@ -13,7 +13,14 @@ import '../../../node_modules/@syncfusion/ej2-navigations/styles/material.css';
 import '../../../node_modules/@syncfusion/ej2-popups/styles/material.css';
 import '../../../node_modules/@syncfusion/ej2-richtexteditor/styles/material.css';
 import '../../../node_modules/@syncfusion/ej2-treegrid/styles/material.css';
-import { GanttComponent, Inject, Edit } from '@syncfusion/ej2-react-gantt';
+import {
+  GanttComponent,
+  Inject,
+  Edit,
+  DayMarkers,
+  EventMarkersDirective,
+  EventMarkerDirective,
+} from '@syncfusion/ej2-react-gantt';
 import useMergeState from 'hooks/mergeState';
 import { store } from 'store';
 import api from 'Services/api';
@@ -30,9 +37,24 @@ const defaultFilters = {
 const taskFields = {
   id: 'id',
   name: 'name',
+  resourceInfo: 'assignee',
   startDate: 'startDate',
   endDate: 'endDate',
   progress: 'progress',
+};
+
+const columns = [
+  { field: 'id', headerText: 'ID' },
+  { field: 'name', headerText: 'Name' },
+  { field: 'assignee', headerText: 'Assignee' },
+  { field: 'startDate', headerText: 'Start Date' },
+  { field: 'endDate', headerText: 'End Date' },
+  { field: 'progress', headerText: 'Progress' },
+];
+
+const resourceFields = {
+  id: 'resourceId',
+  name: 'resourceName',
 };
 
 const editSettings = {
@@ -58,30 +80,20 @@ const fetchSprints = res => {
   return sprints;
 };
 
-const data = [
-  {
-    TaskID: 1,
-    TaskName: 'Project Initiation',
-    StartDate: new Date('04/02/2019'),
-    EndDate: new Date('04/21/2019'),
-    Progress: 50,
-  },
-  {
-    TaskID: 5,
-    TaskName: 'Project Estimation',
-    StartDate: new Date('04/02/2019'),
-    EndDate: new Date('04/21/2019'),
-    Progress: 50,
-  },
-];
+const getDisplayName = (members, memberId) => {
+  const res = members.findIndex(member => member.id === memberId);
+  return res;
+};
 
-const refactorIssues = (list, sprintId) => {
+const refactorIssues = (list, members, sprintId) => {
   const filteredSprint = list.sprints.filter(sprint => sprint.id === sprintId)[0];
   const filteredIssues = [];
 
   filteredSprint.issuesList.forEach(issue => {
     if (issue.startDate !== undefined && issue.dueDate !== undefined) {
-      const { issuesKey, name, startDate, dueDate, doneRatio } = issue;
+      const { issuesKey, name, startDate, dueDate, doneRatio, assignMemberId } = issue;
+      const index = getDisplayName(members, assignMemberId);
+      console.log(index);
 
       filteredIssues.push({
         id: issuesKey,
@@ -89,6 +101,7 @@ const refactorIssues = (list, sprintId) => {
         startDate: new Date(startDate),
         endDate: new Date(dueDate),
         progress: doneRatio,
+        assignee: [index],
       });
     }
   });
@@ -101,10 +114,17 @@ const Grantt = () => {
   const [filters, mergeFilters] = useMergeState(defaultFilters);
   const [sprints, setSprints] = useState([]);
   const [issues, setIssues] = useState([]);
+  const [resources, setResources] = useState([]);
   const { projectId } = store.getState().listproject;
 
   useEffect(() => {
     const getBoards = async () => {
+      const members = await api.get(`/api/members/projects/${projectId}/search`);
+      const mapedMember = members.map((member, index) => ({
+        resourceId: index,
+        resourceName: member.displayName,
+      }));
+      setResources(mapedMember);
       const res = await api.get(`/api/backlogs?project_id=${projectId}`);
       console.log(res);
       const fetchedSprint = fetchSprints(res);
@@ -115,7 +135,7 @@ const Grantt = () => {
         filters.sprintId = fetchedSprint[0].id;
       }
 
-      const filteredIssues = refactorIssues(res, filters.sprintId);
+      const filteredIssues = await refactorIssues(res, members, filters.sprintId);
       setIssues(filteredIssues);
     };
 
@@ -123,7 +143,7 @@ const Grantt = () => {
   }, [filters]);
   return (
     <React.Fragment>
-      <Breadcrumbs items={['Projects', 'singularity 1.0', 'Grantt']} />
+      <Breadcrumbs items={['Projects', 'Grantt']} />
       <Header />
       <Filters
         sprints={sprints}
@@ -133,8 +153,18 @@ const Grantt = () => {
       />
       <div style={{ marginTop: 20 }} />
 
-      <GanttComponent dataSource={issues} taskFields={taskFields} editSettings={editSettings}>
-        <Inject services={[Edit]} />
+      <GanttComponent
+        dataSource={issues}
+        taskFields={taskFields}
+        editSettings={editSettings}
+        resourceFields={resourceFields}
+        resources={resources}
+        columns={columns}
+      >
+        <EventMarkersDirective>
+          <EventMarkerDirective day={new Date()} cssClass="e-custom-event-marker" />
+        </EventMarkersDirective>
+        <Inject services={[Edit, DayMarkers]} />
       </GanttComponent>
     </React.Fragment>
   );

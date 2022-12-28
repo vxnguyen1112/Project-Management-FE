@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Breadcrumbs } from 'components';
+import { Breadcrumbs, Modal } from 'components';
 import { DragDropContext } from 'react-beautiful-dnd';
 import { toast } from 'react-project-management';
 import api from 'Services/api';
 import { store } from 'store';
+import { Route, Link, useRouteMatch, useHistory } from 'react-router-dom';
+import IssueDetails from 'Project/TestBoard/IssueDetails';
 import { FormHeading } from '../ProjectSettings/Styles';
 import BoardSprint from './Board/BoardSprint';
 import BoardBacklog from './Board/BoardBacklog';
@@ -63,6 +65,8 @@ const moveIssue = async movedIssue => {
 };
 
 const Backlog = () => {
+  const match = useRouteMatch();
+  const history = useHistory();
   const [boards, setBoards] = useState(null);
   const [boardStatus, setBoardStatus] = useState('empty');
   const [isMove, setIsMove] = useState(false);
@@ -175,7 +179,7 @@ const Backlog = () => {
         flexDirection: 'column',
       }}
     >
-      <Breadcrumbs items={['Projects', 'singularity 1.0', 'Backlog']} />
+      <Breadcrumbs items={['Projects', 'Backlog']} />
       <FormHeading>Backlog</FormHeading>
 
       <DragDropContext onDragEnd={onDragEnd}>
@@ -213,6 +217,29 @@ const Backlog = () => {
           />
         )}
       </DragDropContext>
+
+
+      <Route
+        path={`${match.path}/issues/:issueId`}
+        render={routeProps => (
+          <Modal
+            isOpen
+            testid="modal:issue-details"
+            width={1040}
+            withCloseIcon={false}
+            onClose={() => history.push(match.url)}
+            renderContent={modal => (
+              <IssueDetails
+                issueId={routeProps.match.params.issueId}
+                projectUsers={members}
+                fetchProject={() => {}}
+                updateLocalProjectIssues={() => {}}
+                modalClose={modal.close}
+              />
+            )}
+          />
+        )}
+      />
     </div>
   );
 };

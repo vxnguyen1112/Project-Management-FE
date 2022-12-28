@@ -37,10 +37,10 @@ const updateIssueDetail = async (issueId, issue, modalClose) => {
     issuesStatusId: issuesStatusDto.id,
     organizationId: store.getState().auth.user.organizationId,
   };
-  console.log('Updated', updatedIssue);
+
   try {
     const res = await api.put(`/api/issues/${issueId}`, updatedIssue);
-    console.log(res);
+    toast.success('Update issue sucessfully');
     modalClose();
   } catch (err) {
     toast.error(err);

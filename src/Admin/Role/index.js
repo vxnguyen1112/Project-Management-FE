@@ -25,7 +25,7 @@ const Role = () => {
     await api.get('/api/roles/list').then(
       data => {
         setListRoles(data.data);
-        setRoleSelect({ ...roleSelect, ...data.data[0] });
+        setRoleSelect({ ...roleSelect, ...data.data[3] });
       },
       error => {
         toast.error(error);

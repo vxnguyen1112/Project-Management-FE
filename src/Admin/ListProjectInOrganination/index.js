@@ -70,13 +70,13 @@ const ListProjcectInOrganition = () => {
         Header: 'Domain',
         accessor: 'domain',
       },
-      {
-        Header: 'Public',
-        accessor: 'isPublic',
-        Cell: ({ cell: { value } }) => (
-          <input type="checkbox" className="checkbox" checked={value} readOnly />
-        ),
-      },
+      // {
+      //   Header: 'Public',
+      //   accessor: 'isPublic',
+      //   Cell: ({ cell: { value } }) => (
+      //     <input type="checkbox" className="checkbox" checked={value} readOnly />
+      //   ),
+      // },
       {
         Header: 'Status',
         accessor: 'projectStatus',

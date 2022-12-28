@@ -17,7 +17,10 @@ import { GanttComponent, Inject, Edit } from '@syncfusion/ej2-react-gantt';
 import useMergeState from 'hooks/mergeState';
 import { store } from 'store';
 import api from 'Services/api';
+import { Breadcrumbs } from 'components';
+import { FormHeading } from 'Project/ProjectSettings/Styles';
 import Filters from 'Project/TestBoard/Filters';
+import Header from './Header';
 
 const defaultFilters = {
   searchTerm: '',
@@ -120,12 +123,15 @@ const Grantt = () => {
   }, [filters]);
   return (
     <React.Fragment>
+      <Breadcrumbs items={['Projects', 'singularity 1.0', 'Grantt']} />
+      <Header />
       <Filters
         sprints={sprints}
         defaultFilters={defaultFilters}
         filters={filters}
         mergeFilters={mergeFilters}
       />
+      <div style={{ marginTop: 20 }} />
 
       <GanttComponent dataSource={issues} taskFields={taskFields} editSettings={editSettings}>
         <Inject services={[Edit]} />

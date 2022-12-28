@@ -10,12 +10,21 @@ const token = () => {
   }
   return `${getUser.tokenType} ${getUser.accessToken}`;
 };
+const PROJECT_ID = () => {
+  console.log(`id project ${store.getState().listproject.projectId}`)
+  const getprojectID=store.getState().listproject.projectId;
+  if (getprojectID === null || getprojectID === undefined || getprojectID === '') {
+    return '';
+  }
+  return store.getState().listproject.projectId;
+};
 const defaults = {
   baseURL: process.env.API_URL || 'http://165.232.173.235:8000',
   headers: () => ({
     'Content-Type': 'application/json',
     Authorization: token(),
     accept:'*/*',
+     "PROJECT-ID":PROJECT_ID()
   }),
   error: {
     code: 'INTERNAL_ERROR',

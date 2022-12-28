@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import api from 'Services/api';
+
 import { setMessage } from "./messageSlide"     ;
 
 const user = JSON.parse(localStorage.getItem("user"));
@@ -29,6 +30,7 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     logout(state) {
+        
         state.isLoggedIn = false;
         state.user = null;
       },

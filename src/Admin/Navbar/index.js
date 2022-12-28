@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { NavLink} from "react-router-dom";
 import {logout} from "store/reducers/authSlice";
+import {clear} from 'store/reducers/listprojectSlide'
 import { useDispatch } from "react-redux";
 import "./navbar.css";
 
@@ -71,7 +72,7 @@ const NavBar=()=> {
                 to="/login"
                 activeClassName="active"
                 className="nav-links"
-                onClick={()=> dispatch(logout())}
+                onClick={()=> {dispatch(logout());dispatch(clear())}}
               >
                 Logout
               </NavLink>

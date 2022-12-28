@@ -7,6 +7,7 @@ import ListProjcectInOrganition from './ListProjectInOrganination'
 import AddMemberToProject from './AddMemberToProject'
 import ListMemberInOrganition from './ListMemberInOrganiation'
 import Role from './Role'
+import AddRole from './AddRole';
 
 const Admin = () => {
   const match = useRouteMatch();
@@ -38,6 +39,10 @@ const Admin = () => {
       <Route
         path={`${match.path}/role`}
         render={() => <Role />}
+      />
+      <Route
+        path={`${match.path}/add-role`}
+        render={() => <AddRole />}
       />
       {match.isExact && <Redirect to={`${match.url}/list-projcect`} />}
     

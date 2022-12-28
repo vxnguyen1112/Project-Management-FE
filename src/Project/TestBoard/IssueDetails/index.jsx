@@ -7,12 +7,12 @@ import Divider from 'Project/Backlog/Divider';
 import { toast } from 'react-project-management';
 import { store } from 'store';
 import Type from './Type';
-import Delete from './Delete';
 import Title from './Title';
 import Description from './Description';
 import AssigneesReporter from './AssigneesReporter';
 import Priority from './Priority';
 import EstimateTracking from './EstimateTracking';
+import DoneRatio from './DoneRatio';
 import Calendar from './Calendar';
 import { TopActions, TopActionsRight, Content, Left, Right } from './Styles';
 
@@ -37,10 +37,10 @@ const updateIssueDetail = async (issueId, issue, modalClose) => {
     issuesStatusId: issuesStatusDto.id,
     organizationId: store.getState().auth.user.organizationId,
   };
-  console.log("Updated", updatedIssue);
+
   try {
     const res = await api.put(`/api/issues/${issueId}`, updatedIssue);
-    console.log(res);
+    toast.success('Update issue sucessfully');
     modalClose();
   } catch (err) {
     toast.error(err);
@@ -63,7 +63,7 @@ const ProjectBoardIssueDetails = ({ issueId, projectUsers, fetchProject, modalCl
   const updateIssueStatus = obj => {
     const statusName = statusMap[obj.status];
     const status = issueStatusList.filter(issueStatus => issueStatus.name === statusName)[0];
-    
+
     setIssue(prev => ({
       ...prev,
       issuesStatusDto: status,
@@ -117,6 +117,7 @@ const ProjectBoardIssueDetails = ({ issueId, projectUsers, fetchProject, modalCl
               />
               <Priority issue={issue} updateIssue={updateIssue} />
               <EstimateTracking issue={issue} updateIssue={updateIssue} />
+              <DoneRatio issue={issue} updateIssue={updateIssue} />
               <Calendar
                 issue={issue}
                 updateIssue={updateIssue}

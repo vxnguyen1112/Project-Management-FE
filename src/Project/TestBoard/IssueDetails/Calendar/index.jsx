@@ -21,7 +21,7 @@ const ProjectBoardIssueDetailsCalendar = ({ displayFieldName, fieldName, issue, 
       <SectionTitle>{displayFieldName}</SectionTitle>
       <InputDebounced
         placeholder={displayFieldName}
-        value={isNil(issue[fieldName]) ? '' : moment(issue[fieldName]).format('lll')}
+        value={isNil(issue[fieldName]) ? '' : moment(issue[fieldName]).format('ll')}
         onClick={() => setIsClick(!isClick)}
         onChange={() => {}}
       />

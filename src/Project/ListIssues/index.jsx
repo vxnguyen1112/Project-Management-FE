@@ -52,7 +52,7 @@ const ListIssues = () => {
         accessor: 'startDate',
         Cell: ({ cell: { value } }) => {
           if (value) {
-            return moment(value).format('lll');
+            return moment(value).format('ll');
           }
           return 'N/A';
         },
@@ -62,7 +62,7 @@ const ListIssues = () => {
         accessor: 'dueDate',
         Cell: ({ cell: { value } }) => {
           if (value) {
-            return moment(value).format('lll');
+            return moment(value).format('ll');
           }
           return 'N/A';
         },

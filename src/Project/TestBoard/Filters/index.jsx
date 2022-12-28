@@ -16,7 +16,7 @@ const ProjectBoardFilters = ({ sprints, defaultFilters, filters, mergeFilters })
 
   return (
     <Filters data-testid="board-filters">
-      <SearchInput icon="search" value={searchTerm} onChange={() => {}} />
+      {/* <SearchInput icon="search" value={searchTerm} onChange={() => {}} /> */}
       <Select
         value={sprints.filter(sprint => sprint.id === filters.sprintId)[0]}
         onChange={sprint => mergeFilters({ sprintId: sprint.id })}

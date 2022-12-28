@@ -84,7 +84,7 @@ const ProjectIssueCreate = ({ onCreate, modalClose }) => {
         type: IssueType.TASK,
         name: '',
         description: '',
-        userIds: [],
+        userIds: null,
         priority: IssuePriority.MEDIUM,
         estimateHours: '',
       }}
